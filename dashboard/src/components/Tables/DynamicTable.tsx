@@ -65,7 +65,8 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
                 <th
                   key={`outth-${header.Name}-${rowIndex}`}
                   scope="col"
-                  className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11"
+                  className="py-4 px-4 font-medium text-black dark:text-white text-center"
+                  style={header.type === 'String' ? { minWidth: '300px', maxWidth: '1000px', whiteSpace: 'normal', wordBreak: 'break-word' } : {minWidth: '20px'}}
                 >
                   {header.isShow === 'true' ? header.Name : ''}
                 </th>
@@ -76,8 +77,11 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
           {data.map((row, rowIndex) => (
             <tr key={`intr-${row}-${rowIndex}`} className="hover:bg-gray-50 dark:hover:bg-meta-4">
               {headers.map((header) => (
-                (!header.isEnable || header.isEnable === 'true') ? (
-                  <td key={`intd-${rowIndex}-${header.id}`} className="border-b border-[#eee] py-5 px-10 dark:border-strokedark xl:pl-11">
+                (!header.isEnable || header.isEnable === 'true') ? ( 
+                  <td 
+                    key={`intd-${rowIndex}-${header.id}`} 
+                    className="border-b border-[#eee] py-3 px-3 dark:border-strokedark"
+                    style={header.type === 'String' ? { minWidth: '350px', maxWidth: '1000px', whiteSpace: 'normal', wordBreak: 'break-word' } : {minWidth: '200px'}}>
                     {/* header.id === 'actions' 新增 修改 刪除 */}
                     {header.id === 'actions' && ( // 新增 修改 刪除
                       <div className="flex items-center space-x-3.5">
@@ -150,7 +154,7 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
                       </div>
                     )}
                     {header.id === 'attachmentActions' && ( // 上傳檔案
-                      <div className="flex items-center space-x-3.5">
+                      <div className="flex justify-center items-center space-x-3.5">
                         {onEdit && (
                           <button className="hover:text-primary" onClick={() => onEdit(row)}>
                             <FaEdit />
@@ -187,13 +191,18 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
                         )) : <></>}
                       </div>
                     ) : header.type === 'Url' && row[header.id] ? ( // 顯示連結
-                      <a href={row[header.id]} target="_blank" rel="noopener noreferrer" className="text-blue-500">
-                        <FaLink />
-                      </a>
+                      <div className="flex justify-center items-center">
+                        <a href={row[header.id]} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+                          <FaLink />
+                        </a>
+                      </div>
                     ) : ( // 顯示文字
-                      <span className="text-black dark:text-white">
+                      <div
+                        className="text-black dark:text-white inline-block max-w-full"
+                        style={{ maxWidth: '100%' }}  // 使用 max-width 來防止內容超出表格邊界
+                      >
                         {row[header.id]}
-                      </span>
+                      </div>
                     )}
                   </td>
                 ) : <></>
