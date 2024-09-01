@@ -24,7 +24,7 @@ const NewsDetail = ({ news, error }) => {
           <div style={{ flex: 1, textAlign: 'center' }}>
             <h1
               style={{ overflowWrap: 'anywhere' }}
-              className="text-5xl font-extrabold text-gray-800/80 drop-shadow-lg text-wrap dark:text-white"
+              className="text-[33px] font-extrabold text-gray-800/80 drop-shadow-lg text-wrap text-left dark:text-white"
             >
               {news.title}
             </h1>
@@ -35,7 +35,7 @@ const NewsDetail = ({ news, error }) => {
         </div>
         <hr className="my-4 border-gray-300" />
         <div
-          className="mx-auto w-full max-w-4xl news-content-container"
+          className="mx-auto w-full news-content-container"
           dangerouslySetInnerHTML={{
             __html: news.content,
           }}

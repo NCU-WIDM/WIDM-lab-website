@@ -231,7 +231,7 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ headers, isOpen, onClose, onS
       return (
         <JoditEditor
           key={header.id}
-          value={formData[header.id]}
+          value={formData[header.id] || ''}
           onBlur={(newContent) => setFormData({
             ...formData,
             [header.id]: newContent,
