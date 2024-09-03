@@ -71,15 +71,17 @@ export default function LayoutMessage() {
 
     const response = await defaultHttp.get(`${processDataRoutes.retrieval}/query`, {
       params: {
-        query_string: current_text
+        query_string: current_text,
+        person_id: "1"
       }
     });
-    const responseMessage = { sender: 'api', text: response.data };
-    const finalMessages = [...updatedMessages, responseMessage];
+    const responseMessage = { sender: 'api', text: response.data.response.answer };
+    const finalMessages = [...updatedMessages.slice(0, -1), responseMessage];
+
     if (finalMessages.length > 15) {
       finalMessages.shift(); // 移除最舊的訊息
     }
-    setMessages(finalMessages);
+    setMessages(finalMessages || []);
     localStorage.setItem('chatMessages', JSON.stringify(finalMessages)); // 更新 localStorage
     eventBus.emit('refreshMessages'); // 通知其他對話框刷新消息
   };

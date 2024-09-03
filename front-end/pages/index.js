@@ -60,20 +60,20 @@ export default function Home() {
     setMessages(updatedMessages);
     localStorage.setItem('chatMessages', JSON.stringify(updatedMessages)); // 更新 localStorage
     eventBus.emit('refreshMessages'); // 通知其他對話框刷新消息
-
     // - Response
     const response = await defaultHttp.get(`${processDataRoutes.retrieval}/query`, {
       params: {
-        query_string: current_text
+        query_string: current_text,
+        person_id: "1"
       }
     });
-    const responseMessage = { sender: 'api', text: response.data };
+    const responseMessage = { sender: 'api', text: response.data.response.answer };
     const finalMessages = [...updatedMessages.slice(0, -1), responseMessage]; // 排除回覆符號，在新增回覆訊息
 
     if (finalMessages.length > 15) {
       finalMessages.shift(); // 移除最舊的訊息
     }
-    setMessages(finalMessages);
+    setMessages(finalMessages || []);
     localStorage.setItem('chatMessages', JSON.stringify(finalMessages)); // 更新 localStorage
     eventBus.emit('refreshMessages'); // 通知其他對話框刷新消息
   };
