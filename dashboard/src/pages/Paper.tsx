@@ -34,7 +34,7 @@ const PaperPage = () => {
     { id: 'publish_year', Name: '發布時間', isShow: 'true', type: 'Date', dateType: ['month','YYYY-MM'] as [PickerMode, string], required: 'true' },
     { id: 'authors', Name: '論文作者', isShow: 'true', type: 'SelectItems', data: [] },
     { id: 'tags', Name: '關鍵詞', isShow: 'true', type: 'SelectItems', data: [] },
-    { id: 'type', Name: '發表類型', isShow: 'true', type: 'SelectItems', data: ['Journal Papers', 'International Conference Papers', 'Book Chapters',  'Patents', 'Domestic Conference Papers (In Chinese)', 'Phd Thesis', 'Master Thesis', "Part-time Graduate Students' Master Thesis"]},
+    { id: 'types', Name: '發表類型', isShow: 'true', type: 'SelectItems', data: ['Journal Papers', 'International Conference Papers', 'Book Chapters',  'Patents', 'Domestic Conference Papers (In Chinese)', 'Phd Thesis', 'Master Thesis', "Part-time Graduate Students' Master Thesis"]},
     { id: 'link', Name: '論文連結', isShow: 'true', type: 'Url' },
     { id: 'attachmentActions', Name: 'attachment', isShow: 'false', type: 'Null' },
   ];
@@ -65,7 +65,7 @@ const PaperPage = () => {
         publish_year: formData.publish_year,
         authors: formData.authors || [],
         tags: formData.tags || [],
-        type: formData.type || [],
+        types: formData.types || [],
         link: formData.link || '',
       };
 

@@ -49,12 +49,12 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
         <ul className='list-none'>
           {!filteredBlogPosts.length && 'No posts found.'}
           {displayPosts.map((frontMatter) => {
-            const { id, uniqueId, sub_title, title, content } = frontMatter
+            const { id, uniqueId, sub_title, title, content, create_time } = frontMatter
             return (
               <Link
                 href={`/news/${id}`}
                 key={id}
-                className="group flex bg-transparent bg-opacity-20 px-2 transition duration-100 hover:scale-105 hover:rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800  border-b border-gray-300"
+                className="group flex bg-transparent bg-opacity-20 px-2 transition duration-100 hover:scale-105 hover:rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 border-b border-gray-300"
               >
                 <li key={uniqueId} className="list-none py-6">
                   <article className="space-y-2 bg-transparent bg-opacity-20 p-2 transition duration-200 hover:rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-3">
@@ -67,10 +67,13 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
                         </div>
                         <div>{sub_title}</div>
                       </div>
+                      {/* 調整 create_time 的樣式 */}
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{create_time}</p>
                     </div>
                   </article>
                 </li>
               </Link>
+
             )
           })}
         </ul>
