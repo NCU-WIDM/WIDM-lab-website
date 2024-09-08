@@ -30,7 +30,7 @@ const ActivityPage = () => {
     { id: 'id', Name: 'Id', isShow: 'false', isEnable: 'false', type: 'Number' },
     { id: 'title', Name: '標題', isShow: 'true', type: 'String', required: 'true' },
     { id: 'sub_title', Name: '副標題', isShow: 'true', type: 'String' },
-    { id: 'date', Name: '日期', isShow: 'true', type: 'Date', dateType: ['date','YYYY-MM-DD'] as [PickerMode, string], required: 'true' },
+    { id: 'date', Name: '日期', isShow: 'true', type: 'Date', dateType: ['date','YYYY-MM-DD'] as [PickerMode, string], required: 'true', style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'imagesActions', Name: 'images', isShow: 'false', type: 'Null' },
   ];
 

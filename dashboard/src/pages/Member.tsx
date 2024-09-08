@@ -28,11 +28,11 @@ const MemberPage = () => {
 
   const headers = [
     { id: 'id', Name: 'Id', isShow: 'false', isEnable: "false", type: 'Number' },
-    { id: 'name', Name: '名稱', isShow: 'true', type: 'String', required: 'true' },
-    { id: 'name_en', Name: '英文名稱', isShow: 'true', type: 'String' },
+    { id: 'name', Name: '名稱', isShow: 'true', type: 'String', required: 'true', style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
+    { id: 'name_en', Name: '英文名稱', isShow: 'true', type: 'String', style: { minWidth: '200px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'intro', Name: '介紹', isShow: 'true', type: 'Textarea' },
-    { id: 'position', Name: '職位', isShow: 'true', type: 'Select', data: ['Master Student', 'PHD Student', 'Project Assistant'], required: 'true' },
-    { id: 'graduate_year', Name: '畢業時間', isShow: 'true', type: 'Date', dateType: ['month','YYYY-MM'] as [PickerMode, string] },
+    { id: 'position', Name: '職位', isShow: 'true', type: 'Select', data: ['Master Student', 'PHD Student', 'Project Assistant'], required: 'true', style: { minWidth: '100px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
+    { id: 'graduate_year', Name: '畢業時間', isShow: 'true', type: 'Date', dateType: ['month','YYYY-MM'] as [PickerMode, string], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'imageActions', Name: 'member-image', isShow: 'false', type: 'Null' },
   ];
 

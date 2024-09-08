@@ -26,12 +26,12 @@ const ProjectPage = () => {
 
   const headers = [
     { id: 'id', Name: 'Id', isShow: 'false', isEnable: "false", type: 'Number' },
-    { id: 'name', Name: '專案名稱', isShow: 'true', type: 'String', required: 'true' },
-    { id: 'description', Name: '專案描述', isShow: 'true', type: 'Textarea' },
-    { id: 'github', Name: 'GitHub 連結', isShow: 'true', type: 'Url' },
-    { id: 'link', Name: '專案連結', isShow: 'true', type: 'Url' },
+    { id: 'name', Name: '專案名稱', isShow: 'true', type: 'String', required: 'true', style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
+    { id: 'description', Name: '專案描述', isShow: 'true', type: 'Textarea', style: { minWidth: '500px', whiteSpace: 'normal', wordBreak: 'break-word' } },
+    { id: 'github', Name: 'GitHub 連結', isShow: 'true', type: 'Url', style: { minWidth: '100px', whiteSpace: 'normal', textAlign: 'center' } },
+    { id: 'link', Name: '專案連結', isShow: 'true', type: 'Url', style: { minWidth: '100px', whiteSpace: 'normal', textAlign: 'center' } },
     { id: 'tags', Name: '專案標籤', isShow: 'true', type: 'SelectItems', data: [] },
-    { id: 'members', Name: '人員', isShow: 'true', type: 'SelectItems', data: [] },
+    { id: 'members', Name: '人員', isShow: 'true', type: 'SelectItems', data: [], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'imageActions', Name: 'project-icon', isShow: 'false', type: 'Null' },
   ];
 

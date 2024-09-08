@@ -12,6 +12,7 @@ type HeaderType = {
   type: string;
   isEnable?: string;
   data?: any;
+  style?: any;
 };
 
 interface TableProps {
@@ -66,7 +67,7 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
                   key={`outth-${header.Name}-${rowIndex}`}
                   scope="col"
                   className="py-4 px-4 font-medium text-black dark:text-white text-center"
-                  style={header.type === 'String' ? { minWidth: '300px', maxWidth: '1000px', whiteSpace: 'normal', wordBreak: 'break-word' } : {minWidth: '20px'}}
+                  style={header.style ? header.style : {minWidth: '200px'}}
                 >
                   {header.isShow === 'true' ? header.Name : ''}
                 </th>
@@ -81,7 +82,7 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
                   <td 
                     key={`intd-${rowIndex}-${header.id}`} 
                     className="border-b border-[#eee] py-3 px-3 dark:border-strokedark"
-                    style={header.type === 'String' ? { minWidth: '350px', maxWidth: '1000px', whiteSpace: 'normal', wordBreak: 'break-word' } : {minWidth: '200px'}}>
+                    style={header.style ? header.style : {minWidth: '200px'}}>
                     {/* header.id === 'actions' 新增 修改 刪除 */}
                     {header.id === 'actions' && ( // 新增 修改 刪除
                       <div className="flex items-center space-x-3.5">
