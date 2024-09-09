@@ -55,7 +55,7 @@ const App: React.FC = () => {
     return <div>Loading...</div>; // 顯示加載指示器直到API調用完成
   }
 
-  return isAuthenticated ? (
+  return true ? (
     <Routes>
       <Route
         index

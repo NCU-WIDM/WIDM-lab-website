@@ -9,6 +9,7 @@ import { defaultHttp } from '../utils/http';
 import { processDataRoutes } from '../routes/api';
 import { storedHeaders } from '../utils/storedHeaders';
 import { handleErrorResponse } from '../utils';
+import style from 'react-syntax-highlighter/dist/esm/styles/hljs/a11y-dark';
 
 const ActivityPage = () => {
   const [activities, setActivities] = useState<any[]>([]);
@@ -28,10 +29,10 @@ const ActivityPage = () => {
 
   const headers = [
     { id: 'id', Name: 'Id', isShow: 'false', isEnable: 'false', type: 'Number' },
-    { id: 'title', Name: '標題', isShow: 'true', type: 'String', required: 'true' },
-    { id: 'sub_title', Name: '副標題', isShow: 'true', type: 'String' },
-    { id: 'date', Name: '日期', isShow: 'true', type: 'Date', dateType: ['date','YYYY-MM-DD'] as [PickerMode, string], required: 'true', style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
-    { id: 'imagesActions', Name: 'images', isShow: 'false', type: 'Null' },
+    { id: 'title', Name: '標題', isShow: 'true', type: 'String', required: 'true',  style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
+    { id: 'sub_title', Name: '副標題', isShow: 'true', type: 'String',  style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
+    { id: 'date', Name: '日期', isShow: 'true', type: 'Date', dateType: ['date','YYYY-MM-DD'] as [PickerMode, string], required: 'true', style: {textAlign: 'center'}},
+    { id: 'imagesActions', Name: 'images', isShow: 'false', type: 'Null',  style: {textAlign: 'center'}},
   ];
 
   const fetchActivities = async () => {

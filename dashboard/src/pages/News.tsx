@@ -25,8 +25,8 @@ const NewsPage = () => {
 
   const headers = [
     { id: 'id', Name: 'Id', isShow: 'false', isEnable: "false", type: 'Number' },
-    { id: 'title', Name: '標題', isShow: 'true', type: 'String', required: 'true' },
-    { id: 'sub_title', Name: '副標題', isShow: 'true', type: 'String' },
+    { id: 'title', Name: '標題', isShow: 'true', type: 'String', required: 'true', style: { whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' }  },
+    { id: 'sub_title', Name: '副標題', isShow: 'true', type: 'String', style: { whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' }  },
     { id: 'content', Name: '內容', isShow: 'false', isEnable: 'false', type: 'jodit' },
     { id: 'actions', Name: 'Actions', isShow: 'false', type: 'Null' },
   ];
