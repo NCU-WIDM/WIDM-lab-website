@@ -61,7 +61,7 @@ const App: React.FC = () => {
         index
         element={
           <>
-            <PageTitle title="eCommerce Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+            <PageTitle title="WIDM Lab Dashboard" />
             <HomePage />
           </>
         }
