@@ -10,7 +10,7 @@ export const Members = ({ members }) => {
   const [filter, setFilter] = useState('current');
 
   // 使用環境變數來設置 API URL
-  const API_URL = process.env.API_URL || 'https://widm-back-end.nevercareu.space';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://widm-back-end.nevercareu.space';
 
   // Group members by their position and filter based on the selected filter
   const groupByPosition = members.reduce((acc, member) => {

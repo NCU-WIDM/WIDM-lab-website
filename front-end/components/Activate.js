@@ -13,7 +13,7 @@ export default function Tweet({
   images,
 }) {
   // 使用環境變數來設置 API URL
-  const API_URL = process.env.API_URL || 'https://widm-back-end.nevercareu.space';;
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://widm-back-end.nevercareu.space';
 
   return (
     <div className="my-3 w-full max-w-3xl rounded-md border border-gray-100 bg-white px-4 py-4 shadow-sm shadow-gray-300 dark:border-zinc-900 dark:bg-zinc-900 dark:shadow-none">

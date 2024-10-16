@@ -4,7 +4,7 @@ import FolderIcon from './icon'
 
 const ProjectCard = ({ project_id, title, description, project_link, github, tags, members, icon }) => {
   // 使用環境變數來設置 API URL
-  const API_URL = process.env.API_URL || 'https://widm-back-end.nevercareu.space';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://widm-back-end.nevercareu.space';
 
   return (
     <div className="md p-4 md:w-1/2" style={{ maxWidth: '544px' }}>
