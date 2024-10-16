@@ -4,17 +4,18 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 
 const userManager = new UserManager({
-  authority: 'https://portal.ncu.edu.tw',
+  authority: import.meta.env.VITE_AUTHORITY || '',
   client_id: import.meta.env.VITE_CLIENT_ID || '',
   redirect_uri: import.meta.env.VITE_REDIRECT_URI || '',
   response_type: 'code',
   scope: 'identifier chinese-name',
   metadata: {
-    authorization_endpoint: 'https://portal.ncu.edu.tw/oauth2/authorization',
-    token_endpoint: 'https://portal.ncu.edu.tw/oauth2/token',
-    userinfo_endpoint: 'https://portal.ncu.edu.tw/apis/oauth/v1/info'
+    authorization_endpoint: import.meta.env.VITE_AUTHORIZATION_ENDPOINT || '',
+    token_endpoint: import.meta.env.VITE_TOKEN_ENDPOINT || '',
+    userinfo_endpoint: import.meta.env.VITE_USERINFO_ENDPOINT || ''
   }
 });
+
 
 const SignIn: React.FC = () => {
 

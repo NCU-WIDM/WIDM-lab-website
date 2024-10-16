@@ -3,16 +3,19 @@ import DefaultLayout from '../layout/DefaultLayout';
 import { NavLink } from 'react-router-dom';
 
 const HomePage: React.FC = () => {
+  const webUrl = import.meta.env.VITE_WEB_URL || '#';
+  const dashboardUrl = import.meta.env.VITE_DASHBOARD_URL || '#';
+
   return (
     <DefaultLayout>
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', textAlign: 'center', color: 'black', fontSize: '20px' }}>
         <div>
           <div style={{ marginBottom: '10px' }}>
-            正式機 Web: <a href="https://widm-front-end.nevercareu.space/" style={{ color: '#007BFF', textDecoration: 'none' }}>https://widm-front-end.nevercareu.space/</a>
+            正式機 Web: <a href={webUrl} style={{ color: '#007BFF', textDecoration: 'none' }}>{webUrl}</a>
           </div>
           
           <div style={{ marginBottom: '30px' }}>
-            正式機 Dashboard: <a href="https://widm-dash.nevercareu.space/" style={{ color: '#007BFF', textDecoration: 'none' }}>https://widm-dash.nevercareu.space/</a>
+            正式機 Dashboard: <a href={dashboardUrl} style={{ color: '#007BFF', textDecoration: 'none' }}>{dashboardUrl}</a>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
