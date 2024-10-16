@@ -12,7 +12,9 @@ export default function Tweet({
   date,
   images,
 }) {
-  
+  // 使用環境變數來設置 API URL
+  const API_URL = process.env.API_URL || 'https://widm-back-end.nevercareu.space';;
+
   return (
     <div className="my-3 w-full max-w-3xl rounded-md border border-gray-100 bg-white px-4 py-4 shadow-sm shadow-gray-300 dark:border-zinc-900 dark:bg-zinc-900 dark:shadow-none">
       <div className="flex items-center">
@@ -55,7 +57,7 @@ export default function Tweet({
                 >
                   <img
                     alt={title}
-                    src={`https://widm-back-end.nevercareu.space/activity/${id}/activity-image/${image}`}
+                    src={`${API_URL}/activity/${id}/activity-image/${image}`}  // 使用環境變數的 API URL
                     style={{
                       maxWidth: '100%',
                       maxHeight: '100%',

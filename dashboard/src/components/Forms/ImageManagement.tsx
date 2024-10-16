@@ -19,6 +19,8 @@ const ImageManagement: React.FC<ImageManagementProps> = ({ onClose, isOpen, acti
   const [confirmingDelete, setConfirmingDelete] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://widm-back-end.nevercareu.space';; // 使用環境變數
+
   useEffect(() => {
     setImagesId(initialImagesId || []);
     console.log(initialImagesId);
@@ -106,7 +108,7 @@ const ImageManagement: React.FC<ImageManagementProps> = ({ onClose, isOpen, acti
           {imagesId.map(imageId => (
               <div key={imageId} className="flex items-center justify-between">
                 <img
-                  src={`https://widm-back-end.nevercareu.space/${action_1}/${id}/${action_2}/${imageId}`}
+                  src={`${apiUrl}/${action_1}/${id}/${action_2}/${imageId}`}
                   alt={`Image ${imageId}`}
                   className="w-60 h-60 object-cover"
                 />

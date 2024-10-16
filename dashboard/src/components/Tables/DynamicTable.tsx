@@ -32,10 +32,12 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [imageUpdate, setImageUpdate] = useState(0);
 
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://widm-back-end.nevercareu.space';; // 使用環境變數
+
   useEffect(() => {
     console.log(data);
     setImageUpdate(prev => prev + 1); // 更新狀態
-  } , [data]);
+  }, [data]);
 
   const handleDeleteClick = (id: number) => {
     setSelectedId(id);
@@ -117,7 +119,7 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
                           )}
                           <img
                             key={imageUpdate}
-                            src={row.imageUrl ? row.imageUrl : `https://widm-back-end.nevercareu.space/${page}/${row['id']}/${header.Name}`}
+                            src={row.imageUrl ? row.imageUrl : `${apiUrl}/${page}/${row['id']}/${header.Name}`}
                             className="w-10 h-10 object-cover"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;

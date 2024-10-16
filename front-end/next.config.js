@@ -46,6 +46,9 @@ const securityHeaders = [
   },
 ];
 
+// 使用環境變數來設定 API URL
+const API_URL = process.env.API_URL || 'https://widm-back-end.nevercareu.space';
+
 module.exports = withBundleAnalyzer({
   reactStrictMode: true,
   images: {
@@ -62,7 +65,7 @@ module.exports = withBundleAnalyzer({
       'cdn.hashnode.com',
       'res.craft.do',
       'res.cloudinary.com',
-      'widm-back-end.nevercareu.space', // 新增的圖片域名
+      API_URL.replace(/^https?:\/\//, ''), // 將 API_URL 的域名部分新增到允許圖片域名
     ],
   },
   pageExtensions: ['js', 'jsx', 'md', 'mdx'],
@@ -85,7 +88,7 @@ module.exports = withBundleAnalyzer({
       },
       {
         source: '/api/:path((?!auth).*)', // 排除 /api/auth 路徑
-        destination: 'https://widm-back-end.nevercareu.space/:path*',
+        destination: `${API_URL}/:path*`, // 使用環境變數來設置 API URL
       },
     ];
   },
@@ -115,7 +118,7 @@ module.exports = withBundleAnalyzer({
         ...config.devServer,
         proxy: {
           '/api': {
-            target: 'https://widm-back-end.nevercareu.space',
+            target: API_URL, // 使用環境變數來設置代理的目標 URL
             changeOrigin: true,
             secure: false,
             bypass: (req) => {

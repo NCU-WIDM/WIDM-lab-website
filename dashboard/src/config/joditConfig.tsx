@@ -2,7 +2,7 @@ export const joditConfig = {
   readonly: false,
   height: '500px',
   uploader: {
-    url: 'https://widm-back-end.nevercareu.space/image',
+    url: `${import.meta.env.VITE_API_URL || 'https://widm-back-end.nevercareu.space'}/image`,  // 使用環境變數
     filesVariableName: () => 'file',
     withCredentials: false,
     pathVariableName: 'path',
@@ -11,7 +11,7 @@ export const joditConfig = {
   },
   filebrowser: {
     ajax: {
-      url: 'https://widm-back-end.nevercareu.space/image',
+      url: `${import.meta.env.VITE_API_URL || 'https://widm-back-end.nevercareu.space'}/image`,  // 使用環境變數
       method: 'GET',
     },
     permissions: {
@@ -21,7 +21,7 @@ export const joditConfig = {
       download: true,
     },
     fileRemove: {
-      url: 'https://widm-back-end.nevercareu.space/image',
+      url: `${import.meta.env.VITE_API_URL || 'https://widm-back-end.nevercareu.space'}/image`,  // 使用環境變數
       method: 'DELETE',
       contentType: 'application/json',
     },

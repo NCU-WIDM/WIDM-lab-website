@@ -13,6 +13,8 @@ interface DeleteImagesProps {
 const DeleteImages: React.FC<DeleteImagesProps> = ({ onClose, action_1, action_2, id, imageId, imagesId, onDeleteImage }) => {
   const [confirmingDelete, setConfirmingDelete] = useState<string | null>(null);
 
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://widm-back-end.nevercareu.space';;
+
   const handleDeleteClick = (imageId: string) => {
     setConfirmingDelete(imageId);
   };
@@ -41,7 +43,7 @@ const DeleteImages: React.FC<DeleteImagesProps> = ({ onClose, action_1, action_2
               {imageId ? (
                 <div className="flex items-center justify-between">
                   <img
-                    src={`https://widm-back-end.nevercareu.space/${action_1}/${id}/${action_2}/${imageId}`}
+                    src={`${apiUrl}/${action_1}/${id}/${action_2}/${imageId}`}
                     alt={`Image ${imageId}`}
                     className="w-60 h-60 object-cover"
                   />
@@ -56,7 +58,7 @@ const DeleteImages: React.FC<DeleteImagesProps> = ({ onClose, action_1, action_2
                 imagesId?.map(imageId => (
                   <div key={imageId} className="flex items-center justify-between">
                     <img
-                      src={`https://widm-back-end.nevercareu.space/${action_1}/${id}/${action_2}/${imageId}`}
+                      src={`${apiUrl}/${action_1}/${id}/${action_2}/${imageId}`}
                       alt={`Image ${imageId}`}
                       className="w-60 h-60 object-cover"
                     />

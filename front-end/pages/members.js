@@ -9,6 +9,9 @@ export const Members = ({ members }) => {
   // State to control the display of members (showing 'current' or 'graduated')
   const [filter, setFilter] = useState('current');
 
+  // 使用環境變數來設置 API URL
+  const API_URL = process.env.API_URL || 'https://widm-back-end.nevercareu.space';
+
   // Group members by their position and filter based on the selected filter
   const groupByPosition = members.reduce((acc, member) => {
     const isGraduated = member.graduate_year !== null;
@@ -57,7 +60,7 @@ export const Members = ({ members }) => {
                       <div className="flex-shrink-0 p-3 font-sans text-gray-700 dark:text-gray-50 ">
                         {member.image_existed ? (
                           <img
-                            src={`https://widm-back-end.nevercareu.space/member/${member.id}/member-image`}
+                            src={`${API_URL}/member/${member.id}/member-image`} // 使用環境變數的 API URL
                             alt="Member Icon"
                             className="h-28 w-28 rounded-md"
                           />
@@ -115,4 +118,4 @@ export async function getStaticProps() {
   }
 }
 
-export default Members
+export default Members;
