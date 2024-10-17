@@ -116,7 +116,7 @@ export default function Home() {
       <div className="flex items-stretch space-x-2">
         <textarea
           ref={textareaRef}
-          className="bg-gray-100 dark:bg-black border border-gray-300 rounded-l-md flex-1 py-4 px-4 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="bg-gray-100 dark:bg-black borde r border-gray-300 rounded-l-md flex-1 py-4 px-4 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="輸入消息..."
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -273,9 +273,15 @@ export default function Home() {
                       style={{ maxWidth: '80%', wordBreak: 'break-word' }}
                     >
                         {msg.sender !== 'time' && (
-                          <p className="text-gray-800 dark:text-gray-100">
-                            {msg.text === 'loading' ? <Icon icon="svg-spinners:3-dots-bounce" style={{'color': 'black'}} /> : msg.text}
-                          </p>
+                          <div>
+                            <p className="text-gray-800 dark:text-gray-100">
+                              {msg.text === 'loading' ? <Icon icon="svg-spinners:3-dots-bounce" style={{'color': 'black'}} /> : msg.text}
+                            </p>
+
+                            <div className='flex mt-4 gap-4 '>
+
+                            </div>
+                          </div>
                         )}
                       </div>
                     </div>
