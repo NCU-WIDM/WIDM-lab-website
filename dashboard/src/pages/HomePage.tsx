@@ -6,14 +6,18 @@ const HomePage: React.FC = () => {
   const webUrl = import.meta.env.VITE_WEB_URL || '#';
   const dashboardUrl = import.meta.env.VITE_DASHBOARD_URL || '#';
 
-  // 定義 MouseEnter 和 MouseLeave 處理函數
-  const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.currentTarget.style.backgroundColor = 'rgba(0, 123, 255, 1)';
-  };
+  // 抽取 NavLink 的通用樣式
+  const navLinkClass = `
+    text-blue-700 border-2 border-blue-700 
+    bg-opacity-5 bg-blue-500 
+    py-3 px-10 rounded 
+    transition-all duration-300 
+    w-1/2 text-center
 
-  const handleMouseLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.currentTarget.style.backgroundColor = 'rgba(0, 123, 255, 0.7)';
-  };
+    hover:bg-sky-600
+    hover:text-white
+
+  `;
 
   return (
     <DefaultLayout>
@@ -36,49 +40,37 @@ const HomePage: React.FC = () => {
           <div className="flex flex-col items-center gap-2">
             <NavLink
               to="/activity"
-              className="text-white bg-blue-500 bg-opacity-70 py-2 px-10 rounded transition-all duration-300 w-1/2 text-center"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
+              className={navLinkClass}
             >
               Activity
             </NavLink>
             <NavLink
               to="/member"
-              className="text-white bg-blue-500 bg-opacity-70 py-2 px-10 rounded transition-all duration-300 w-1/2 text-center"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
+              className={navLinkClass}
             >
               Member
             </NavLink>
             <NavLink
               to="/news"
-              className="text-white bg-blue-500 bg-opacity-70 py-2 px-10 rounded transition-all duration-300 w-1/2 text-center"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
+              className={navLinkClass}
             >
               News
             </NavLink>
             <NavLink
               to="/paper"
-              className="text-white bg-blue-500 bg-opacity-70 py-2 px-10 rounded transition-all duration-300 w-1/2 text-center"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
+              className={navLinkClass}
             >
               Paper
             </NavLink>
             <NavLink
               to="/project"
-              className="text-white bg-blue-500 bg-opacity-70 py-2 px-10 rounded transition-all duration-300 w-1/2 text-center"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
+              className={navLinkClass}
             >
               Project
             </NavLink>
             <NavLink
               to="/project_task"
-              className="text-white bg-blue-500 bg-opacity-70 py-2 px-10 rounded transition-all duration-300 w-1/2 text-center"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
+              className={navLinkClass}
             >
               Project Task
             </NavLink>
