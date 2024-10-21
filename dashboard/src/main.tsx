@@ -7,9 +7,11 @@ import './css/satoshi.css';
 import 'jsvectormap/dist/css/jsvectormap.css';
 import 'flatpickr/dist/flatpickr.min.css';
 
+const endPoint = import.meta.env.VITE_END_POINT || '/';
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <Router>
+    <Router basename={endPoint}>
       <App />
     </Router>
   </React.StrictMode>,

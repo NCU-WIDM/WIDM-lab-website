@@ -4,18 +4,23 @@ import tailwindcss from 'tailwindcss';
 import postcssNesting from 'postcss-nesting';
 import autoprefixer from 'autoprefixer';
 
-export default defineConfig({
+// https://vitejs.dev/config/
+export default defineConfig(() => {
+  const endPoint = process.env.VITE_END_POINT || '/';
+  return {
     plugins: [react()],
+    base: endPoint + '/',
     css: {
-        postcss: {
-            plugins: [
-                postcssNesting(),
-                tailwindcss(),
-                autoprefixer(),
-            ],
-        },
+      postcss: {
+        plugins: [
+          postcssNesting(),
+          tailwindcss(),
+          autoprefixer(),
+        ],
+      },
     },
     server: {
-        host: '0.0.0.0',
+      host: '0.0.0.0',
     },
+  };
 });
