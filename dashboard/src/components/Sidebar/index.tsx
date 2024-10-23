@@ -3,6 +3,9 @@ import { NavLink, useLocation } from 'react-router-dom';
 import Logo from '../../images/logo/csie_logo.png';
 // import { AuthApi } from '../../../domain/api-client/api';
 // import { Configuration } from '../../../domain/api-client/configuration';
+import { processDataRoutes } from '../../routes/api';
+import { defaultHttp } from '../../utils/http';
+import { storedHeaders } from '../../utils/storedHeaders';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -21,23 +24,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
   );
 
-  // const userInfoLogout = async () => {
-  //   try {
-  //       const configuration = new Configuration({
-  //         baseOptions: {
-  //             withCredentials: true,
-  //         }
-  //       });
-  //       // const apiClient = new AuthApi(configuration);
-  //       // await apiClient.authLogOutGet()
+  const userInfoLogout = async () => {
+    try {
 
-  //       window.location.href = '/';
+        const configuration = await defaultHttp.get(processDataRoutes.log_out, {
+          headers: storedHeaders(),
+          withCredentials: true,
+        });
+
+        window.location.href = '/dash/';
         
-  //   } catch (error) {
-  //       console.error('Error fetching user info:', error);
-  //   } finally {
-  //   }
-  // }
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+    } finally {
+    }
+  }
 
   // close on click outside
   useEffect(() => {
@@ -360,7 +361,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
               <li>
                 <button
-                  // onClick={userInfoLogout}
+                  onClick={userInfoLogout}
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                     pathname.includes('signin') && 'bg-graydark dark:bg-meta-4'
                   }`}
