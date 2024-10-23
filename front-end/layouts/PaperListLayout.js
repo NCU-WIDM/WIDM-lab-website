@@ -14,7 +14,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
   const [error, setError] = useState(null)
   const [searchValue, setSearchValue] = useState('')
 
-  const filteredBlogPosts = posts.filter((frontMatter) => {
+  const filteredPapersPosts = posts.filter((frontMatter) => {
     const searchContent = frontMatter.title + frontMatter.authors + frontMatter.tags.join(' ') + frontMatter.origin 
     return searchContent.toLowerCase().includes(searchValue.toLowerCase())
   })
@@ -58,7 +58,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
   
 
   const displayPosts =
-    initialDisplayPosts.length > 0 && !searchValue ? initialDisplayPosts : filteredBlogPosts
+    initialDisplayPosts.length > 0 && !searchValue ? initialDisplayPosts : filteredPapersPosts
 
   console.log('displayPosts:', displayPosts)
 
@@ -94,7 +94,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
           </div>
         </div>
         <ul className='list-none'> 
-          {!filteredBlogPosts.length && 'No posts found.'}
+          {!filteredPapersPosts.length && <h2 className=' m-2 text-lg'>No Papers found.</h2>}
           {displayPosts.map((frontMatter) => {
             const {
               id,

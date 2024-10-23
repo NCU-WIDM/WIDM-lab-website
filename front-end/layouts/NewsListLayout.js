@@ -4,13 +4,13 @@ import Pagination from '@/components/Pagination'
 
 export default function ListLayout({ posts, title, initialDisplayPosts = [], pagination }) {
   const [searchValue, setSearchValue] = useState('')
-  const filteredBlogPosts = posts.filter((frontMatter) => {
+  const filteredNewsPosts = posts.filter((frontMatter) => {
     const searchContent = frontMatter.title + frontMatter.sub_title
     return searchContent.toLowerCase().includes(searchValue.toLowerCase())
   })
 
   // If initialDisplayPosts exist, display it if no searchValue is specified
-  const displayPosts = initialDisplayPosts.length > 0 && !searchValue ? initialDisplayPosts : filteredBlogPosts
+  const displayPosts = initialDisplayPosts.length > 0 && !searchValue ? initialDisplayPosts : filteredNewsPosts
 
   return (
     <>
@@ -47,7 +47,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
           </div>
         </div>
         <ul className='list-none'>
-          {!filteredBlogPosts.length && 'No posts found.'}
+          {!filteredNewsPosts.length && <h2 className=' m-2 text-lg'>No News found.</h2>}
           {displayPosts.map((frontMatter) => {
             const { id, uniqueId, sub_title, title, content, create_time } = frontMatter
             return (

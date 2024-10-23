@@ -47,7 +47,7 @@ const securityHeaders = [
 ];
 
 // 使用環境變數來設定 API URL
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 module.exports = withBundleAnalyzer({
   reactStrictMode: true,
