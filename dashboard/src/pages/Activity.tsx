@@ -30,7 +30,7 @@ const ActivityPage = () => {
   const headers = [
     { id: 'id', Name: 'Id', isShow: 'false', isEnable: 'false', type: 'Number' },
     { id: 'title', Name: '標題', isShow: 'true', type: 'String', required: 'true',  style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
-    { id: 'sub_title', Name: '副標題', isShow: 'true', type: 'String',  style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
+    { id: 'sub_title', Name: '副標題', isShow: 'true', type: 'Textarea',  style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
     { id: 'date', Name: '日期', isShow: 'true', type: 'Date', dateType: ['date','YYYY-MM-DD'] as [PickerMode, string], required: 'true', style: {textAlign: 'center'}},
     { id: 'imagesActions', Name: 'images', isShow: 'false', type: 'Null',  style: {textAlign: 'center'}},
   ];
