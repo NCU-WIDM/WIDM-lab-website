@@ -119,7 +119,6 @@ class MyDocument extends Document {
             name="google-site-verification"
             content="_Ba0lKk4Dl9XMvABJ9gZEtoMPITT5Vr5TGx2M-34Z_I"
           />
-          <meta httpEquiv="Content-Security-Policy" content="frame-src giscus.app https://www.google.com; img-src 'self' https://maps.gstatic.com;"/>
         </Head>
         <body className="bg-white text-black antialiased dark:bg-background-color dark:text-white">
           <Main />

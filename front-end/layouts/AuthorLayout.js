@@ -171,9 +171,9 @@ export default function AuthorLayout({ children, frontMatter }) {
             </h1>
           </div>
           <div className="max-w-none pt-8 pb-8 xl:col-span-2">
-            {experienceData.map((d) => (
+            {experienceData.map((d, index) => (
               <Experience
-                key={d.company}
+                key={index}
                 title={d.title}
                 company={d.company}
                 location={d.location}
