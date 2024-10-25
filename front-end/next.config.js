@@ -5,13 +5,13 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 // Content Security Policy
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app https://maps.googleapis.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net;
   font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net;
-  img-src * blob: data:;
+  img-src 'self' blob: data: https://maps.gstatic.com https://maps.googleapis.com;
   media-src 'none';
-  connect-src *;
-  frame-src giscus.app;
+  connect-src 'self' https://maps.googleapis.com;
+  frame-src giscus.app https://www.google.com https://maps.google.com;
 `;
 
 // Security headers
@@ -65,6 +65,8 @@ module.exports = withBundleAnalyzer({
       'cdn.hashnode.com',
       'res.craft.do',
       'res.cloudinary.com',
+      'maps.googleapis.com',  // 加入 Google Maps 圖片資源
+      'maps.gstatic.com',     // 加入 Google Maps 圖片資源
       API_URL.replace(/^https?:\/\//, ''), // 將 API_URL 的域名部分新增到允許圖片域名
     ],
   },

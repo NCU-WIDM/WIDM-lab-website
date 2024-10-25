@@ -317,13 +317,27 @@ export default function Home() {
         <AutoResizeTextarea />
 
         <hr className="border-gray-200 dark:border-gray-700 pb-5 mt-5" />
-        <div>
-          <h1 className='text-3xl font-extrabold mb-3 text-gray-800 dark:text-gray-500'>{siteMetadata.labName}</h1>
-          <h2 className='text-2xl font-semibold mt-5 mb-2 text-gray-700 dark:text-gray-500'>位置</h2>
-          <p className='mb-4 text-gray-600 dark:text-gray-500'>{siteMetadata.address}</p>
+        <div className="flex flex-col xl:flex-row gap-6">
+          <div className="flex-1">
+            <h1 className="text-3xl font-extrabold mb-3 text-gray-800 dark:text-gray-500">{siteMetadata.labName}</h1>
+            <h2 className="text-2xl font-semibold mt-5 mb-2 text-gray-700 dark:text-gray-500">位置</h2>
+            <p className="mb-4 text-gray-600 dark:text-gray-500">{siteMetadata.address}</p>
 
-          <h2 className='text-2xl font-semibold mt-5 mb-2 text-gray-700 dark:text-gray-500'>聯絡方式</h2>
-          <p className='text-xl text-gray-600 dark:text-gray-500'>{siteMetadata.contactNumber}</p>
+            <h2 className="text-2xl font-semibold mt-5 mb-2 text-gray-700 dark:text-gray-500">聯絡方式</h2>
+            <p className="text-xl text-gray-600 dark:text-gray-500">{siteMetadata.contactNumber}</p>
+          </div>
+          
+          <div className="flex-1">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3616.9695183580543!2d121.18513762950894!3d24.96715169153035!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x346823ec9d6d4167%3A0xf1c9f93ab06af735!2z5ZyL56uL5Lit5aSu5aSn5a24IOW3peeoi-S6lOmkqA!5e0!3m2!1szh-TW!2stw!4v1729840297941!5m2!1szh-TW!2stw"
+              width="80%"
+              height="300"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
         </div>
       </div>
 
