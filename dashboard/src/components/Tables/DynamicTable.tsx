@@ -117,15 +117,17 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
                               <LuImageMinus className="text-red-500"/>
                             </button>
                           )}
-                          <img
-                            key={imageUpdate}
-                            src={row.imageUrl ? row.imageUrl : `${apiUrl}/${page}/${row['id']}/${header.Name}`}
-                            className="w-10 h-10 object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                            }}
-                          />
+                          {row.image_existed && (
+                            <img
+                              key={imageUpdate}
+                              src={row.imageUrl ? row.imageUrl : `${apiUrl}/${page}/${row['id']}/${header.Name}`}
+                              className="w-10 h-10 object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                              }}
+                            />
+                          )}
                         </div>
                       </div>
                     )}
