@@ -155,7 +155,7 @@ export default function LayoutMessage() {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="relative mx-auto w-full max-w-4xl h-[80vh] overflow-hidden rounded-xl bg-zinc-200 shadow-2xl ring-1 ring-black/5 dark:bg-zinc-800">
+            <div className="relative mx-auto w-full w-[70vw] h-[80vh] overflow-hidden rounded-xl bg-zinc-200 shadow-2xl ring-1 ring-black/5 dark:bg-zinc-800">
               <div className="flex flex-col h-full">
                 <div ref={nodeRef} className="flex-1 w-full overflow-y-auto bg-white dark:bg-black p-4 rounded-md custom-scrollbar">
                   {messages.length === 0 ? (
