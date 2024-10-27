@@ -24,7 +24,7 @@ const ProjectTask = ({ projectTasks, error }) => {
           <div style={{ flex: 1, textAlign: 'center' }}>
             <h1 
               style={{overflowWrap: 'anywhere'}}
-              className="text-5xl font-extrabold text-gray-800/80 drop-shadow-lg text-wrap dark:text-white">
+              className="text-4xl font-extrabold text-gray-800/80 drop-shadow-lg text-wrap dark:text-white">
               {projectTasks.title}
             </h1>
           </div>

@@ -5,7 +5,6 @@ import { Select, Tree, TreeProps, Spin, message } from 'antd';
 import AddTaskModal from '../components/AddTaskModal';
 import { DownOutlined } from '@ant-design/icons';
 import JoditEditor from 'jodit-react';
-import { WithContext as ReactTags } from 'react-tag-input';
 import { defaultHttp } from '../utils/http';
 import { processDataRoutes } from '../routes/api';
 import { storedHeaders } from '../utils/storedHeaders';
@@ -377,24 +376,46 @@ const ProjectPage = () => {
                     </div>
                     <div>
                       <label className="mb-3 block text-black dark:text-white">成員</label>
-                      <ReactTags
-                        tags={projectTask?.members || []}
-                        handleDelete={handleDeleteMmeberTag}
-                        handleAddition={handleAdditionMemberTag}
-                        handleDrag={handleDragMemberTag}
-                        inputFieldPosition="top"
-                        editable
+                      <Select
+                        mode="tags"
+                        placeholder={`輸入成員 (按下Enter輸入多個)`}
+                        value={projectTask?.members.map((member) => member.text) || undefined} // 將 Tag 元素轉換為 Select 的值
+                        className="w-full"
+                        size="large"
+                        open={false}
+                        suffixIcon={null}
+                        onChange={(value) => {
+                          // 更新選中的成員 tags
+                          const updatedTags = value.map((item, index) => ({
+                            id: index.toString(),
+                            text: item,
+                            className: '',
+                          }));
+                          setProjectTask({ ...projectTask, members: updatedTags });
+                        }}
+                        options={projectTask?.members.map((member) => ({ label: member.text, value: member.text }))}
                       />
                     </div>
                     <div>
                       <label className="mb-3 block text-black dark:text-white">論文</label>
-                      <ReactTags
-                        tags={projectTask?.papers || []}
-                        handleDelete={handleDeletePaperTag}
-                        handleAddition={handleAdditionPaperTag}
-                        handleDrag={handleDragPaperTag}
-                        inputFieldPosition="top"
-                        editable
+                      <Select
+                        mode="tags"
+                        placeholder={`輸入論文 (按下Enter輸入多個)`}
+                        value={projectTask?.papers.map((paper) => paper.text) || undefined} // 將 Tag 元素轉換為 Select 的值
+                        className="w-full"
+                        size="large"
+                        open={false}
+                        suffixIcon={null}
+                        onChange={(value) => {
+                          // 更新選中的論文 tags
+                          const updatedTags = value.map((item, index) => ({
+                            id: index.toString(),
+                            text: item,
+                            className: '',
+                          }));
+                          setProjectTask({ ...projectTask, papers: updatedTags });
+                        }}
+                        options={projectTask?.papers.map((paper) => ({ label: paper.text, value: paper.text }))}
                       />
                     </div>
                     <div>

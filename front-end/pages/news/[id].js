@@ -23,8 +23,8 @@ const NewsDetail = ({ news, error }) => {
         <div className="flex items-center justify-between">
           <div style={{ flex: 1, textAlign: 'center' }}>
             <h1
-              style={{ overflowWrap: 'anywhere' }}
-              className="text-[33px] font-extrabold text-gray-800/80 drop-shadow-lg text-wrap text-left dark:text-white"
+              style={{ overflowWrap: 'anywhere', whiteSpace: 'pre-line' }}
+              className="text-[33px] font-extrabold text-gray-800/80 drop-shadow-lg text-wrap text-center dark:text-white"
             >
               {news.title}
             </h1>
