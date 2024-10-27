@@ -27,6 +27,8 @@ const ProjectTask = ({ projectTasks, error }) => {
               className="text-4xl font-extrabold text-gray-800/80 drop-shadow-lg text-wrap dark:text-white">
               {projectTasks.title}
             </h1>
+
+            <p class="text-lg text-gray-400 mt-1">{projectTasks.sub_title}</p>
           </div>
           <button onClick={() => router.back()} className="p-2 border border-gray-400 rounded text-gray-600 hover:bg-gray-100">
             <IoMdReturnLeft size={24} />

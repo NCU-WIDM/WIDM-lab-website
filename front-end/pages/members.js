@@ -5,6 +5,10 @@ import { defaultHttp } from 'utils/http'
 import { processDataRoutes } from 'routes/api'
 import { useState } from 'react';
 
+function CharmPerson(props) {
+	return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" {...props}><g fill="none" stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}><circle cx={8} cy={6} r={3.25}></circle><path d="M2.75 14.25c0-2.5 2-5 5.25-5s5.25 2.5 5.25 5"></path></g></svg>);
+}
+
 export const Members = ({ members }) => {
   // State to control the display of members (showing 'current' or 'graduated')
   const [filter, setFilter] = useState('current');
@@ -65,7 +69,8 @@ export const Members = ({ members }) => {
                             className="h-28 w-28 rounded-md"
                           />
                         ) : (
-                          <Icon icon="charm:person" style={{ color: 'black', height: '7rem', width: '7rem' }} />
+                          <CharmPerson style={{ color: 'black', height: '7rem', width: '7rem' }} />
+                          // <Icon icon="charm:person" style={{ color: 'black', height: '7rem', width: '7rem' }} />
                         )}
                       </div>
                       <div className="flex flex-col p-3">

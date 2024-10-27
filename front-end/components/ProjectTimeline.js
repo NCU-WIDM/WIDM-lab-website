@@ -41,11 +41,11 @@ function TimelineItem({ item, level = 0 }) {
                 style={{ backgroundColor: backgroundColor, ringColor: backgroundColor }}>
             {icon}
           </span>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
             {item.title}
-            
           </h2>
-          <p className='mt-1 mb-3 '>{
+
+          <p className='mt-2 mb-3 '>{
             item.sub_title && (
               <span className="mt-2 mb-3 rounded px-2.5 py-0.5 text-sm font-medium"
                     style={{ backgroundColor: backgroundColor, color: '#FFFFFF' }}>
@@ -59,7 +59,7 @@ function TimelineItem({ item, level = 0 }) {
                 <span
                   key={index}
                   className="mt-1 mb-1 rounded px-2.5 py-0.5 text-sm font-medium"
-                  style={{ backgroundColor: '#FFB6C1', color: '#FFFFFF' }} // 淺粉紅背景顏色
+                  style={{ backgroundColor: 'rgb(244 116 135)', color: '#FFFFFF' }} // 淺粉紅背景顏色
                 >
                   {member}
                 </span>

@@ -133,7 +133,7 @@ export default function DropMenu() {
             </Menu.Item>
             <Menu.Item>
               {({ active }) => (
-                <Link href="/projects">
+                <Link href="/project">
                   <a
                     className={classNames(
                       active
@@ -143,7 +143,7 @@ export default function DropMenu() {
                     )}
                   >
                     <div className="flex flex-row">
-                      <ArchiveIcon className="mr-4 mt-0.5" /> Projects
+                      <ArchiveIcon className="mr-4 mt-0.5" /> Project
                     </div>
                   </a>
                 </Link>

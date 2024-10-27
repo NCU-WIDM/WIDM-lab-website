@@ -155,7 +155,7 @@ export default function AuthorLayout({ children, frontMatter }) {
             <br />
             <p>
               <Link
-                href={'/projects'}
+                href={'/project'}
                 className="special-underline no-underline hover:text-gray-100 dark:text-gray-100 hover:dark:text-gray-100"
               >
                 Here
