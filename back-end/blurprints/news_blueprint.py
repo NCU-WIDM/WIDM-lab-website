@@ -2,7 +2,7 @@ import os
 from uuid import uuid4
 from pathlib import Path
 
-from sqlalchemy import desc
+from sqlalchemy import desc, asc
 
 from models.news_model import db, News
 from models.responses import Response
@@ -54,7 +54,7 @@ def get_newses():
         description: news not found
     """
     news = db.session.query(News)
-    news = news.order_by(desc(News.create_time)).all()
+    news = news.order_by(desc(News.importance), desc(News.update_time)).all()
     return Response.response('get newses successfully', [n.to_dict() for n in news])
 
 
@@ -220,3 +220,32 @@ def delete_news(news_id):
     db.session.delete(news)
     db.session.commit()
     return Response.response('delete news successfully', news.to_dict())
+
+
+@news_blueprint.route('/<news_id>/importance', methods=['PATCH'])
+def update_news_importance(news_id):
+    """
+    update news importance
+    ---
+    tags:
+      - news
+    parameters:
+      - in: path
+        name: news_id
+        required: true
+        type: integer
+    responses:
+      200:
+        description: patch news successfully
+        schema:
+          id: news
+      404:
+        description: news not found
+    """
+    news = News.query.get(news_id)
+    if not news:
+        return Response.not_found('news not found')
+
+    news.importance = not news.importance
+    db.session.commit()
+    return Response.response('patch news successfully', news.to_dict())

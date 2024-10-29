@@ -6,5 +6,5 @@ class News(db.Model, SchemaMixin):
     title = db.Column(db.String(255))
     sub_title = db.Column(db.String(255))
     content = db.Column(db.Text)
-
+    importance = db.Column(db.Boolean)
 
