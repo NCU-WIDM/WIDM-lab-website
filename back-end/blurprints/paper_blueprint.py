@@ -103,7 +103,7 @@ def post_paper():
         description: no ['paper_publish_year', 'paper_title', 'paper_origin', 'paper_attachment', 'paper_link'] or content in form
     """
     if not api_input_check(
-            ['title', 'sub_title', 'authors', 'tags', 'publish_year', 'origin', 'link', 'type'], request.json
+            ['title', 'sub_title', 'authors', 'tags', 'publish_year', 'origin', 'link', 'types'], request.json
     ):
         return Response.client_error(
             "no ['title', 'sub_title', 'authors', 'tags', 'publish_year', 'origin', 'link', 'types'] or content in form"

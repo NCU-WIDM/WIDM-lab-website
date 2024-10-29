@@ -30,6 +30,7 @@ const Projects = ({ projectsDatas }) => {
                 icon={d.icon}
                 members={d.members}
                 project_link={d.link}
+                icon_existed={d.icon_existed}
               />
             ))}
           </div>

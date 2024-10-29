@@ -19,6 +19,7 @@ class Project(db.Model, SchemaMixin):
     def to_dict(self):
         self.tags = loads(self.tags)
         self.members = loads(self.members)
+        icon_existed = True if self.icon_path else False
 
         return {
             'id': self.id,
@@ -28,6 +29,7 @@ class Project(db.Model, SchemaMixin):
             'link': self.link,
             'github': self.github,
             'members': self.members,
+            'icon_existed': icon_existed,
             'create_time': self.create_time,
             'update_time': self.update_time,
         }

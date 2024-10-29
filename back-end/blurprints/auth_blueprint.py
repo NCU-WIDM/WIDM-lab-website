@@ -124,8 +124,9 @@ def user_info():
 
 @auth_blueprint.after_request
 def refresh_expiring_jwts(response):
-    if request.path == '/authentication/sign-out':
+    if request.path == '/api/auth/log_out':
         return response
+
     try:
         exp_timestamp = get_jwt()["exp"]
         now = datetime.now(timezone.utc)

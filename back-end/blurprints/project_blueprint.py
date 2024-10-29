@@ -146,6 +146,9 @@ def get_projects():
                   members:
                     example: ['member1', 'member2']
                     type: array
+                  icon_existed:
+                    example: true
+                    type: boolean
                   created_time:
                     example: 'Tue, 06 Aug 2024 10:39:27 GMT'
                     type: string

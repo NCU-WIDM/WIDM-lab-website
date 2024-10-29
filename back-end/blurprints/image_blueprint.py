@@ -152,4 +152,4 @@ def delete_image():
     os.remove(image.image_path)
     db.session.delete(image)
     db.session.commit()
-    return Response.response('delete image successfully')
+    return Response.jodit_delete_one()

@@ -1,4 +1,6 @@
+from config import Config
 from datetime import datetime
+from urllib import parse
 
 
 class Response:
@@ -35,7 +37,7 @@ class Response:
                 "sources": [
                     {
                         "name": "default",
-                        "baseurl": "https://widm-back-end.nevercareu.space/image/",
+                        "baseurl": parse.urljoin(Config.HOME_PAGE_URL, '/api/image/'),
                         "path": "",
                         "files": files
                     }
@@ -51,7 +53,7 @@ class Response:
             "success": True,
             "time": datetime.now().strftime('%Y-%m-%d %I:%M:%S'),
             "data": {
-                "baseurl": "https://widm-back-end.nevercareu.space/image/",
+                "baseurl": parse.urljoin(Config.HOME_PAGE_URL, '/api/image/'),
                 "messages": ['image uploaded'],
                 "files": [
                     files
@@ -63,3 +65,14 @@ class Response:
             },
             "elapsedTime": 0
         }, 200
+    
+    @staticmethod
+    def jodit_delete_one():
+        return {
+                "success": True,
+                "time": datetime.now(),
+                "data": {
+                    "code": 220
+                },
+                "elapsedTime": 0
+            }, 200

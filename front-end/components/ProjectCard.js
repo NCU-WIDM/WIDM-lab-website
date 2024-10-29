@@ -7,7 +7,7 @@ function UiwFolder(props) {
 	return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 20 20" {...props}><path fill="black" d="M9.566 5.838a1.36 1.36 0 0 1-1.347-1.135L7.984 3.22a.45.45 0 0 0-.45-.378H1.818a.45.45 0 0 0-.454.447v13.422a.45.45 0 0 0 .454.447h16.364c.25 0 .454-.2.454-.447V6.285a.45.45 0 0 0-.454-.447zm0-1.342h8.616c1.004 0 1.818.8 1.818 1.79V16.71c0 .988-.814 1.789-1.818 1.789H1.818C.814 18.5 0 17.699 0 16.71V3.29C0 2.3.814 1.5 1.818 1.5h5.716a1.81 1.81 0 0 1 1.797 1.514z"></path></svg>);
 }
 
-const ProjectCard = ({ project_id, title, description, project_link, github, tags, members, icon }) => {
+const ProjectCard = ({ project_id, title, description, project_link, github, tags, members, icon, icon_existed }) => {
   // 使用環境變數來設置 API URL
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -22,13 +22,18 @@ const ProjectCard = ({ project_id, title, description, project_link, github, tag
           >
             <div className="flex flex-row items-center justify-between">
               <div className="flex justify-center my-2 w-full h-52">
-                <UiwFolder className="w-full h-5/6 invert-0 dark:invert"></UiwFolder>
-                {/* <img 
-                  className="w-52 invert-0 dark:invert"
-                  src={`${API_URL}/project/${project_id}/project-icon`}  // 使用環境變數的 API URL
-                  alt="Project Icon" 
-                  onError={(e) => e.target.style.display = 'none'} 
-                /> */}
+                {
+                  icon_existed ? (
+                    <img
+                      className="w-44 h-44 invert-0 dark:invert"
+                      src={`${API_URL}/project/${project_id}/project-icon`}  // 使用環境變數的 API URL
+                      alt="Project Icon"
+                      onError={(e) => e.target.style.display = 'none'}
+                    />
+                  ) : (
+                    <UiwFolder className="w-full h-5/6 invert-0 dark:invert" />
+                  )
+                }
               </div>
             </div>
             <p className="mb-3 text-2xl font-bold leading-8 tracking-tight text-black dark:text-white">{title}</p>

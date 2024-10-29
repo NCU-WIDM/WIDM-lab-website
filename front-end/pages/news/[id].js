@@ -28,7 +28,8 @@ const NewsDetail = ({ news, error }) => {
             >
               {news.title}
             </h1>
-            <p class="text-lg text-gray-400 mt-1">{news.sub_title}</p>
+            <p className="text-lg text-gray-800 mt-1">{news.sub_title}</p>
+            <p className="text-lg text-gray-400 mt-2">update by: {news.update_time}</p>
           </div>
           <button onClick={() => router.back()} className="p-2 border border-gray-400 rounded text-gray-600 hover:bg-gray-100">
             <IoMdReturnLeft size={24} />
