@@ -1,6 +1,5 @@
 ﻿import siteMetadata from '@/data/siteMetadata'
 import { PageSEO } from '@/components/SEO'
-import { Icon } from '@iconify/react';
 import { defaultHttp } from 'utils/http'
 import { processDataRoutes } from 'routes/api'
 import { useState } from 'react';

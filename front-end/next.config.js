@@ -10,7 +10,7 @@ const ContentSecurityPolicy = `
   font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net;
   img-src 'self' blob: data: https://maps.gstatic.com https://maps.googleapis.com;
   media-src 'none';
-  connect-src 'self' https://maps.googleapis.com;
+  connect-src 'self' https://maps.googleapis.com https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com;
   frame-src giscus.app https://www.google.com https://maps.google.com;
 `;
 
