@@ -8,5 +8,5 @@ def api_input_check(args, api_input):
 def api_input_get(args, api_input):
     res = []
     for arg in args:
-        res.append(api_input[arg])
+        res.append(api_input.get(arg, None))
     return res
