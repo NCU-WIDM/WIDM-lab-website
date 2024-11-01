@@ -47,7 +47,6 @@ const PaperPage = () => {
       });
       const data = response.data.response;
       setPapers(data);
-      console.log(data);
     } catch (error) {
       handleErrorResponse(error);
     } finally {
@@ -68,12 +67,14 @@ const PaperPage = () => {
         types: formData.types || [],
         link: formData.link || '',
       };
-
+      
+      // 是否為編輯模式
       if (editData) {
-        response = await defaultHttp.patch(`${processDataRoutes.paper}/${editData.id}`, newPaper, { headers: storedHeaders() });
+        await defaultHttp.patch(`${processDataRoutes.paper}/${editData.id}`, newPaper, { headers: storedHeaders() });
       } else {
-        response = await defaultHttp.post(processDataRoutes.paper, newPaper, { headers: storedHeaders() });
+        await defaultHttp.post(processDataRoutes.paper, newPaper, { headers: storedHeaders() });
       }
+
       setIsAdding(false);
       fetchPapers();  // 新增或更新後重新獲取成員數據
       message.success('更新成功!');  // 顯示成功消息

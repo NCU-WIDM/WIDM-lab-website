@@ -28,7 +28,6 @@ interface AddItemFormProps {
 }
 
 type PickerMode = 'date' | 'week' | 'month' | 'quarter' | 'year'; // 定義PickerMode類型
-
 const AddItemForm: React.FC<AddItemFormProps> = ({ headers, isOpen, onClose, onSubmit, editData, joditConfig }) => {
 
   // selectitems
@@ -152,7 +151,20 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ headers, isOpen, onClose, onS
   
     const handlePickerChange = (value: PickerMode) => {
       setPickerType(value);
-      setDateValue(null); // Clear the date when changing picker type
+      const default_month = '07'
+
+      if (value === 'year') {
+        // 如果選擇年份，預設為該年七月
+        const currentYear = dayjs().format('YYYY');
+        const julyDate = `${currentYear}-${default_month}`; 
+        setDateValue(julyDate);
+        setFormData({
+          ...formData,
+          [header.id]: julyDate,
+        });
+      } else {
+        setDateValue(null); // 清除選擇
+      }
     };
   
     return (
