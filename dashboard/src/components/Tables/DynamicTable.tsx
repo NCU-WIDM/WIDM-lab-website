@@ -3,7 +3,7 @@ import { FaEdit, FaTrashAlt, FaLink } from 'react-icons/fa';
 import { LuImage, LuImagePlus, LuImageMinus } from "react-icons/lu";
 import { FiFilePlus, FiFileMinus } from "react-icons/fi";
 import { MdOutlineFileDownload } from "react-icons/md";
-import { Tag, Modal } from 'antd';
+import { Tag, Modal, Tooltip } from 'antd';
 
 type HeaderType = {
   id: string;
@@ -161,29 +161,37 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
                     {header.id === 'attachmentActions' && ( // 上傳檔案
                       <div className="flex justify-center items-center space-x-3.5">
                         {onEdit && (
-                          <button className="hover:text-primary" onClick={() => onEdit(row)}>
-                            <FaEdit />
-                          </button>
+                          <Tooltip title="編輯">
+                            <button className="hover:text-primary" onClick={() => onEdit(row)}>
+                              <FaEdit />
+                            </button>
+                          </Tooltip>
                         )}
-                        <button className="hover:text-primary" onClick={() => handleDeleteClick(row.id)}>
-                          <FaTrashAlt />
-                        </button>
-                        {onUploadFile && !row[header.Name] && (
-                          <button className="hover:text-primary" onClick={() => onUploadFile(row)}>
-                            <FiFilePlus />
+                        <Tooltip title="刪除">
+                          <button className="hover:text-primary" onClick={() => handleDeleteClick(row.id)}>
+                            <FaTrashAlt />
                           </button>
+                        </Tooltip>
+                        {onUploadFile && !row[header.Name] && (
+                          <Tooltip title="上傳檔案">
+                            <button className="hover:text-primary" onClick={() => onUploadFile(row)}>
+                              <FiFilePlus />
+                            </button>
+                          </Tooltip>
                         )}
                         {onDeleteFiles && row[header.Name] && (
-                          <button className="hover:text-primary" onClick={() => onDeleteFiles(row)}>
-                            <FiFileMinus />
-                          </button>
+                          <Tooltip title="刪除檔案">
+                            <button className="hover:text-primary" onClick={() => onDeleteFiles(row)}>
+                              <FiFileMinus />
+                            </button>
+                          </Tooltip>
                         )}
                         {onDownloadFile && row[`${page}_existed`] && (
-                          <button className="hover:text-primary" onClick={() => onDownloadFile(row)}>
-                            <MdOutlineFileDownload 
-                              style={{ fontSize: '20px', color: '#0066FF' }}
-                            />
-                          </button>
+                          <Tooltip title="下載檔案">
+                            <button className="hover:text-primary" onClick={() => onDownloadFile(row)}>
+                              <MdOutlineFileDownload style={{ fontSize: '20px', color: '#0066FF' }} />
+                            </button>
+                          </Tooltip>
                         )}
                       </div>
                     )}

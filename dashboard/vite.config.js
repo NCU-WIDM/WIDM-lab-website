@@ -6,7 +6,7 @@ import autoprefixer from 'autoprefixer';
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
-  const endPoint = process.env.VITE_END_POINT || '/';
+  const endPoint = process.env.VITE_END_POINT || '';
   return {
     plugins: [react()],
     base: endPoint + '/',
