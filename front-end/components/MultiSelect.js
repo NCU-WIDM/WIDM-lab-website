@@ -45,7 +45,7 @@ const MultiSelect = ({ selectedTypes, setSelectedTypes }) => {
   return (
     <div className="relative w-full max-w-xs" ref={dropdownRef}>
       <div
-        className="flex items-center justify-between rounded border border-gray-400 bg-white p-2 cursor-pointer"
+        className="flex items-center justify-between rounded border border-gray-400 bg-white p-2 cursor-pointer dark:text-gray-500 dark:bg-gray-800 dark:border-gray-900"
         onClick={toggleDropdown}
       >
         <span className="truncate" style={{ maxWidth: '80%' }}>
@@ -54,7 +54,7 @@ const MultiSelect = ({ selectedTypes, setSelectedTypes }) => {
         {isOpen ? <FaChevronUp /> : <FaChevronDown />}
       </div>
       {isOpen && (
-        <div className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded border border-gray-300 bg-white shadow-md">
+        <div className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded border border-gray-300 bg-white shadow-md dark:bg-gray-800 dark:text-gray-500 dark:border-gray-900">
           {typeOptions.map((option) => (
             <div
               key={option}

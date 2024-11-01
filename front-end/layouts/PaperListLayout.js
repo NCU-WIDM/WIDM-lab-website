@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import MultiSelect from '../components/MultiSelect'  // 引入自製的多選下拉選單
-import Link from '@/components/Link'
 import Tag from '@/components/Tag'
-import Pagination from '@/components/Pagination'
 import formatDate from '@/lib/utils/formatDate'
 import { FaFileDownload, FaExternalLinkAlt } from 'react-icons/fa'
 import { ToastContainer, toast } from 'react-toastify'
@@ -106,9 +104,6 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
         </ul>
       </div>
       <ToastContainer />
-      {pagination && pagination.totalPages > 1 && !searchValue && !selectedTypes.length && (
-        <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} />
-      )}
     </>
   )
 }
