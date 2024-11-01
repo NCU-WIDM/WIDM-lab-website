@@ -1,10 +1,24 @@
-import siteMetadata from '@/data/siteMetadata'
-import ProjectCard from '@/components/ProjectCard'
-import { PageSEO } from '@/components/SEO'
-import { defaultHttp } from 'utils/http'
-import { processDataRoutes } from 'routes/api'
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import siteMetadata from '@/data/siteMetadata';
+import ProjectCard from '@/components/ProjectCard';
+import { PageSEO } from '@/components/SEO';
+import { defaultHttp } from 'utils/http';
+import { processDataRoutes } from 'routes/api';
 
-const Projects = ({ projectsDatas }) => {
+const Projects = ({ projectsDatas, timeoutError }) => {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (timeoutError) {
+      router.push('/timeout'); // 發生 timeout 時跳轉到 /timeout
+    }
+  }, [timeoutError, router]);
+
+  if (timeoutError) {
+    return null; // 發生超時時，不渲染內容
+  }
+
   return (
     <>
       <PageSEO
@@ -18,7 +32,8 @@ const Projects = ({ projectsDatas }) => {
           </h1>
         </div>
         <div className="container py-12">
-          <div className="-m-4 flex flex-wrap">
+          <div className="m-4 flex flex-wrap">
+            {!projectsDatas.length && <h2 className="text-lg">No Projects found.</h2>}
             {projectsDatas.map((d) => (
               <ProjectCard
                 key={d.id}
@@ -37,28 +52,31 @@ const Projects = ({ projectsDatas }) => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
 export async function getStaticProps() {
   try {
-    const response = await defaultHttp.get(processDataRoutes.project);
+    const response = await defaultHttp.get(processDataRoutes.project, { timeout: 10000 });
     const projectsDatas = response.data.response;
 
     return {
       props: {
         projectsDatas,
+        timeoutError: false,
       },
-    }
+    };
   } catch (error) {
-    console.error('API 調用失敗:', error.message);
+    const isTimeout = error.code === 'ECONNABORTED';
 
     return {
       props: {
         projectsDatas: [],
+        timeoutError: isTimeout,
       },
-    }
+      revalidate: 60,
+    };
   }
 }
 
-export default Projects
+export default Projects;

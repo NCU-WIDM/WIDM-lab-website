@@ -1,19 +1,34 @@
-﻿import siteMetadata from '@/data/siteMetadata'
-import { PageSEO } from '@/components/SEO'
-import { defaultHttp } from 'utils/http'
-import { processDataRoutes } from 'routes/api'
-import { useState } from 'react';
+﻿import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import siteMetadata from '@/data/siteMetadata';
+import { PageSEO } from '@/components/SEO';
+import { defaultHttp } from 'utils/http';
+import { processDataRoutes } from 'routes/api';
 
 function CharmPerson(props) {
-	return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" {...props}><g fill="none" stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}><circle cx={8} cy={6} r={3.25}></circle><path d="M2.75 14.25c0-2.5 2-5 5.25-5s5.25 2.5 5.25 5"></path></g></svg>);
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" {...props}>
+      <g fill="none" stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}>
+        <circle cx={8} cy={6} r={3.25}></circle>
+        <path d="M2.75 14.25c0-2.5 2-5 5.25-5s5.25 2.5 5.25 5"></path>
+      </g>
+    </svg>
+  );
 }
 
-export const Members = ({ members }) => {
-  // State to control the display of members (showing 'current' or 'graduated')
+export const Members = ({ members, timeoutError }) => {
   const [filter, setFilter] = useState('current');
+  const router = useRouter();
 
-  // 使用環境變數來設置 API URL
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  useEffect(() => {
+    if (timeoutError) {
+      router.push('/timeout'); // 超時時跳轉到 /timeout 頁面
+    }
+  }, [timeoutError, router]);
+
+  if (timeoutError) {
+    return null; // 超時時不渲染內容
+  }
 
   // Group members by their position and filter based on the selected filter
   const groupByPosition = members.reduce((acc, member) => {
@@ -36,20 +51,23 @@ export const Members = ({ members }) => {
             Members
           </h1>
           <div className="flex mb-0 items-end space-x-6">
-            <button 
-              onClick={() => setFilter('current')} 
-              className={`text-gray-600 hover:text-gray-900 dark:text-gray-100 ${filter === 'current' ? 'font-bold' : ''}`}>
+            <button
+              onClick={() => setFilter('current')}
+              className={`text-gray-600 hover:text-gray-900 dark:text-gray-100 ${filter === 'current' ? 'font-bold' : ''}`}
+            >
               在學
             </button>
-            <button 
-              onClick={() => setFilter('graduated')} 
-              className={`text-gray-600 hover:text-gray-900 dark:text-gray-100 ${filter === 'graduated' ? 'font-bold' : ''}`}>
+            <button
+              onClick={() => setFilter('graduated')}
+              className={`text-gray-600 hover:text-gray-900 dark:text-gray-100 ${filter === 'graduated' ? 'font-bold' : ''}`}
+            >
               畢業
             </button>
           </div>
         </div>
 
         <div className="container py-12">
+          {!groupByPosition.length && <h2 className="m-2 text-lg">No Member found.</h2>}
           {Object.keys(groupByPosition).map((position, index) => (
             <div key={index} className="mb-8">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{position}</h2>
@@ -63,13 +81,12 @@ export const Members = ({ members }) => {
                       <div className="flex-shrink-0 p-3 font-sans text-gray-700 dark:text-gray-50 ">
                         {member.image_existed ? (
                           <img
-                            src={`${API_URL}/member/${member.id}/member-image`} // 使用環境變數的 API URL
+                            src={`${process.env.NEXT_PUBLIC_API_URL || ""}/member/${member.id}/member-image`}
                             alt="Member Icon"
                             className="h-28 w-28 rounded-md"
                           />
                         ) : (
                           <CharmPerson style={{ color: 'black', height: '7rem', width: '7rem' }} />
-                          // <Icon icon="charm:person" style={{ color: 'black', height: '7rem', width: '7rem' }} />
                         )}
                       </div>
                       <div className="flex flex-col p-3">
@@ -82,7 +99,6 @@ export const Members = ({ members }) => {
                         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 sm:text-base lg:text-sm xl:text-base">
                           {member.intro}
                         </p>
-                        {/* Show graduation year if the member is graduated */}
                         {filter === 'graduated' && member.graduate_year && (
                           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
                             Graduate Year: {member.graduate_year}
@@ -98,27 +114,31 @@ export const Members = ({ members }) => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
 // 使用 getStaticProps 在構建時獲取資料
 export async function getStaticProps() {
   try {
-    const response = await defaultHttp.get(processDataRoutes.member);
+    const response = await defaultHttp.get(processDataRoutes.member, { timeout: 10000 });
     const members = response.data.response;
 
     return {
       props: {
         members,
+        timeoutError: false,
       },
-    }
+    };
   } catch (error) {
-    console.error('API 調用失敗:', error.message);
+    const isTimeout = error.code === 'ECONNABORTED';
+
     return {
       props: {
         members: [],
+        timeoutError: isTimeout,
       },
-    }
+      revalidate: 60,
+    };
   }
 }
 

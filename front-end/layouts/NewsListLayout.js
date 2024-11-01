@@ -2,7 +2,7 @@ import Link from '@/components/Link'
 import { useState } from 'react'
 import Pagination from '@/components/Pagination'
 
-export default function ListLayout({ posts, title, initialDisplayPosts = [], pagination }) {
+export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
   const [searchValue, setSearchValue] = useState('')
   const filteredNewsPosts = posts.filter((frontMatter) => {
     const searchContent = frontMatter.title + frontMatter.sub_title
@@ -78,9 +78,9 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
           })}
         </ul>
       </div>
-      {pagination && pagination.totalPages > 1 && !searchValue && (
+      {/* {pagination && pagination.totalPages > 1 && !searchValue && (
         <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} />
-      )}
+      )} */}
     </>
   )
 }

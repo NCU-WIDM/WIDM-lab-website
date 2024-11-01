@@ -6,7 +6,7 @@ import { FaFileDownload, FaExternalLinkAlt } from 'react-icons/fa'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-export default function ListLayout({ posts, title, initialDisplayPosts = [], pagination }) {
+export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
   const [error, setError] = useState(null)
   const [searchValue, setSearchValue] = useState('')
   const [selectedTypes, setSelectedTypes] = useState([])  // 儲存選中的 type 條件
