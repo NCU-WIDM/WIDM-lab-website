@@ -104,6 +104,9 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
         </ul>
       </div>
       <ToastContainer />
+      {/* {pagination && pagination.totalPages > 1 && !searchValue && !selectedTypes.length && (
+        <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} />
+      )} */}
     </>
   )
 }

@@ -4,7 +4,7 @@ import { PageSEO } from '@/components/SEO'
 import { defaultHttp } from 'utils/http'
 import { processDataRoutes } from 'routes/api'
 
-export const POSTS_PER_PAGE = 20
+// export const POSTS_PER_PAGE = 20
 
 const Papers = ({ posts, initialDisplayPosts, pagination, error }) => {
   if (error) {
@@ -26,7 +26,7 @@ const Papers = ({ posts, initialDisplayPosts, pagination, error }) => {
 
 export async function getStaticProps() {
   try {
-    const response = await defaultHttp.get(processDataRoutes.paper);
+    const response = await defaultHttp.get('https://widm.csie.ncu.edu.tw/api/paper');
 
     // 確保每個 paper 都有唯一的 `id`
     const papersWithId = response.data.response.map((paper, index) => ({
@@ -34,17 +34,18 @@ export async function getStaticProps() {
       uniqueId: `${paper.attachment}-${paper.id}-${index}`, // 生成唯一鍵
     }))
 
+    const POSTS_PER_PAGE = response.data.response.length;
+
     const initialDisplayPosts = papersWithId.slice(0, POSTS_PER_PAGE)
-    const pagination = {
-      currentPage: 1,
-      totalPages: Math.ceil(papersWithId.length / POSTS_PER_PAGE),
-    }
+    // const pagination = {
+    //   currentPage: 2,
+    //   totalPages: Math.ceil(papersWithId.length / POSTS_PER_PAGE),
+    // }
 
     return {
       props: {
         posts: papersWithId,
         initialDisplayPosts,
-        pagination,
       },
     }
   } catch (error) {
@@ -54,10 +55,6 @@ export async function getStaticProps() {
       props: {
         posts: [],
         initialDisplayPosts: [],
-        pagination: {
-          currentPage: 1,
-          totalPages: 1,
-        },
         error: error.message,
       },
     }
