@@ -4,7 +4,7 @@ from json import dumps, loads
 
 class Paper(db.Model, SchemaMixin):
     __tablename__ = 'paper'
-    title = db.Column(db.String(50))
+    title = db.Column(db.Text)
     sub_title = db.Column(db.Text)
     authors = db.Column(db.Text)
     tags = db.Column(db.Text)
