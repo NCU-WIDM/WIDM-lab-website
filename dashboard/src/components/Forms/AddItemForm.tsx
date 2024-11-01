@@ -136,7 +136,7 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ headers, isOpen, onClose, onS
 
   const renderDateField = (header: Header) => {
     const [pickerType, setPickerType] = useState<PickerMode>('month');
-    const [dateValue, setDateValue] = useState<string | null>(null);
+    const [dateValue, setDateValue] = useState<string | null>(formData[header.id]);
   
     const dateFormats: Record<PickerMode, string> = {
       date: 'YYYY-MM-DD',
@@ -145,7 +145,6 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ headers, isOpen, onClose, onS
       quarter: 'YYYY-[Q]Q',
       year: 'YYYY',
     };
-    
   
     const handlePickerChange = (value: PickerMode) => {
       setPickerType(value);
