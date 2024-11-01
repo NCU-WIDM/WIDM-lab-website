@@ -6,6 +6,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import JoditEditor from 'jodit-react';
 
 dayjs.extend(customParseFormat);
+const { Option } = Select;
 
 interface Header {
   id: string;
@@ -133,6 +134,53 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ headers, isOpen, onClose, onS
     onClose();
   };
 
+  const renderDateField = (header: Header) => {
+    const [pickerType, setPickerType] = useState<PickerMode>('month');
+    const [dateValue, setDateValue] = useState<string | null>(null);
+  
+    const dateFormats: Record<PickerMode, string> = {
+      date: 'YYYY-MM-DD',
+      week: 'YYYY-WW',
+      month: 'YYYY-MM',
+      quarter: 'YYYY-[Q]Q',
+      year: 'YYYY',
+    };
+    
+  
+    const handlePickerChange = (value: PickerMode) => {
+      setPickerType(value);
+      setDateValue(null); // Clear the date when changing picker type
+    };
+  
+    return (
+      <div className="flex items-center gap-2">
+        <Select
+          value={pickerType}
+          onChange={handlePickerChange}
+          className="w-1/6"
+        >
+          <Option value="month">Year-Month</Option>
+          <Option value="year">Year</Option>
+        </Select>
+        <DatePicker
+          format={dateFormats[pickerType]}
+          picker={pickerType}
+          value={dateValue ? dayjs(dateValue, dateFormats[pickerType]) : null}
+          onChange={(date) => {
+            const formattedDate = date ? date.format(dateFormats[pickerType]) : null;
+            setDateValue(formattedDate);
+            setFormData({
+              ...formData,
+              [header.id]: formattedDate,
+            });
+          }}
+          className="w-full"
+        />
+      </div>
+    );
+  };
+  
+
   const renderInputField = (header: Header) => {
     const commonProps = {
       name: header.id,
@@ -175,21 +223,7 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ headers, isOpen, onClose, onS
         />
       );
     } else if (header.type === 'Date') {
-      return (
-        <DatePicker
-          format={header.dateType?.[1]}
-          key={header.id}
-          value={formData[header.id] ? dayjs(formData[header.id], header.dateType?.[1]) : null}
-          onChange={(date, dateString) => {
-            setFormData({
-              ...formData,
-              [header.id]: date ? date.format(header.dateType?.[1]) : null,
-            });
-          }}
-          picker={header.dateType?.[0]}
-          className={commonProps.className}
-        />
-      );
+      return renderDateField(header);
     } else if (header.type === 'Select') {
       return (
         <select
