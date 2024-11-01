@@ -92,12 +92,12 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
                           {/* Tooltip for FaExternalLinkAlt */}
                           <div className="relative group flex items-center">
                             <FaExternalLinkAlt
-                              className={`text-4xl ${link === null ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500 cursor-pointer'}`}
+                              className={`text-4xl ${link === '' ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500 cursor-pointer'}`}
                               onClick={() => link && window.open(link, '_blank')}
                               style={{ pointerEvents: link === '' ? 'none' : 'auto' }}
                             />
                             <div className={`absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-1 text-xs text-white bg-gray-600 rounded shadow-lg ${!link ? 'text-gray-400 cursor-not-allowed' : 'text-gray-800 cursor-pointer'} group-hover:flex hidden whitespace-nowrap`}>
-                              {link !== '' ? '會議連結'  : '無法點擊' }
+                              {link !== '' ? '會議連結'  : '無會議連結' }
                             </div>
                           </div>
 
@@ -109,7 +109,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
                               style={{ pointerEvents: frontMatter.paper_existed === true ? 'none' : 'auto' }}
                             />
                             <div className={`absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-1 text-xs text-white bg-gray-600 rounded shadow-lg ${frontMatter.paper_existed === false ? 'text-gray-400 cursor-not-allowed' : 'text-gray-800 cursor-pointer'} group-hover:flex hidden whitespace-nowrap`}>
-                              {frontMatter.paper_existed === true ? '檔案下載' : '無法下載'}
+                              {frontMatter.paper_existed === true ? '檔案下載' : '無檔案'}
                             </div>
                           </div>
                         </div>

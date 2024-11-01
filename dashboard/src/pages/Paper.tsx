@@ -33,7 +33,7 @@ const PaperPage = () => {
     { id: 'origin', Name: '會議、發布地', isShow: 'true', type: 'String', required: 'false', style: { minWidth: '100px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'publish_year', Name: '發布時間', isShow: 'true', type: 'Date', required: 'true', dateType: ['month','YYYY-MM'] as [PickerMode, string], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'authors', Name: '論文作者', isShow: 'true', type: 'SelectItems', required: 'true', data: [], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
-    { id: 'tags', Name: '關鍵詞', isShow: 'true', isEnable: "false", type: 'SelectItems', required: 'true', data: [], style: { minWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
+    { id: 'tags', Name: '關鍵詞', isShow: 'true', isEnable: "true", type: 'SelectItems', required: 'false', data: [], style: { minWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'types', Name: '發表類型', isShow: 'true', type: 'SelectItems', required: 'false', data: ['Journal Papers', 'International Conference Papers', 'Book Chapters',  'Patents', 'Domestic Conference Papers (In Chinese)', 'Phd Thesis', 'Master Thesis', "Part-time Graduate Students' Master Thesis"], style: { minWidth: '100px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' }},
     { id: 'link', Name: '論文連結', isShow: 'true', isEnable: "false", required: 'false', type: 'Url', style: { minWidth: '100px', whiteSpace: 'normal', textAlign: 'center' } },
     { id: 'attachmentActions', Name: 'attachment', isShow: 'false', type: 'Null' },
@@ -57,6 +57,7 @@ const PaperPage = () => {
   const createPaper = async (formData: { [key: string]: any }) => {
     try {
       setLoadingStates(prev => ({ ...prev, createPaper: true }));
+
       const newPaper = {
         title: formData.title,
         sub_title: formData.sub_title || '',
