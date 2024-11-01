@@ -28,7 +28,7 @@ const DeleteFiles: React.FC<DeleteFileProps> = ({ onClose, action, id, fileId, f
   };
 
   const handleDownloadClick = (fileId: string) => {
-    const apiUrl = import.meta.env.VITE_API_URL || 'https://widm-back-end.nevercareu.space';;
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://widm.csie.ncu.edu.tw';;
     const link = document.createElement('a');
     link.href = `${apiUrl}/${action}/${id}/${action}-attachment/${fileId}`;
     link.download = fileId;

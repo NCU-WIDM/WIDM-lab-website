@@ -29,6 +29,7 @@ const NewsPage = () => {
     { id: 'sub_title', Name: '副標題', isShow: 'true', type: 'String', style: { whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' }  },
     { id: 'content', Name: '內容', isShow: 'false', isEnable: 'false', type: 'jodit' },
     { id: 'actions', Name: 'Actions', isShow: 'false', type: 'Null' },
+    { id: 'importance', Name: '置頂', isShow: 'true', type: 'Switch', effect: 'importance', style: { whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' }  },
   ];
 
   const fetchNews = async () => {
@@ -91,6 +92,21 @@ const NewsPage = () => {
     }
   };
 
+  const onPinTop = async (id, importance) => {
+    try {
+      setLoadingStates((prev) => ({ ...prev, updateImportance: true }));
+      await defaultHttp.patch(`${processDataRoutes.news}/${id}/importance`, { importance }, { headers: storedHeaders() });
+      fetchNews(); // 更新後重新加載數據
+      message.success(importance ? '已置頂!' : '已取消置頂!');
+    } catch (error) {
+      handleErrorResponse(error);
+      message.error('操作失敗!');
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, updateImportance: false }));
+    }
+  };
+  
+
   useEffect(() => {
     fetchNews();
   }, []);
@@ -123,7 +139,7 @@ const NewsPage = () => {
           </button>
         </div>
         <div className="flex flex-col gap-6">
-          <DynamicTable data={news} headers={headers} onDelete={deleteNews} onEdit={handleEditItem} />
+          <DynamicTable data={news} headers={headers} onDelete={deleteNews} onEdit={handleEditItem} onPinTop={onPinTop}/>
         </div>
         <AddItemForm headers={headers} isOpen={isAdding} onClose={handleCloseForm} onSubmit={createNews} editData={editData} joditConfig={joditConfig} />
       </DefaultLayout>

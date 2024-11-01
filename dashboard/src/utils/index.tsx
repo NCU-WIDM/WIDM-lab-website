@@ -2,7 +2,7 @@ import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import axios from 'axios';
 
-let API_URL = import.meta.env.VITE_API_URL || 'https://widm-back-end.nevercareu.space';
+let API_URL = import.meta.env.VITE_API_URL || 'https://widm.csie.ncu.edu.tw';
 // axios.get('/api/config').then(response => {
 //   const HOSTNAME = response.data.HOSTNAME;
 //   API_URL = `http://${HOSTNAME}:4567`;

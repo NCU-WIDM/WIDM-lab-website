@@ -13,7 +13,7 @@ interface DeleteImagesProps {
 const DeleteImages: React.FC<DeleteImagesProps> = ({ onClose, action_1, action_2, id, imageId, imagesId, onDeleteImage }) => {
   const [confirmingDelete, setConfirmingDelete] = useState<string | null>(null);
 
-  const apiUrl = import.meta.env.VITE_API_URL || 'https://widm-back-end.nevercareu.space';;
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://widm.csie.ncu.edu.tw';;
 
   const handleDeleteClick = (imageId: string) => {
     setConfirmingDelete(imageId);

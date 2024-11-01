@@ -19,7 +19,7 @@ const ImageManagement: React.FC<ImageManagementProps> = ({ onClose, isOpen, acti
   const [confirmingDelete, setConfirmingDelete] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const apiUrl = import.meta.env.VITE_API_URL || 'https://widm-back-end.nevercareu.space';; // 使用環境變數
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://widm.csie.ncu.edu.tw';; // 使用環境變數
 
   useEffect(() => {
     setImagesId(initialImagesId || []);

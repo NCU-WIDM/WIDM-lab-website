@@ -29,13 +29,13 @@ const PaperPage = () => {
   const headers = [
     { id: 'id', Name: 'Id', isShow: 'false', isEnable: "false", type: 'Number' },
     { id: 'title', Name: '標題', isShow: 'true', type: 'String', required: 'true', style: { minWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
-    { id: 'sub_title', Name: '副標題', isShow: 'true', type: 'String', required: 'true', style: { minWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
-    { id: 'origin', Name: '會議、發布地', isShow: 'true', type: 'String', required: 'true', style: { minWidth: '100px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
+    { id: 'sub_title', Name: '副標題', isShow: 'true', type: 'String', required: 'false', style: { minWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
+    { id: 'origin', Name: '會議、發布地', isShow: 'true', type: 'String', required: 'false', style: { minWidth: '100px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'publish_year', Name: '發布時間', isShow: 'true', type: 'Date', required: 'true', dateType: ['month','YYYY-MM'] as [PickerMode, string], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'authors', Name: '論文作者', isShow: 'true', type: 'SelectItems', required: 'true', data: [], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'tags', Name: '關鍵詞', isShow: 'true', isEnable: "false", type: 'SelectItems', required: 'true', data: [], style: { minWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
-    { id: 'types', Name: '發表類型', isShow: 'true', type: 'SelectItems', required: 'true', data: ['Journal Papers', 'International Conference Papers', 'Book Chapters',  'Patents', 'Domestic Conference Papers (In Chinese)', 'Phd Thesis', 'Master Thesis', "Part-time Graduate Students' Master Thesis"], style: { minWidth: '100px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' }},
-    { id: 'link', Name: '論文連結', isShow: 'true', isEnable: "false", required: 'true', type: 'Url', style: { minWidth: '100px', whiteSpace: 'normal', textAlign: 'center' } },
+    { id: 'types', Name: '發表類型', isShow: 'true', type: 'SelectItems', required: 'false', data: ['Journal Papers', 'International Conference Papers', 'Book Chapters',  'Patents', 'Domestic Conference Papers (In Chinese)', 'Phd Thesis', 'Master Thesis', "Part-time Graduate Students' Master Thesis"], style: { minWidth: '100px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' }},
+    { id: 'link', Name: '論文連結', isShow: 'true', isEnable: "false", required: 'false', type: 'Url', style: { minWidth: '100px', whiteSpace: 'normal', textAlign: 'center' } },
     { id: 'attachmentActions', Name: 'attachment', isShow: 'false', type: 'Null' },
   ];
 
@@ -62,14 +62,13 @@ const PaperPage = () => {
         title: formData.title,
         sub_title: formData.sub_title || '',
         origin: formData.origin || '',
-        publish_year: formData.publish_year,
+        publish_year: formData.publish_year || '',
         authors: formData.authors || [],
         tags: formData.tags || [],
         types: formData.types || [],
         link: formData.link || '',
       };
 
-      let response;
       if (editData) {
         response = await defaultHttp.patch(`${processDataRoutes.paper}/${editData.id}`, newPaper, { headers: storedHeaders() });
       } else {

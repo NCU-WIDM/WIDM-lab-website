@@ -136,6 +136,6 @@ module.exports = withBundleAnalyzer({
     return config;
   },
   env: {
-    NEXTAUTH_URL: 'http://localhost:3000/api/auth',
+    NEXTAUTH_URL: API_URL || 'http://localhost:3000/api/auth',
   },
 });

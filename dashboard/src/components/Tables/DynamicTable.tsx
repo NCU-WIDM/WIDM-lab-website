@@ -3,7 +3,7 @@ import { FaEdit, FaTrashAlt, FaLink } from 'react-icons/fa';
 import { LuImage, LuImagePlus, LuImageMinus } from "react-icons/lu";
 import { FiFilePlus, FiFileMinus } from "react-icons/fi";
 import { MdOutlineFileDownload } from "react-icons/md";
-import { Tag, Modal, Tooltip } from 'antd';
+import { Tag, Modal, Tooltip, Switch } from 'antd';
 
 type HeaderType = {
   id: string;
@@ -27,7 +27,7 @@ interface TableProps {
   onEditImage?: (row: { [key: string]: any }) => void;
 }
 
-const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onEdit, onUploadFile, onDeleteFiles, onDownloadFile, onEditImage }) => {
+const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onEdit, onUploadFile, onDeleteFiles, onDownloadFile, onEditImage, onPinTop }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [imageUpdate, setImageUpdate] = useState(0);
@@ -35,7 +35,6 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
   const apiUrl = import.meta.env.VITE_API_URL || 'https://widm-back-end.nevercareu.space';; // 使用環境變數
 
   useEffect(() => {
-    console.log(data);
     setImageUpdate(prev => prev + 1); // 更新狀態
   }, [data]);
 
@@ -216,6 +215,13 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
                       >
                         {row[header.id]}
                       </div>
+                    )}
+                    {header.effect === 'importance' && (
+                      <Switch
+                        checked={row[header.id]}
+                        onChange={(checked) => onPinTop (row.id, checked)}
+                        defaultChecked={row[header.id]}
+                      />
                     )}
                   </td>
                 ) : <></>
