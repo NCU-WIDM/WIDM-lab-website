@@ -137,6 +137,10 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ headers, isOpen, onClose, onS
   const renderDateField = (header: Header) => {
     const [pickerType, setPickerType] = useState<PickerMode>('month');
     const [dateValue, setDateValue] = useState<string | null>(formData[header.id]);
+
+    useEffect(() => {
+      setDateValue(formData[header.id])
+    }, [formData[header.id]]);
   
     const dateFormats: Record<PickerMode, string> = {
       date: 'YYYY-MM-DD',
