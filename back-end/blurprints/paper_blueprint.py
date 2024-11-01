@@ -120,8 +120,8 @@ def post_paper():
         return Response.client_error('publish_year format error')
 
     authors = dumps(authors)
-    tags = dumps(tags)
-    types = dumps(types)
+    tags = dumps(tags) if tags else dumps(['']) 
+    types = dumps(types) if types else dumps([''])
 
     paper = Paper(
         title=title,
