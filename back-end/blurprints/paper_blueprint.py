@@ -195,7 +195,7 @@ def get_papers():
                     type: string
     """
     papers = db.session.query(Paper)
-    papers = papers.order_by(desc(Paper.create_time)).all()
+    papers = papers.order_by(desc(Paper.publish_year)).all()
     return Response.response("get papers successfully", [paper.to_dict() for paper in papers])
 
 
