@@ -85,19 +85,35 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
                           {authors && authors.length > 0 && <p>Author: {authors.join(', ')}</p>}
                           {types && types.length > 0 && <p>Type: {types.join(', ')}</p>}
                         </div>
-                        <div className="flex gap-4">
+
+                        <div className="flex gap-4 items-center">
                           <div className="text-2xl font-bold content-center text-cyan-600/70">{origin}</div>
-                          <FaExternalLinkAlt
-                            className={`cursor-pointer text-4xl ${link === '' ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500'}`}
-                            onClick={() => window.open(link, '_blank')}
-                            style={{ pointerEvents: link === '' ? 'none' : 'auto' }}
-                          />
-                          <FaFileDownload
-                            className={`cursor-pointer text-4xl ${frontMatter.paper_existed === false ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500'}`}
-                            onClick={() => frontMatter.paper_existed === true && download_attachment(id)}
-                            style={{ pointerEvents: frontMatter.paper_existed === '' ? 'none' : 'auto' }}
-                          />
+                          
+                          {/* Tooltip for FaExternalLinkAlt */}
+                          <div className="relative group flex items-center">
+                            <FaExternalLinkAlt
+                              className={`text-4xl ${link === null ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500 cursor-pointer'}`}
+                              onClick={() => link && window.open(link, '_blank')}
+                              style={{ pointerEvents: link === '' ? 'none' : 'auto' }}
+                            />
+                            <div className={`absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-1 text-xs text-white bg-gray-600 rounded shadow-lg ${!link ? 'text-gray-400 cursor-not-allowed' : 'text-gray-800 cursor-pointer'} group-hover:flex hidden whitespace-nowrap`}>
+                              {link !== '' ? '會議連結'  : '無法點擊' }
+                            </div>
+                          </div>
+
+                          {/* Tooltip for FaFileDownload */}
+                          <div className="relative group flex items-center">
+                            <FaFileDownload
+                              className={`text-4xl cursor-pointer ${frontMatter.paper_existed === false ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500'}`}
+                              onClick={() => frontMatter.paper_existed && download_attachment(id)}
+                              style={{ pointerEvents: frontMatter.paper_existed === true ? 'none' : 'auto' }}
+                            />
+                            <div className={`absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-1 text-xs text-white bg-gray-600 rounded shadow-lg ${frontMatter.paper_existed === false ? 'text-gray-400 cursor-not-allowed' : 'text-gray-800 cursor-pointer'} group-hover:flex hidden whitespace-nowrap`}>
+                              {frontMatter.paper_existed === true ? '檔案下載' : '無法下載'}
+                            </div>
+                          </div>
                         </div>
+
                       </div>
                     </div>
                   </div>
