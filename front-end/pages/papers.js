@@ -26,7 +26,7 @@ const Papers = ({ posts, initialDisplayPosts, pagination, error }) => {
 
 export async function getStaticProps() {
   try {
-    const response = await defaultHttp.get('https://widm.csie.ncu.edu.tw/api/paper');
+    const response = await defaultHttp.get(processDataRoutes.paper);
 
     // 確保每個 paper 都有唯一的 `id`
     const papersWithId = response.data.response.map((paper, index) => ({

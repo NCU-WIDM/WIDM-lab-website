@@ -1,18 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { FaCheck, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
-const typeOptions = [
-  'Journal Papers',
-  'International Conference Papers',
-  'Book Chapters',
-  'Patents',
-  'Domestic Conference Papers (In Chinese)',
-  'Phd Thesis',
-  'Master Thesis',
-  "Part-time Graduate Students' Master Thesis",
-]
-
-const MultiSelect = ({ selectedTypes, setSelectedTypes }) => {
+const MultiSelect = ({ selectedTypes, setSelectedTypes, typeOptions  }) => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef(null)
 

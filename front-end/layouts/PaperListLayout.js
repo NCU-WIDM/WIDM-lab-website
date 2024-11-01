@@ -10,6 +10,8 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
   const [error, setError] = useState(null)
   const [searchValue, setSearchValue] = useState('')
   const [selectedTypes, setSelectedTypes] = useState([])  // 儲存選中的 type 條件
+  const typeOptions = Array.from(new Set(posts.flatMap(post => post.types)));
+
 
   const filteredPapersPosts = posts.filter((frontMatter) => {
     const searchContent = frontMatter.title + frontMatter.authors + frontMatter.tags.join(' ') + frontMatter.origin + frontMatter.types.join(' ')
@@ -25,6 +27,8 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
     initialDisplayPosts.length > 0 && !searchValue && selectedTypes.length === 0
       ? initialDisplayPosts
       : filteredPapersPosts
+
+  
 
   return (
     <>
@@ -43,7 +47,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
               style={{ width: '400px' }}
             />
             <div style={{ width: '300px' }}>
-              <MultiSelect selectedTypes={selectedTypes} setSelectedTypes={setSelectedTypes} />
+            <MultiSelect selectedTypes={selectedTypes} setSelectedTypes={setSelectedTypes} typeOptions={typeOptions} />
             </div>
           </div>
         </div>
