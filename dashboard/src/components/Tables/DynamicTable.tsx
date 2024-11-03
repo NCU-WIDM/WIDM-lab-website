@@ -225,7 +225,7 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
                         />
                       )}
                     </td>
-                  ) : <></>
+                  ) : null
                 ))}
               </tr>
             ))}
