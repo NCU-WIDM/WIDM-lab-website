@@ -54,7 +54,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
         <ul className="list-none">
           {!filteredPapersPosts.length && <h2 className="m-2 text-lg">No Papers found.</h2>}
           {displayPosts.map((frontMatter) => {
-            const { id, uniqueId, authors, link, origin, publish_year, tags, title, types, update_time } = frontMatter
+            const { id, uniqueId, authors, link, origin, publish_year, tags, title, sub_title, types, update_time } = frontMatter
             return (
               <li
                 key={`li-paper-${id}-${uniqueId}`}
@@ -63,7 +63,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
                 <article className="space-y-2 bg-transparent bg-opacity-20 p-2 transition duration-200 hover:rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 xl:grid xl:grid-cols-2 xl:items-baseline xl:space-y-3">
                   <dl>
                     <dd className="text-sm font-normal leading-6 text-gray-500 dark:text-gray-400">
-                      <a>Publish Year {publish_year}</a>
+                      <a className="font-bold text-gray-700 dark:text-gray-200">Publish Year {publish_year}</a>
                       {' • － '}
                       <time dateTime={update_time}>Update by {formatDate(update_time)}</time>
                     </dd>
@@ -76,17 +76,24 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
                             {title}
                           </span>
                         </h2>
+                        <h3 className="text-[1.2rem] font-bold leading-8 tracking-tight">
+                          <span className="text-gray-600 transition duration-500 ease-in-out hover:text-primary-500 dark:text-gray-100 dark:hover:text-primary-500">
+                            {sub_title}
+                          </span>
+                        </h3>
                       </div>
                       <div className="flex flex-wrap">
                         {tags && tags.length > 0 && tags.map((tag) => <Tag key={tag} text={tag} />)}
                       </div>
                       <div className="prose flex max-w-none justify-between pt-2 text-gray-500 dark:text-gray-400">
-                        <div className="not-prose flex flex-col">
-                          {authors && authors.length > 0 && <p>Author: {authors.join(', ')}</p>}
+                        <div className="not-prose flex flex-col w-2/3">
                           {types && types.length > 0 && <p>Type: {types.join(', ')}</p>}
+                          {authors && authors.length > 0 && (
+                            <p className="text-orange-500">Author: {authors.join(', ')}</p>
+                          )}
                         </div>
 
-                        <div className="flex gap-4 items-center">
+                        <div className="flex gap-4 items-center w-1/3 justify-end">
                           <div className="text-2xl font-bold content-center text-cyan-600/70">{origin}</div>
                           
                           {/* Tooltip for FaExternalLinkAlt */}
@@ -113,7 +120,6 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
                             </div>
                           </div>
                         </div>
-
                       </div>
                     </div>
                   </div>

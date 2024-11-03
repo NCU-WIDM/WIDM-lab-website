@@ -67,7 +67,7 @@ export const Members = ({ members, timeoutError }) => {
         </div>
 
         <div className="container py-12">
-          {!groupByPosition.length && <h2 className="m-2 text-lg">No Member found.</h2>}
+          {Object.keys(groupByPosition).length === 0 && <h2 className="m-2 text-lg">No Member found.</h2>}
           {Object.keys(groupByPosition).map((position, index) => (
             <div key={index} className="mb-8">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{position}</h2>
