@@ -44,7 +44,6 @@ const MemberPage = () => {
       });
       const data = response.data.response;
       setMembers(data);
-      console.log(data);
     } catch (error) {
       handleErrorResponse(error);
     } finally {
@@ -55,7 +54,6 @@ const MemberPage = () => {
   const createMember = async (formData: { [key: string]: any }) => {
     try {
       setLoadingStates(prev => ({ ...prev, createMember: true }));
-      console.log('formData:', formData);
       const newMember = {
         name: formData.name,
         name_en: formData.name_en || "",

@@ -43,7 +43,6 @@ const ProjectPage = () => {
       });
       const data = response.data.response;
       setProjects(data);
-      console.log(data);
     } catch (error) {
       handleErrorResponse(error);
     } finally {
@@ -54,7 +53,6 @@ const ProjectPage = () => {
   const createProject = async (formData: { [key: string]: any }) => {
     try {
       setLoadingStates(prev => ({ ...prev, createProject: true }));
-      console.log(formData);
       const newProject = {
         name: formData.name,
         description: formData.description || '',
@@ -64,7 +62,6 @@ const ProjectPage = () => {
         members: formData.members || [],
       };
 
-      console.log(newProject);
 
       let response;
       if (editData) {
@@ -118,7 +115,6 @@ const ProjectPage = () => {
         if (response.status === 200) {
           await fetchProjects();
 
-          console.log(projects);
   
           // 為了強制圖片刷新，添加一個隨機的 query 參數
           const updatedProjects = projects.map(project => {
@@ -127,7 +123,6 @@ const ProjectPage = () => {
             }
             return project;
           });
-          console.log(updatedProjects);
           setProjects(updatedProjects);
   
           message.success('圖片上傳成功!');

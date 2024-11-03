@@ -142,24 +142,38 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ headers, isOpen, onClose, onS
     }, [formData[header.id]]);
   
     const dateFormats: Record<PickerMode, string> = {
+      year: 'YYYY', 
+      month: 'YYYY-MM',
       date: 'YYYY-MM-DD',
       week: 'YYYY-WW',
-      month: 'YYYY-MM',
       quarter: 'YYYY-[Q]Q',
-      year: 'YYYY', // 修改為 'YYYY' 以只選年份
     };
   
     const handlePickerChange = (value: PickerMode) => {
       setPickerType(value);
-  
+      
       if (value === 'year') {
-        // 若沒有現有資料，使用當前年份的七月
         const currentYear = dayjs(formData[header.id] || dayjs().format('YYYY')).year();
-        const julyDate = `${currentYear}-07`;
-        setDateValue(julyDate);
+        setDateValue(currentYear.toString());
         setFormData({
           ...formData,
-          [header.id]: julyDate,
+          [header.id]: currentYear.toString(),
+        });
+      } else if (value === 'month') {
+        const currentMonth = dayjs(formData[header.id] || dayjs().format('YYYY-MM')).format('YYYY-MM');
+        setDateValue(currentMonth);
+        setFormData({
+          ...formData,
+          [header.id]: currentMonth,
+        });
+      } else if (value === 'date') {
+        const currentDate = formData[header.id]
+          ? dayjs(formData[header.id]).format('YYYY-MM-DD')
+          : dayjs().format('YYYY-MM-DD');
+        setDateValue(currentDate);
+        setFormData({
+          ...formData,
+          [header.id]: currentDate,
         });
       }
     };
@@ -171,18 +185,16 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ headers, isOpen, onClose, onS
           onChange={handlePickerChange}
           className="w-1/6"
         >
-          <Option value="month">Year-Month</Option>
           <Option value="year">Year</Option>
+          <Option value="month">Year-Month</Option>
+          <Option value="date">Year-Month-Date</Option>
         </Select>
         <DatePicker
           format={dateFormats[pickerType]}
           picker={pickerType}
           value={dateValue ? dayjs(dateValue, dateFormats[pickerType]) : null}
           onChange={(date) => {
-            let formattedDate = date ? date.format(dateFormats[pickerType]) : null;
-            if (pickerType === 'year' && formattedDate) {
-              formattedDate += '-07'; // 自動追加 '-07' 為七月
-            }
+            const formattedDate = date ? date.format(dateFormats[pickerType]) : null;
             setDateValue(formattedDate);
             setFormData({
               ...formData,
@@ -194,6 +206,7 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ headers, isOpen, onClose, onS
       </div>
     );
   };
+  
   
   
 

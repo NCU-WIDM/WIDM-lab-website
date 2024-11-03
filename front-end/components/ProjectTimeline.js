@@ -27,7 +27,6 @@ function TimelineItem({ item, level = 0 }) {
   const icon = IconMap[level % IconMap.length];
   const backgroundColor = colorMap[level % colorMap.length]; // 獲取對應層級的背景顏色
 
-  console.log("item", item)
 
   return (
     <>

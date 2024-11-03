@@ -64,7 +64,6 @@ const ProjectPage = () => {
       });
       const data = response.data.response;
       setProjects(data);
-      console.log(data);
     } catch (error) {
       handleErrorResponse(error);
     } finally {

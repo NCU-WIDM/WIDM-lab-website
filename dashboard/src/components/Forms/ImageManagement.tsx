@@ -23,7 +23,6 @@ const ImageManagement: React.FC<ImageManagementProps> = ({ onClose, isOpen, acti
 
   useEffect(() => {
     setImagesId(initialImagesId || []);
-    console.log(initialImagesId);
   }, [initialImagesId]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

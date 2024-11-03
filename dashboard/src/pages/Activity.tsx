@@ -43,7 +43,6 @@ const ActivityPage = () => {
       });
       const data = response.data.response;
       setActivities(data);
-      console.log(data);
     } catch (error) {
       handleErrorResponse(error);
     } finally {

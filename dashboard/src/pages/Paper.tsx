@@ -96,7 +96,6 @@ const PaperPage = () => {
       if (editData) {
         const paperImageUrl = `${processDataRoutes.paper}/${editData.id}/paper-attachment`;
         const uploadFormData = new FormData();
-        console.log(formData)
         // 確保圖片文件被添加到 FormData 中
         if (formData.attachment) {
           uploadFormData.append('attachment', formData.attachment);
