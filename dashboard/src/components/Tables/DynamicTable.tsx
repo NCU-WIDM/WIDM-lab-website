@@ -198,7 +198,7 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
                       {header.type === 'Tags' || header.type === 'SelectItems' ? ( // 顯示標籤
                         <div className="flex flex-wrap">
                           {row[header.id] ? row[header.id].map((tag: string, index: number) => (
-                            <Tag key={`tag-${row}-${rowIndex}-${tag}-${index}`} className="mb-1 mr-1">
+                            <Tag key={`tag-${row}-${tag}-${index}`} className="mb-1 mr-1">
                               {tag}
                             </Tag>
                           )) : <></>}
