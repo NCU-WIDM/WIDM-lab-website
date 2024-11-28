@@ -8,14 +8,14 @@ class Paper(db.Model, SchemaMixin):
     sub_title = db.Column(db.Text)
     authors = db.Column(db.Text)
     tags = db.Column(db.Text)
-    publish_year = db.Column(db.DateTime)
+    publish_year = db.Column(db.String(30))
     origin = db.Column(db.String(255))
     link = db.Column(db.String(255))
     types = db.Column(db.Text)
     attachment_path = db.Column(db.String(255))
 
     def to_dict(self):
-        self.publish_year = self.publish_year.strftime('%Y-%m')
+        self.publish_year = self.publish_year
         self.authors = loads(self.authors)
         self.tags = loads(self.tags)
         self.types = loads(self.types)

@@ -6,11 +6,14 @@ class Project(db.Model, SchemaMixin):
     __tablename__ = 'project'
     name = db.Column(db.String(50), nullable=True)
     description = db.Column(db.TEXT, nullable=True)
+    summary = db.Column(db.TEXT, nullable=True)
     tags = db.Column(db.TEXT, nullable=True)
     link = db.Column(db.String(255), nullable=True)
     icon_path = db.Column(db.String(255), nullable=True)
     github = db.Column(db.String(255), nullable=True)
     members = db.Column(db.TEXT, nullable=True)
+    start_time = db.Column(db.DateTime, nullable=True)
+    end_time = db.Column(db.DateTime, nullable=True)
 
     project_task = db.relationship(
         'ProjectTask', backref='member', lazy='select', cascade="all, delete-orphan"
@@ -20,15 +23,20 @@ class Project(db.Model, SchemaMixin):
         self.tags = loads(self.tags)
         self.members = loads(self.members)
         icon_existed = True if self.icon_path else False
-
+        self.start_time = datetime.strftime(self.start_time, '%Y-%m') if self.start_time else None
+        self.end_time = datetime.strftime(self.end_time, '%Y-%m') if self.end_time else None
+        
         return {
             'id': self.id,
             'name': self.name,
             'description': self.description,
+            'summary': self.summary,
             'tags': self.tags,
             'link': self.link,
             'github': self.github,
             'members': self.members,
+            'start_time': self.start_time,
+            'end_time': self.end_time,
             'icon_existed': icon_existed,
             'create_time': self.create_time,
             'update_time': self.update_time,

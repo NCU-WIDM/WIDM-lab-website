@@ -40,10 +40,13 @@ const Projects = ({ projectsDatas, timeoutError }) => {
                 project_id={d.id}
                 title={d.name}
                 description={d.description}
+                summary={d.summary}
                 github={d.github}
                 tags={d.tags}
                 icon={d.icon}
                 members={d.members}
+                start_time={d.start_time}
+                end_time={d.end_time}
                 project_link={d.link}
                 icon_existed={d.icon_existed}
               />

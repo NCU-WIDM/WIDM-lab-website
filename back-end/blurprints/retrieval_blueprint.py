@@ -277,7 +277,10 @@ def query():
         description: scrapying is not ready
     """
     if scrapying_status['status'] == 'pending' or scrapying_status['status'] == 'not start':
-        return Response.client_error('scrapying is not ready', scrapying_status)
+        return Response.response('scrapying is not ready', {
+            'answer': "網頁資訊尚未準備完成，請洽管理員",
+            'source_list': []
+        })
 
     if 'query_string' not in request.args or 'person_id' not in request.args:
         return Response.client_error('query_string, person_id is required')

@@ -24,14 +24,19 @@ const ProjectPage = () => {
     setIsLoading(anyLoading);
   }, [loadingStates]);
 
+  type PickerMode = 'date' | 'week' | 'month' | 'quarter' | 'year'; // 定義PickerMode類型
+
   const headers = [
     { id: 'id', Name: 'Id', isShow: 'false', isEnable: "false", type: 'Number' },
     { id: 'name', Name: '專案名稱', isShow: 'true', type: 'String', required: 'true', style: { minWidth: '250px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
     { id: 'description', Name: '專案描述', isShow: 'true', type: 'Textarea', style: { minWidth: '500px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
+    { id: 'summary', Name: '專案摘要', isShow: 'true', type: 'Textarea', style: { minWidth: '500px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
     { id: 'github', Name: 'GitHub 連結', isShow: 'true', isEnable: "false", type: 'Url', style: { minWidth: '100px', whiteSpace: 'normal', textAlign: 'center' } },
     { id: 'link', Name: '專案連結', isShow: 'true', isEnable: "false", type: 'Url', style: { minWidth: '100px', whiteSpace: 'normal', textAlign: 'center' } },
     { id: 'tags', Name: '專案標籤', isShow: 'true', type: 'SelectItems', data: [] },
     { id: 'members', Name: '人員', isShow: 'true', type: 'SelectItems', data: [], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
+    { id: 'start_time', Name: '開始時間', isShow: 'true', type: 'Date', dateType: ['month','YYYY-MM'] as [PickerMode, string], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' }, required: 'true' },
+    { id: 'end_time', Name: '結束時間', isShow: 'true', type: 'Date', dateType: ['month','YYYY-MM'] as [PickerMode, string], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'imageActions', Name: 'project-icon', isShow: 'false', type: 'Null' },
   ];
 
@@ -56,10 +61,13 @@ const ProjectPage = () => {
       const newProject = {
         name: formData.name,
         description: formData.description || '',
+        summary: formData.summary || '',
         github: formData.github || '',
         link: formData.link || '',
         tags: formData.tags || [],
         members: formData.members || [],
+        start_time: formData.start_time || '',
+        end_time: formData.end_time || ''
       };
 
 

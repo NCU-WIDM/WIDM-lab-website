@@ -59,6 +59,20 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
               <li
                 key={`li-paper-${id}-${uniqueId}`}
                 className="list-none py-6 transition duration-100 hover:scale-105 hover:rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800"
+                style={{ maxHeight: '220px', overflow: 'hidden', transition: 'max-height 0.3s ease-in-out' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.maxHeight = 'none'; 
+                  const originElement = e.currentTarget.querySelector('.origin-text');
+                  originElement.style.webkitLineClamp = 'unset'; 
+                  originElement.textContent = origin; 
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.maxHeight = '220px'; 
+                  const originElement = e.currentTarget.querySelector('.origin-text');
+                  originElement.style.webkitLineClamp = '1';
+                  originElement.style.overflow = 'hidden'; 
+                  originElement.textContent = origin.split(' ').slice(0, 10).join(' ') + (origin.split(' ').length > 10 ? '...' : ''); 
+                }}
               >
                 <article className="space-y-2 bg-transparent bg-opacity-20 p-2 transition duration-200 hover:rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 xl:grid xl:grid-cols-2 xl:items-baseline xl:space-y-3">
                   <dl>
@@ -94,7 +108,18 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
                         </div>
 
                         <div className="flex gap-4 items-center w-1/3 justify-end">
-                          <div className="text-2xl font-bold content-center text-cyan-600/70">{origin}</div>
+                          <div
+                            className="origin-text text-2xl font-bold content-center text-cyan-600/70"
+                            style={{
+                              whiteSpace: 'normal', 
+                              overflow: 'hidden',  
+                              display: '-webkit-box', 
+                              WebkitBoxOrient: 'vertical', 
+                              WebkitLineClamp: 1, 
+                            }}
+                          >
+                            {origin.split(' ').slice(0, 10).join(' ') + (origin.split(' ').length > 10 ? '...' : '')} 
+                          </div>
                           
                           {/* Tooltip for FaExternalLinkAlt */}
                           <div className="relative group flex items-center">

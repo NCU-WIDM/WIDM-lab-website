@@ -3,6 +3,7 @@ import json
 from uuid import uuid4
 from pathlib import Path
 from json import dumps
+from datetime import datetime
 
 from models.project_model import Project, db, ProjectTask
 from models.responses import Response
@@ -54,6 +55,8 @@ def post_project():
           properties:
             description:
               type: string
+            summary:
+              type: string
             response:
               properties:
                 id:
@@ -76,6 +79,12 @@ def post_project():
                 members:
                   example: ['member1', 'member2']
                   type: array
+                start_time:
+                  example: '2024-01'
+                  type: string
+                end_time:
+                  example: '2024-01'
+                  type: string
                 created_time:
                   example: 'Tue, 06 Aug 2024 10:39:27 GMT'
                   type: string
@@ -85,22 +94,28 @@ def post_project():
       400:
         description: no ['project_name'] in json
     """
-    if not api_input_check(['name', 'description', 'tags', 'link', 'github', 'members'], request.json):
-        return Response.client_error("no ['name', 'description', 'tags', 'link', 'github', 'members'] in json")
+    if not api_input_check(['name', 'description', 'summary', 'tags', 'link', 'github', 'members','start_time','end_time'], request.json):
+        return Response.client_error("no ['name', 'description', 'summary', 'tags', 'link', 'github', 'members','start_time','end_time'] in json")
 
-    name, description, tags, link, github, members = api_input_get(
-        ['name', 'description', 'tags', 'link', 'github', 'members'], request.json)
+    name, description, summary, tags, link, github, members, start_time, end_time= api_input_get(
+        ['name', 'description', 'summary', 'tags', 'link', 'github', 'members','start_time','end_time'], request.json)
 
     tags = dumps(tags)
     members = dumps(members)
 
+    start_time = datetime.strptime(start_time, '%Y-%m') if start_time else None
+    end_time = datetime.strptime(end_time, '%Y-%m') if end_time else None
+
     project = Project(
         name=name,
         description=description,
+        summary=summary,
         tags=tags,
         link=link,
         github=github,
         members=members,
+        start_time=start_time,
+        end_time=end_time,
     )
     db.session.add(project)
     db.session.commit()
@@ -121,6 +136,8 @@ def get_projects():
           id: projects
           properties:
             description:
+              type: string
+            summary:
               type: string
             response:
               type: array
@@ -146,6 +163,12 @@ def get_projects():
                   members:
                     example: ['member1', 'member2']
                     type: array
+                  start_time:
+                    example: '2024-01'
+                    type: string
+                  end_time:
+                    example: '2024-01'
+                    type: string
                   icon_existed:
                     example: true
                     type: boolean
@@ -252,6 +275,8 @@ def patch_project(project_id):
         project.name = request.json['name']
     if 'description' in request.json:
         project.description = request.json['description']
+    if 'summary' in request.json:
+        project.summary = request.json['summary']
     if 'tags' in request.json:
         project.tags = dumps(request.json['tags'])
     if 'link' in request.json:
@@ -260,7 +285,12 @@ def patch_project(project_id):
         project.github = request.json['github']
     if 'members' in request.json:
         project.members = json.dumps(request.json['members'])
-
+    if 'start_time' in request.json:
+        project.start_time = datetime.strptime(request.json['start_time'], '%Y-%m') \
+            if request.json['start_time'] else None
+    if 'end_time' in request.json:
+        project.end_time = datetime.strptime(request.json['end_time'], '%Y-%m') \
+            if request.json['end_time'] else None
     db.session.commit()
     return Response.response('patch project successfully', project.to_dict())
 

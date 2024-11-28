@@ -70,7 +70,9 @@ def post_activity():
         return Response.client_error("no ['title', 'sub_title', 'date'] in form")
 
     title, sub_title, date = api_input_get(['title', 'sub_title', 'date'], request.json)
-    date = datetime.strptime(date, '%Y-%m-%d')
+    
+    # date = datetime.strptime(date, '%Y-%m-%d')
+
     activity = Activity(
         title=title,
         sub_title=sub_title,
@@ -163,7 +165,7 @@ def patch_activity(activity_id):
         activity.sub_title = request.json['sub_title']
 
     if 'date' in request.json and request.json['date']:
-        activity.date = datetime.strptime(request.json['date'], '%Y-%m-%d')
+        activity.date = request.json['date']
 
     db.session.commit()
     return Response.response('patch activity successfully', activity.to_dict())

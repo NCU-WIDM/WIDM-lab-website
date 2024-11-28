@@ -114,14 +114,14 @@ def post_paper():
     )
 
 
-    try:
-        publish_year = datetime.strptime(publish_year, '%Y-%m')
-    except ValueError:
-        return Response.client_error('publish_year format error')
+    # try:
+    #     publish_year = datetime.strptime(publish_year, '%Y-%m')
+    # except ValueError:
+    #     return Response.client_error('publish_year format error')
 
     authors = dumps(authors)
-    tags = dumps(tags) if tags else dumps(['']) 
-    types = dumps(types) if types else dumps([''])
+    tags = dumps(tags) if tags else dumps([]) 
+    types = dumps(types) if types else dumps([])
 
     paper = Paper(
         title=title,
@@ -196,6 +196,7 @@ def get_papers():
     """
     papers = db.session.query(Paper)
     papers = papers.order_by(desc(Paper.publish_year)).all()
+    
     return Response.response("get papers successfully", [paper.to_dict() for paper in papers])
 
 
@@ -235,11 +236,13 @@ def patch_paper(paper_id):
         paper.authors = dumps(request.json['authors'])
     if 'tags' in request.json:
         paper.tags = dumps(request.json['tags'])
-    if 'publish_year' in request.json and request.json['publish_year']:
-        try:
-            paper.publish_year = datetime.strptime(request.json['publish_year'], '%Y-%m')
-        except ValueError:
-            return Response.client_error('publish_year format error')
+    if 'publish_year' in request.json:
+        paper.publish_year = request.json['publish_year']
+    # if 'publish_year' in request.json and request.json['publish_year']:
+        # try:
+        #     paper.publish_year = datetime.strptime(request.json['publish_year'], '%Y-%m')
+        # except ValueError:
+        #     return Response.client_error('publish_year format error')
     if 'origin' in request.json:
         paper.origin = request.json['origin']
     if 'link' in request.json:
