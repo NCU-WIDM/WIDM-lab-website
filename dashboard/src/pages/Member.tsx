@@ -59,7 +59,7 @@ const MemberPage = () => {
         name_en: formData.name_en || "",
         intro: formData.intro || "",
         position: formData.position,
-        graduate_year: formData.graduate_year
+        graduate_year: formData.graduate_year|| ""
       };
 
       let response;

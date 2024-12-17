@@ -8,6 +8,7 @@ import eventBus from '../utils/eventBus'
 import { Icon } from '@iconify/react'
 import { defaultHttp } from '../utils/http'
 import { processDataRoutes } from '../routes/api'
+import { marked } from 'marked';
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
@@ -67,8 +68,31 @@ export default function Home() {
         person_id: "1"
       }
     });
-    const responseMessage = { sender: 'api', text: response.data.response.answer };
-    const finalMessages = [...updatedMessages.slice(0, -1), responseMessage]; // 排除回覆符號，在新增回覆訊息
+    // console.log(response)
+    const responseMessage = { sender: 'api', text: response.data.response.answer }; // 單一解答
+    // console.log(response.data.response)
+    const responseSourceLink = response.data.response.source_list; // 連結列表 (list)
+    const linksource = responseSourceLink
+      .map((link, index) => {
+        const isLastLink = index === responseSourceLink.length - 1;
+        return `<a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a>${isLastLink ? '' : '<br>'}`;
+      })
+      .join('');
+    const combinedMessage = {
+      sender: 'api',
+      text: linksource ? `${marked(responseMessage.text)}<br>${linksource}` : responseMessage.text,
+    };
+
+    // 合併到 finalMessages
+    const finalMessages = [
+      ...updatedMessages.slice(0, -1), // 保留原來的訊息，移除最後一個
+      combinedMessage, // 插入合併後的訊息
+    ];
+
+    // console.log(finalMessages);
+    // const responseMessage = { sender: 'api', text: response.data.response.answer };
+    // const responseSourceLink = { sender: 'api', text: response.data.response.source_list };
+    // const finalMessages = [...updatedMessages.slice(0, -1), responseMessage]; // 排除回覆符號，在新增回覆訊息
 
     if (finalMessages.length > 15) {
       finalMessages.shift(); // 移除最舊的訊息
@@ -275,12 +299,13 @@ export default function Home() {
                         {msg.sender !== 'time' && (
                           <div>
                             <p className="text-gray-800 dark:text-gray-100">
-                              {msg.text === 'loading' ? <Icon icon="svg-spinners:3-dots-bounce" style={{'color': 'black'}} /> : msg.text}
+                              {/* {msg.text === 'loading' ? <Icon icon="svg-spinners:3-dots-bounce" style={{'color': 'black'}} /> : msg.text} */}
+                              {msg.text === 'loading' ? <Icon icon="svg-spinners:3-dots-bounce" style={{'color': 'black'}} /> : <span dangerouslySetInnerHTML={{ __html: msg.text }} />}
                             </p>
 
-                            <div className='flex mt-4 gap-4 '>
+                            {/* <div className='flex mt-4 gap-4 '>
 
-                            </div>
+                            </div> */}
                           </div>
                         )}
                       </div>

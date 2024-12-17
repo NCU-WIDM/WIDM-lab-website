@@ -21,6 +21,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from langchain_community.document_loaders import AsyncHtmlLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_transformers import MarkdownifyTransformer
+# from langchain_core.runnables import RunnablePassthrough
+
 
 from flask import Blueprint, request, stream_with_context, current_app
 from flask import Response as FlaskResponse
@@ -35,7 +37,7 @@ scrapying_status = {
     'end_time': ''
 }
 embedding = OpenAIEmbeddings(model='text-embedding-3-small', openai_api_key=Config.OPENAI_KEY)
-llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, api_key=Config.OPENAI_KEY)
+llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0, api_key=Config.OPENAI_KEY)
 
 
 class UserMemoryManager:
@@ -172,8 +174,26 @@ def chat_with_rag(user_id, question):
 
     answer = result['answer']
     source_list = [source.metadata['source'] for source in result['source_documents']]
+    temp = []
+    after_list = []
+    for link in source_list:
+        if after_list is None:
+            temp.append(link.replace('/',''))
+            after_list.append(link)
+        else:
+            if link.replace('/','') not in temp:
+                temp.append(link.replace('/',''))
+                after_list.append(link)
+    # after_list = clean_list_with_rag(user_id,source_list)
+    return answer, after_list
 
-    return answer, source_list
+def clean_list_with_rag(user_id,source_list):
+    global manager
+    chain = manager.get_chain_for_user(user_id)
+    after_link = ",".join(str(link) for link in source_list)
+    result = chain({"question": after_link+"\n幫我整理先前輸入(以逗號進行分隔)，結果相同的不要重複列出順序依照輸入，格式為:link1,link2,... 不輸出其他內容"})
+    answer = result['answer'].split(',')
+    return answer
 
 
 def periodic_cleanup():
@@ -284,7 +304,7 @@ def query():
 
     if 'query_string' not in request.args or 'person_id' not in request.args:
         return Response.client_error('query_string, person_id is required')
-
+    # print(request.args['person_id'])
     answer, source_list = chat_with_rag(request.args['person_id'], request.args['query_string'])
 
     return Response.response('chat retrieval augmented generation successful', {

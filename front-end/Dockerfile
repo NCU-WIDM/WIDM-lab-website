@@ -13,6 +13,7 @@ COPY package*.json ./
 # 安裝 Node.js 專案的依賴項
 RUN npm install
 RUN npm install esbuild
+RUN npm install marked
 # RUN npm install next-auth@latest
 RUN npm install openid-client@latest
 
