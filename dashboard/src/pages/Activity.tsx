@@ -32,6 +32,7 @@ const ActivityPage = () => {
     { id: 'title', Name: '標題', isShow: 'true', type: 'String', required: 'true',  style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
     { id: 'sub_title', Name: '副標題', isShow: 'true', type: 'Textarea',  style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
     { id: 'date', Name: '日期', isShow: 'true', type: 'Date', dateType: ['date','YYYY-MM-DD'] as [PickerMode, string], required: 'true', style: {textAlign: 'center'}},
+    { id: 'importance', Name: '置頂', isShow: 'true', type: 'Switch', effect: 'importance', style: { whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' }  },
     { id: 'imagesActions', Name: 'images', isShow: 'false', type: 'Null',  style: {textAlign: 'center'}},
   ];
 
@@ -76,6 +77,20 @@ const ActivityPage = () => {
       }
     } finally {
       setLoadingStates(prev => ({ ...prev, createActivitie: false }));
+    }
+  };
+
+  const onPinTop = async (id, importance) => {
+    try {
+      setLoadingStates((prev) => ({ ...prev, updateImportance: true }));
+      await defaultHttp.patch(`${processDataRoutes.activity}/${id}/importance`, { importance }, { headers: storedHeaders() });
+      fetchActivities(); // 更新後重新加載數據
+      message.success(importance ? '已置頂!' : '已取消置頂!');
+    } catch (error) {
+      handleErrorResponse(error);
+      message.error('操作失敗!');
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, updateImportance: false }));
     }
   };
 
@@ -204,7 +219,7 @@ const ActivityPage = () => {
           </button>
         </div>
         <div className="flex flex-col gap-6">
-          <DynamicTable data={activities} headers={headers} onDelete={deleteActivitie} onEdit={handleEditItem} onEditImage={handleEditImages}/>
+          <DynamicTable data={activities} headers={headers} onDelete={deleteActivitie} onEdit={handleEditItem} onEditImage={handleEditImages} onPinTop={onPinTop}/>
         </div>
         <AddItemForm headers={headers} isOpen={isAdding} onClose={handleCloseForm} onSubmit={createActivitie} editData={editData} />
         <ImageManagement isOpen={isEditImages} onClose={handleCloseEditImages} action_1={'activity'} action_2={'activity-image'} id={editData?.id!} initialImagesId={editData?.images} onUploadImage={handleUploadImageSubmit} onDeleteImage={handleDeleteImagesSubmit}/>

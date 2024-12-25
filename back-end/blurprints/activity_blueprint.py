@@ -9,6 +9,7 @@ from utiles.api_helper import api_input_get, api_input_check
 
 from flask import Blueprint, request, send_file
 from sqlalchemy.orm import joinedload
+from sqlalchemy import desc, asc
 
 activity_blueprint = Blueprint('activity', __name__)
 
@@ -126,7 +127,9 @@ def get_activities():
       404:
         description: activity not exist
     """
-    activities = Activity.query.all()
+    activities = db.session.query(Activity)
+    activities = activities.order_by(desc(Activity.importance), desc(Activity.update_time)).all()
+    # activities = Activity.query.all()
     return Response.response('get activities successfully', [activity.to_dict() for activity in activities])
 
 
@@ -321,3 +324,31 @@ def delete_activity_image(activity_id, image_id):
     db.session.delete(activity_image)
     db.session.commit()
     return Response.response('delete activity image successfully', activity.to_dict())
+
+@activity_blueprint.route('/<activity_id>/importance', methods=['PATCH'])
+def update_news_importance(activity_id):
+    """
+    update activity importance
+    ---
+    tags:
+      - activity
+    parameters:
+      - in: path
+        name: activity_id
+        required: true
+        type: integer
+    responses:
+      200:
+        description: patch news successfully
+        schema:
+          id: activity
+      404:
+        description: activity not found
+    """
+    activity = Activity.query.get(activity_id)
+    if not activity:
+        return Response.not_found('activity not found')
+
+    activity.importance = not activity.importance
+    db.session.commit()
+    return Response.response('patch activity successfully', activity.to_dict())

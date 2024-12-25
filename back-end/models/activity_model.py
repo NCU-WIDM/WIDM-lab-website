@@ -6,6 +6,7 @@ class Activity(db.Model, SchemaMixin):
     title = db.Column(db.String(50))
     sub_title = db.Column(db.Text)
     date = db.Column(db.String(30))
+    importance = db.Column(db.Boolean, default=0)
 
     activity_image = db.relationship('ActivityImage', backref='activity')
 
