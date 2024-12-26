@@ -10,6 +10,7 @@ class Paper(db.Model, SchemaMixin):
     tags = db.Column(db.Text)
     publish_year = db.Column(db.String(30))
     origin = db.Column(db.String(255))
+    detail_origin = db.Column(db.String(255))
     link = db.Column(db.String(255))
     types = db.Column(db.Text)
     attachment_path = db.Column(db.String(255))
@@ -29,6 +30,7 @@ class Paper(db.Model, SchemaMixin):
             'tags': self.tags,
             'publish_year': self.publish_year,
             'origin': self.origin,
+            'detail_origin': self.detail_origin,
             'link': self.link,
             'types': self.types,
             'paper_existed': attachment_existed,

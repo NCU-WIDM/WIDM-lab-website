@@ -109,10 +109,12 @@ def post_paper():
             "no ['title', 'authors', 'publish_year'] or content in form"
         )
 
-    title, sub_title, authors, tags, publish_year, origin, link, types = api_input_get(
-        ['title', 'sub_title', 'authors', 'tags', 'publish_year', 'origin', 'link', 'types'], request.json
+    # title, sub_title, authors, tags, publish_year, origin, link, types = api_input_get(
+    #     ['title', 'sub_title', 'authors', 'tags', 'publish_year', 'origin', 'link', 'types'], request.json
+    # )
+    title, sub_title, authors, tags, publish_year, origin, detail_origin, link, types = api_input_get(
+        ['title', 'sub_title', 'authors', 'tags', 'publish_year', 'origin', 'detail_origin', 'link', 'types'], request.json
     )
-
 
     # try:
     #     publish_year = datetime.strptime(publish_year, '%Y-%m')
@@ -130,6 +132,7 @@ def post_paper():
         tags=tags,
         publish_year=publish_year,
         origin=origin,
+        detail_origin=detail_origin,
         link=link,
         types=types,
     )
@@ -245,6 +248,8 @@ def patch_paper(paper_id):
         #     return Response.client_error('publish_year format error')
     if 'origin' in request.json:
         paper.origin = request.json['origin']
+    if 'detail_origin' in request.json:
+      paper.detail_origin = request.json['detail_origin']
     if 'link' in request.json:
         paper.link = request.json['link']
     if 'types' in request.json:
