@@ -367,3 +367,13 @@ def get_paper_attachment(paper_id):
         as_attachment=True,
         download_name=paper.title + Path(paper.attachment_path).suffix
     )
+
+def get_paper_by_uuid():
+    paper = {}
+    
+    papers = Paper.query.filter(Paper.attachment_path.isnot(None)).all()
+    
+    for p in papers:
+        paper[p.attachment_path] = p.title
+    
+    return paper

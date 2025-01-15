@@ -18,6 +18,7 @@ from flasgger import Swagger
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
+import requests
 
 def create_app():
     app = Flask(__name__)
@@ -25,6 +26,26 @@ def create_app():
     app.config.from_object(Config)
     db.init_app(app)
 
+    from blurprints.retrieval_blueprint import scrapying
+
+    # 創建一個狀態標記
+    class AppState:
+        initialized = False
+
+    app.state = AppState()
+
+    @app.after_request
+    def after_request(response):
+        if not app.state.initialized:
+            with app.app_context():
+                try:
+                    scrapying()
+                    app.state.initialized = True
+                    app.logger.info("Retrieval initialization completed")
+                except Exception as e:
+                    app.logger.error(f"Error initializing retrieval: {str(e)}")
+        return response
+    
     with app.app_context():
         db.create_all()
         db.session.commit()
@@ -57,4 +78,5 @@ app = create_app()
 if __name__ == '__main__':
     Path('statics/images').mkdir(parents=True, exist_ok=True)
     Path('statics/attachments').mkdir(parents=True, exist_ok=True)
+    Path('statics/chroma_db').mkdir(parents=True, exist_ok=True)
     app.run(host=app.config['HOST'], port=app.config['PORT'])

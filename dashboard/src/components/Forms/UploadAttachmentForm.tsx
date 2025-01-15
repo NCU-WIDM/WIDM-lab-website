@@ -11,6 +11,10 @@ const UploadAttachmentForm: React.FC<UploadAttachmentProps> = ({ isOpen, onClose
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
   const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
 
+  const clearFile = () => {
+    setAttachmentFile(null);
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setAttachmentFile(e.target.files[0]);
@@ -25,6 +29,7 @@ const UploadAttachmentForm: React.FC<UploadAttachmentProps> = ({ isOpen, onClose
         attachment: attachmentFile,
       });
       onSubmit({ ...formData, attachment: attachmentFile });
+      clearFile();
       onClose();
     } else {
       onSubmit(formData);
@@ -32,11 +37,16 @@ const UploadAttachmentForm: React.FC<UploadAttachmentProps> = ({ isOpen, onClose
     }
   };
 
+  const handleClose = () => {
+    clearFile(); // 關閉時清除檔案
+    onClose();
+  };
+
   return (
     <Modal
       title="Upload Image"
       open={isOpen}
-      onCancel={onClose}
+      onCancel={handleClose}
       footer={null}
       centered={true}
       maskClosable={false}
@@ -54,7 +64,7 @@ const UploadAttachmentForm: React.FC<UploadAttachmentProps> = ({ isOpen, onClose
         <div className="flex justify-end gap-4">
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="rounded-md border border-stroke bg-transparent py-3 px-6 text-black dark:text-white"
           >
             關閉

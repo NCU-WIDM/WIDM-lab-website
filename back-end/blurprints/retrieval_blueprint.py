@@ -6,7 +6,10 @@ from queue import Queue
 from datetime import datetime
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-
+import pdfplumber
+from pathlib import Path
+from io import BytesIO
+from . import paper_blueprint
 from google.api.resource_pb2 import resource
 
 from config import Config
@@ -21,6 +24,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from langchain_community.document_loaders import AsyncHtmlLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_transformers import MarkdownifyTransformer
+from langchain.schema import Document
+
 # from langchain_core.runnables import RunnablePassthrough
 
 
@@ -35,6 +40,15 @@ scrapying_status = {
     'status': 'not start',
     'start_time': '',
     'end_time': ''
+}
+paper_status = {
+    'status': 'not start',
+    'start_time': '',
+    'end_time': '',
+    'total_documents': 0,
+    'total_batches': 0,
+    'current_batch': 0,
+    'processed_documents': 0
 }
 embedding = OpenAIEmbeddings(model='text-embedding-3-small', openai_api_key=Config.OPENAI_KEY)
 llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0, api_key=Config.OPENAI_KEY)
@@ -85,7 +99,7 @@ class UserMemoryManager:
 
 
 manager = None
-
+vectorstore = None
 
 def process_url(url, root_url, visited_urls, html_urls, next_queue):
     if url in visited_urls:
@@ -142,6 +156,7 @@ def bfs_website(root_url, max_workers=20):
 
 
 def scrapying_website():
+    global vectorstore
     scrapying_status['status'] = 'pending'
     scrapying_status['start_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -154,7 +169,8 @@ def scrapying_website():
         converted_docs = md.transform_documents(docs)
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=128)
         splits = text_splitter.split_documents(converted_docs)
-        vectorstore = Chroma.from_documents(documents=splits, embedding=embedding)
+        vectorstore.add_documents(documents=splits)
+        # vectorstore = Chroma.from_documents(documents=splits, embedding=embedding)
         retriever = vectorstore.as_retriever()
         global manager
         manager = UserMemoryManager(retriever, llm, inactive_time=300)
@@ -187,14 +203,134 @@ def chat_with_rag(user_id, question):
     # after_list = clean_list_with_rag(user_id,source_list)
     return answer, after_list
 
-def clean_list_with_rag(user_id,source_list):
-    global manager
-    chain = manager.get_chain_for_user(user_id)
-    after_link = ",".join(str(link) for link in source_list)
-    result = chain({"question": after_link+"\n幫我整理先前輸入(以逗號進行分隔)，結果相同的不要重複列出順序依照輸入，格式為:link1,link2,... 不輸出其他內容"})
-    answer = result['answer'].split(',')
-    return answer
+def load_paper():
+    org_paper = paper_blueprint.get_paper_by_uuid()
+    documents = []
+    
+    for path, title in org_paper.items():
+        try:
+            with open(path, 'rb') as file:
+                contents = file.read()
+            
+            all_text = ""
+            with pdfplumber.open(BytesIO(contents)) as pdf:
+                for page in pdf.pages:
+                    extracted_text = page.extract_text() or ""
+                    all_text += extracted_text + "\n"
+            
+            doc = Document(
+                page_content=all_text,
+                metadata={
+                    "source": title,
+                    "path": str(path),
+                    "type": "pdf"
+                }
+            )
+            documents.append(doc)
+            
+        except Exception as e:
+            print(f"處理 PDF 文件 {title} 時發生錯誤: {str(e)}")
+            continue
+    return documents
 
+# def scrapying_paper():
+#     global vectorstore
+#     paper = load_paper()
+#     paper_status['status'] = 'pending'
+#     paper_status['start_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+#     try:
+#         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=128)
+#         splits = text_splitter.split_documents(paper)
+#         vectorstore.add_documents(documents=splits)
+#         retriever = vectorstore.as_retriever()
+#         global manager
+#         manager = UserMemoryManager(retriever, llm, inactive_time=300)
+#     except Exception as e:
+#         print(e)
+#         paper_status['status'] = 'error'
+#         return
+
+#     paper_status['status'] = 'finished'
+#     paper_status['end_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+def scrapying_paper(batch_size=50):
+    global vectorstore, manager
+    paper_status['status'] = 'pending'
+    paper_status['start_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
+    try:
+        # 載入論文
+        papers = load_paper()
+        total_documents = len(papers)
+        total_batches = (total_documents // batch_size) + (1 if total_documents % batch_size != 0 else 0)
+        
+        # 更新狀態資訊
+        paper_status.update({
+            'total_documents': total_documents,
+            'total_batches': total_batches,
+            'current_batch': 0,
+            'processed_documents': 0
+        })
+
+        # 初始化文本分割器
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1024, 
+            chunk_overlap=128
+        )
+        
+        # 分批處理文檔
+        for i in range(0, total_documents, batch_size):
+            try:
+                # 取得當前批次的文檔
+                batch = papers[i:i + batch_size]
+                current_batch = i // batch_size + 1
+                
+                # 更新處理狀態
+                paper_status.update({
+                    'current_batch': current_batch,
+                    'status': f'Processing batch {current_batch}/{total_batches}'
+                })
+
+                # 處理當前批次
+                batch_splits = text_splitter.split_documents(batch)
+                vectorstore.add_documents(documents=batch_splits)
+                
+                # 更新已處理文檔數
+                paper_status['processed_documents'] = min(i + batch_size, total_documents)
+                
+            except Exception as batch_error:
+                print(f"Error in batch {current_batch}: {batch_error}")
+                continue  # 繼續處理下一批
+        
+        # 設置檢索器和記憶管理器
+        retriever = vectorstore.as_retriever()
+        manager = UserMemoryManager(retriever, llm, inactive_time=300)
+        
+        # 完成處理
+        paper_status['status'] = 'finished'
+        
+    except Exception as e:
+        print(f"Error during paper processing: {e}")
+        paper_status['status'] = 'error'
+        paper_status['error_message'] = str(e)
+        return False
+    
+    paper_status['end_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    return True
+
+def get_processing_progress():
+    """獲取處理進度"""
+    if 'total_documents' not in paper_status or paper_status['total_documents'] == 0:
+        progress = 0
+    else:
+        progress = (paper_status['processed_documents'] / 
+                   paper_status['total_documents'] * 100)
+    
+    return {
+        **paper_status,
+        'progress_percentage': round(progress, 2)
+    }
 
 def periodic_cleanup():
     global manager
@@ -237,12 +373,23 @@ def start_scrapying():
     """
 
     if scrapying_status['status'] == 'pending':
-        return Response.client_error('scrapying is pending', scrapying_status)
+        return Response.client_error('scrapying is pending', {
+            'website_status': scrapying_status,
+            # 'paper_status': paper_status
+        })
+
+    # if vectorstore is None:
+    # initialize_vectorstore()
 
     scrapying_website_thread = threading.Thread(target=scrapying_website)
     scrapying_website_thread.start()
 
-    return Response.response('start scrapying successful', scrapying_status)
+    # scrapying_pdf_thread = threading.Thread(target=scrapying_paper)
+    # scrapying_pdf_thread.start()
+    return Response.response('start scrapying successful', {
+        'website_status': scrapying_status,
+        # 'paper_status': paper_status
+    })
 
 
 @retrieval_blueprint.route('/scrapying-status', methods=['GET'])
@@ -310,4 +457,39 @@ def query():
     return Response.response('chat retrieval augmented generation successful', {
         'answer': answer,
         'source_list': source_list
+    })
+
+def create_vectorspace():
+    global embedding,vectorstore
+    try:
+        # Try to load existing vectorstore
+        vectorstore = Chroma(
+            collection_name='info',
+            embedding_function=embedding,
+            persist_directory='./statics/chroma_db'
+        )
+        print(f"Found existing collection: info")
+    except:
+        # Create new vectorstore if it doesn't exist
+        vectorstore = Chroma.from_documents(
+            documents=[],  # Start with empty collection
+            embedding=embedding,
+            collection_name='info',
+            persist_directory='./statics/chroma_db'
+        )
+        print(f"Created new collection: info'")
+
+@retrieval_blueprint.route('/initialize', methods=['GET'])
+def scrapying():
+    if scrapying_status['status'] == 'pending':
+        return Response.client_error('scrapying is pending', {
+            'website_status': scrapying_status,
+            'paper_status': paper_status
+        })
+    create_vectorspace()
+    scrapying_website()
+    scrapying_paper()
+    return Response.response('start scrapying successful', {
+        'website_status': scrapying_status,
+        'paper_status': paper_status
     })
