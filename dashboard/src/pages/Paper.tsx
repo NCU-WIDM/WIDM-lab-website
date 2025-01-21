@@ -121,6 +121,23 @@ const PaperPage = () => {
     }
   };
 
+  const handleDeleteAttachmentSubmit = async () => {
+    try {
+      setLoadingStates(prev => ({ ...prev, handleDeleteAttachmentSubmit: true }));
+      await defaultHttp.delete(`${processDataRoutes.paper}/${editData.id}/paper-attachment`, { headers: storedHeaders() });
+      await fetchPapers();
+      message.success('檔案刪除成功!');
+    } catch (error) {
+      console.error('檔案刪除失敗:', (error as Error).message);
+      message.error('檔案刪除失敗!');
+      if ((error as any).response) {
+        console.error('API Response Error:', (error as any).response.body);
+      }
+    } finally {
+      setLoadingStates(prev => ({ ...prev, handleDeleteAttachmentSubmit: false }));
+    }
+  };
+
   const deletePaper = async (id: number) => {
     try {
       setLoadingStates(prev => ({ ...prev, deletePaper: true }));
@@ -222,7 +239,7 @@ const PaperPage = () => {
           <DynamicTable page={'paper'} data={papers} headers={headers} onDelete={deletePaper} onEdit={handleEditItem} onUploadFile={handleUploadAttachment} onDownloadFile={handleDownloadAttachment} />
         </div>
         <AddItemForm headers={headers} isOpen={isAdding} onClose={handleCloseForm} onSubmit={createPaper} editData={editData} />
-        <UploadAttachmentForm isOpen={isUploading} onClose={handleCloseUploadAttachment} onSubmit={handleUploadAttachmentSubmit} />
+        <UploadAttachmentForm isOpen={isUploading} onClose={handleCloseUploadAttachment} onSubmit={handleUploadAttachmentSubmit} onDelete={handleDeleteAttachmentSubmit}/>
       </DefaultLayout>
     </Spin>
   );

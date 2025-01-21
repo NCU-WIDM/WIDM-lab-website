@@ -1,18 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useRef  } from 'react';
 import { Modal } from 'antd';
 
 interface UploadAttachmentProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (formData: { [key: string]: any }) => void;
+  onDelete: () => void;
 }
 
-const UploadAttachmentForm: React.FC<UploadAttachmentProps> = ({ isOpen, onClose, onSubmit }) => {
+const UploadAttachmentForm: React.FC<UploadAttachmentProps> = ({ isOpen, onClose, onSubmit, onDelete}) => {
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
   const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
+  const [confirmingDelete, setConfirmingDelete] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const clearFile = () => {
     setAttachmentFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,13 +44,26 @@ const UploadAttachmentForm: React.FC<UploadAttachmentProps> = ({ isOpen, onClose
   };
 
   const handleClose = () => {
-    clearFile(); // 關閉時清除檔案
     onClose();
+    clearFile(); // 關閉時清除檔案
+  };
+
+  const handleDeleteClick = (shouldDelete: boolean) => {
+    setConfirmingDelete(shouldDelete);
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmingDelete(false);
+  };
+
+  const handleConfirmDelete = () => {
+    onDelete();
+    setConfirmingDelete(false);
   };
 
   return (
     <Modal
-      title="Upload Image"
+      title="Upload Paper Attachment"
       open={isOpen}
       onCancel={handleClose}
       footer={null}
@@ -55,6 +74,7 @@ const UploadAttachmentForm: React.FC<UploadAttachmentProps> = ({ isOpen, onClose
         <div>
           <label className="mb-3 block text-black dark:text-white">附檔 (會覆蓋原有檔案)</label>
           <input
+            ref={fileInputRef}
             type="file"
             accept="*/*"
             onChange={handleFileChange}
@@ -75,8 +95,42 @@ const UploadAttachmentForm: React.FC<UploadAttachmentProps> = ({ isOpen, onClose
           >
             上傳
           </button>
+          <button
+            type="button"
+            onClick={() => handleDeleteClick(true)}
+            className="rounded-md border border-red-500 bg-red-500 py-3 px-6 text-white"
+          >
+            刪除
+          </button>
         </div>
       </form>
+        <Modal
+          title="確認刪除"
+          open={confirmingDelete}
+          onCancel={handleCancelDelete}
+          footer={null}
+          width={400} // 設置確認刪除Modal寬度
+        >
+          <div className="p-6">
+            <p className="mb-4 text-black dark:text-white">是否確定刪除此檔案?</p>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={handleCancelDelete}
+                className="rounded-md border border-stroke bg-transparent py-2 px-4 text-black dark:text-white"
+              >
+                關閉
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                className="rounded-md border border-red-500 bg-red-500 py-2 px-4 text-white"
+              >
+                確定
+              </button>
+            </div>
+          </div>
+        </Modal>
     </Modal>
   );
 };

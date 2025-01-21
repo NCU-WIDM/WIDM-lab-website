@@ -368,6 +368,33 @@ def get_paper_attachment(paper_id):
         download_name=paper.title + Path(paper.attachment_path).suffix
     )
 
+@paper_blueprint.route('<paper_id>/paper-attachment', methods=['DELETE'])
+def delete_paper_attachment(paper_id):
+    """
+    delete paper
+    ---
+    tags:
+      - paper
+    parameters:
+      - in: path
+        name: paper_id
+        type: integer
+        required: true
+    responses:
+      200:
+        description: delete paper successfully
+        schema:
+          id: paper
+      404:
+        description: paper_id not exist
+    """
+    paper = Paper.query.get(paper_id)
+    if paper.attachment_path:
+        os.remove(paper.attachment_path)
+    paper.attachment_path = None
+    db.session.commit()
+    return Response.response('delete paper attachment successfully', paper.to_dict())
+
 def get_paper_by_uuid():
     paper = {}
     
