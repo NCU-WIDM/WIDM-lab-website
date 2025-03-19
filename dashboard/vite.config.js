@@ -20,6 +20,7 @@ export default defineConfig(() => {
       },
     },
     server: {
+      allowedHosts: ['widm.csie.ncu.edu.tw'],
       host: '0.0.0.0',
     },
   };

@@ -16,7 +16,7 @@ const { Option } = Select;
 interface ProjectTask {
   id: number;
   parent_id: number;
-  project_id: number;
+  project_id: string;
   content: string;
   sub_title: string;
   title: string;
@@ -131,12 +131,13 @@ const ProjectPage = () => {
   const handleAddTask = async (selectedValue: string, taskDetails: creatTaskData) => {
     try {
       setLoadingStates(prev => ({ ...prev, handleAddTask: true }));
-      let project_id = 0;
+      console.log(selectedValue);
+      let project_id = '';
       let parent_id = 0;
       if (selectedValue.startsWith('project-')) {
-        project_id = parseInt(selectedValue.split('-')[1], 10);
+        project_id = selectedValue.split('-')[1];
       } else if (selectedValue.startsWith('task-')) {
-        project_id = parseInt(selectedValue.split('-')[1], 10);
+        project_id = selectedValue.split('-')[1];
         parent_id = parseInt(selectedValue.split('-')[2], 10);
       }
 
@@ -250,7 +251,7 @@ const ProjectPage = () => {
     await fetchProjectsTask(info.node.key as number);
   };
 
-  const handleSelectChange = (id: number) => {
+  const handleSelectChange = (id: string) => {
     fetchProjectsTasks(id);
     setProjectId(id);
     setProjectTask(null);

@@ -27,7 +27,7 @@ const ProjectPage = () => {
   type PickerMode = 'date' | 'week' | 'month' | 'quarter' | 'year'; // 定義PickerMode類型
 
   const headers = [
-    { id: 'id', Name: 'Id', isShow: 'false', isEnable: "false", type: 'Number' },
+    { id: 'id', Name: 'Id', isShow: 'false', isEnable: "false", type: 'String' },
     { id: 'name', Name: '專案名稱', isShow: 'true', type: 'String', required: 'true', style: { minWidth: '250px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
     { id: 'description', Name: '專案描述', isShow: 'true', type: 'Textarea', style: { minWidth: '500px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
     { id: 'summary', Name: '專案摘要', isShow: 'true', type: 'Textarea', style: { minWidth: '500px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },

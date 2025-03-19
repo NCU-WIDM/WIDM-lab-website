@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from uuid import uuid4
 from pathlib import Path
 from json import dumps
@@ -102,11 +103,12 @@ def post_project():
 
     tags = dumps(tags)
     members = dumps(members)
-
+    id = re.sub(r'[^\w\s]', '', name).replace(' ','-').lower()
     start_time = datetime.strptime(start_time, '%Y-%m') if start_time else None
     end_time = datetime.strptime(end_time, '%Y-%m') if end_time else None
 
     project = Project(
+        id = id,
         name=name,
         description=description,
         summary=summary,

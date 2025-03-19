@@ -391,6 +391,8 @@ def delete_paper_attachment(paper_id):
     paper = Paper.query.get(paper_id)
     if paper.attachment_path:
         os.remove(paper.attachment_path)
+    else:
+        return Response.not_found('paper attachment not exist')
     paper.attachment_path = None
     db.session.commit()
     return Response.response('delete paper attachment successfully', paper.to_dict())

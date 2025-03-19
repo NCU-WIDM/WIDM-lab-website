@@ -4,6 +4,7 @@ from json import dumps, loads
 
 class Project(db.Model, SchemaMixin):
     __tablename__ = 'project'
+    id = db.Column(db.String(50), nullable=False, unique=True, primary_key=True)
     name = db.Column(db.String(50), nullable=True)
     description = db.Column(db.TEXT, nullable=True)
     summary = db.Column(db.TEXT, nullable=True)
@@ -50,7 +51,7 @@ class ProjectTask(db.Model, SchemaMixin):
     members = db.Column(db.Text)
     content = db.Column(db.Text)
     papers = db.Column(db.Text)
-    project_id = db.Column(db.Integer, db.ForeignKey('project.id', ondelete="CASCADE"))
+    project_id = db.Column(db.String(50), db.ForeignKey('project.id', ondelete="CASCADE"))
     parent_id = db.Column(db.Integer, nullable=True)
 
     def to_dict(self):

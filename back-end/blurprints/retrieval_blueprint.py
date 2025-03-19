@@ -25,6 +25,8 @@ from langchain_community.document_loaders import AsyncHtmlLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_transformers import MarkdownifyTransformer
 from langchain.schema import Document
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
 
 # from langchain_core.runnables import RunnablePassthrough
 
@@ -182,11 +184,89 @@ def scrapying_website():
     scrapying_status['status'] = 'finished'
     scrapying_status['end_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
+def enhance_question(question):
+    print('start enhance', flush=True)
+     # 創建優化提示模板
+    optimize_template = PromptTemplate(
+        input_variables=["original_query"],
+        template="""你是一個專業的學術查詢優化系統，負責將使用者的查詢轉換為標準化的中文學術問句。
+
+資料範圍：
+- 學術論文資訊（中英文）
+- 實驗室專案介紹
+- 指導教授研究方向和專案
+- 實驗室成員資訊
+- 研究成果展示
+
+處理流程：
+
+1. 輸入檢查階段：
+   - 檢查是否包含錯別字
+   - 檢查專有名詞拼寫是否正確
+   - 檢查英文論文標題格式是否完整
+   - 如發現錯誤，先進行修正
+
+2. 標準化處理：
+   - 必須以「請問」開頭
+   - 確保句尾有問號
+   - 每次只處理一個主題
+   - 保持句子結構完整
+
+3. 專有名詞規範：
+   - 張嘉惠老師 → 張嘉惠教授(Chia-Hui Chang)
+   - 英文論文標題保持原文，加引號
+   - 專業術語採用「中文(English)」格式
+
+4. 語法檢查：
+   - 確認主謂賓結構完整
+   - 檢查量詞使用
+   - 確認介詞使用正確
+   - 避免贅字重複
+
+輸入查詢：{original_query}
+
+如果發現輸入有誤，請先更正，再進行標準化處理。然後只輸出一個完整的標準問句。
+"""
+    )
+    
+    # 創建優化鏈
+    
+    optimization_chain = LLMChain(
+        llm=llm,
+        prompt=optimize_template
+    )
+    
+    try:
+        # 執行優化
+        optimized_query = optimization_chain.run(original_query=question)
+        result = {
+            'original': question,
+            'optimized': optimized_query.strip()
+        }
+        
+        # 輸出優化結果
+        print("\n查詢優化結果:", flush=True)
+        print(f"原始查詢: {result['original']}", flush=True)
+        print(f"優化查詢: {result['optimized']}", flush=True)
+        
+        return result
+    except Exception as e:
+        error_result = {
+            'original': question,
+            'optimized': question,
+            'error': str(e)
+        }
+        print(f"\n查詢優化失敗: {str(e)}", flush=True)
+        return error_result
 
 def chat_with_rag(user_id, question):
     global manager
     chain = manager.get_chain_for_user(user_id)
-    result = chain({"question": question})
+    print("Before enhance call", flush=True)
+    enhance_result = enhance_question(question)
+    optimized_question = enhance_result['optimized']
+    print(optimized_question, flush=True)
+    result = chain({"question": optimized_question})
 
     answer = result['answer']
     source_list = [source.metadata['source'] for source in result['source_documents']]

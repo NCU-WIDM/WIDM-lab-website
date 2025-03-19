@@ -16,7 +16,7 @@ const ProjectCard = ({ project_id, title, description, summary, project_link, gi
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   return (
-    <div className="md p-4 md:w-1/2" style={{ maxWidth: '544px' }}>
+    <div className="md p-4 md:w-1/3" style={{ maxWidth: '544px' }}>
       <div className="h-full transform overflow-hidden rounded-md border-2 border-solid border-gray-200 bg-transparent bg-opacity-20 transition duration-500 hover:scale-105 hover:rounded-md hover:border-primary-500 hover:bg-gray-200 dark:border-gray-700 dark:hover:border-primary-500 dark:hover:bg-gray-800">
         <div className="p-6">
           <Link
@@ -28,7 +28,7 @@ const ProjectCard = ({ project_id, title, description, summary, project_link, gi
               <div className="flex justify-center my-2 w-full h-52">
                 {icon_existed ? (
                   <img
-                    className="w-44 h-44 invert-0 dark:invert"
+                    className="w-30 h-30 invert-0 dark:invert"
                     src={`${API_URL}/project/${project_id}/project-icon`}  // 使用環境變數的 API URL
                     alt="Project Icon"
                     onError={(e) => e.target.style.display = 'none'}
@@ -39,7 +39,7 @@ const ProjectCard = ({ project_id, title, description, summary, project_link, gi
                 )}
               </div>
             </div>
-            <p className="mb-3 text-2xl font-bold leading-8 tracking-tight text-black dark:text-white">{title}</p>
+            <p className="mb-3 text-3xl font-bold leading-8 tracking-tight text-black dark:text-white">{title}</p>
             {/* <p className="prose mb-3 max-w-none text-gray-500 dark:text-gray-400">{description}</p> */}
             <p className="prose mb-3 max-w-none text-gray-500 dark:text-gray-400">{displaySummary}</p>
           </Link>
