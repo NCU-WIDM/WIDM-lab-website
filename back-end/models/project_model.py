@@ -10,6 +10,7 @@ class Project(db.Model, SchemaMixin):
     summary = db.Column(db.TEXT, nullable=True)
     tags = db.Column(db.TEXT, nullable=True)
     link = db.Column(db.String(255), nullable=True)
+    types = db.Column(db.Text)
     icon_path = db.Column(db.String(255), nullable=True)
     github = db.Column(db.String(255), nullable=True)
     members = db.Column(db.TEXT, nullable=True)
@@ -23,6 +24,7 @@ class Project(db.Model, SchemaMixin):
     def to_dict(self):
         self.tags = loads(self.tags)
         self.members = loads(self.members)
+        self.types = loads(self.types)
         icon_existed = True if self.icon_path else False
         self.start_time = datetime.strftime(self.start_time, '%Y-%m') if self.start_time else None
         self.end_time = datetime.strftime(self.end_time, '%Y-%m') if self.end_time else None
@@ -34,6 +36,7 @@ class Project(db.Model, SchemaMixin):
             'summary': self.summary,
             'tags': self.tags,
             'link': self.link,
+            'types': self.types,
             'github': self.github,
             'members': self.members,
             'start_time': self.start_time,

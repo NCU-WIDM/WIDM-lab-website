@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import siteMetadata from '@/data/siteMetadata';
-import ProjectCard from '@/components/ProjectCard';
+import ProjectType from '@/components/ProjectType'; 
 import { PageSEO } from '@/components/SEO';
 import { defaultHttp } from 'utils/http';
 import { processDataRoutes } from 'routes/api';
@@ -19,6 +19,21 @@ const Projects = ({ projectsDatas, timeoutError }) => {
     return null; // 發生超時時，不渲染內容
   }
 
+  // 按類別
+  const groupedProjects = {};
+
+  projectsDatas.forEach((project) => {
+    const categories = Array.isArray(project.types) && project.types.length > 0 ? project.types : ['other'];
+    categories.forEach((type) => {
+      if (!groupedProjects[type]) {
+        groupedProjects[type] = [];
+      }
+      groupedProjects[type].push(project);
+    });
+  });
+  
+  const sortedTypes = Object.keys(groupedProjects).sort();
+
   return (
     <>
       <PageSEO
@@ -34,22 +49,8 @@ const Projects = ({ projectsDatas, timeoutError }) => {
         <div className="container py-12">
           <div className="m-4 flex flex-wrap">
             {!projectsDatas.length && <h2 className="text-lg">No Projects found.</h2>}
-            {projectsDatas.map((d) => (
-              <ProjectCard
-                key={d.id}
-                project_id={d.id}
-                title={d.name}
-                description={d.description}
-                summary={d.summary}
-                github={d.github}
-                tags={d.tags}
-                icon={d.icon}
-                members={d.members}
-                start_time={d.start_time}
-                end_time={d.end_time}
-                project_link={d.link}
-                icon_existed={d.icon_existed}
-              />
+            {sortedTypes.map((type) => (
+              <ProjectType projects={groupedProjects[type]} />
             ))}
           </div>
         </div>

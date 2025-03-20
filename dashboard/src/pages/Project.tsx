@@ -35,6 +35,7 @@ const ProjectPage = () => {
     { id: 'link', Name: '專案連結', isShow: 'true', isEnable: "false", type: 'Url', style: { minWidth: '100px', whiteSpace: 'normal', textAlign: 'center' } },
     { id: 'tags', Name: '專案標籤', isShow: 'true', type: 'SelectItems', data: [] },
     { id: 'members', Name: '人員', isShow: 'true', type: 'SelectItems', data: [], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
+    { id: 'types', Name: '專案類別', isShow: 'true', type: 'SelectItems', required: 'false', data: ['AILA', 'Story Bot/Eduactional Agent'], style: { minWidth: '100px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' }},
     { id: 'start_time', Name: '開始時間', isShow: 'true', type: 'Date', dateType: ['month','YYYY-MM'] as [PickerMode, string], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' }, required: 'true' },
     { id: 'end_time', Name: '結束時間', isShow: 'true', type: 'Date', dateType: ['month','YYYY-MM'] as [PickerMode, string], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'imageActions', Name: 'project-icon', isShow: 'false', type: 'Null' },
@@ -66,6 +67,7 @@ const ProjectPage = () => {
         link: formData.link || '',
         tags: formData.tags || [],
         members: formData.members || [],
+        types: formData.types || [],
         start_time: formData.start_time || '',
         end_time: formData.end_time || ''
       };
