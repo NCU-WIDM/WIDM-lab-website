@@ -10,7 +10,8 @@ class Project(db.Model, SchemaMixin):
     summary = db.Column(db.TEXT, nullable=True)
     tags = db.Column(db.TEXT, nullable=True)
     link = db.Column(db.String(255), nullable=True)
-    types = db.Column(db.Text)
+    types = db.Column(db.Text, nullable=True)
+    sequence = db.Column(db.Integer, nullable=True)
     icon_path = db.Column(db.String(255), nullable=True)
     github = db.Column(db.String(255), nullable=True)
     members = db.Column(db.TEXT, nullable=True)
@@ -25,6 +26,7 @@ class Project(db.Model, SchemaMixin):
         self.tags = loads(self.tags)
         self.members = loads(self.members)
         self.types = loads(self.types)
+        # self.sequence = loads(self.sequence)
         icon_existed = True if self.icon_path else False
         self.start_time = datetime.strftime(self.start_time, '%Y-%m') if self.start_time else None
         self.end_time = datetime.strftime(self.end_time, '%Y-%m') if self.end_time else None
@@ -37,6 +39,7 @@ class Project(db.Model, SchemaMixin):
             'tags': self.tags,
             'link': self.link,
             'types': self.types,
+            'sequence': self.sequence,
             'github': self.github,
             'members': self.members,
             'start_time': self.start_time,

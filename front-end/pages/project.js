@@ -32,6 +32,15 @@ const Projects = ({ projectsDatas, timeoutError }) => {
     });
   });
   
+  // 對每個類別中的專案進行排序
+  Object.keys(groupedProjects).forEach(type => {
+    groupedProjects[type].sort((a, b) => {
+      const seqA = a.sequence || 0;
+      const seqB = b.sequence || 0;
+      return seqA - seqB;
+    });
+  });
+  
   const sortedTypes = Object.keys(groupedProjects).sort();
 
   return (

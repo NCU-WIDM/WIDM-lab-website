@@ -15,7 +15,7 @@ const ProjectPage = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [editData, setEditData] = useState<{ [key: string]: any } | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-
+  const [types, setTypes] = useState<any[]>([]);
   // - Loading
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStates, setLoadingStates] = useState({});    // 儲存各個API的loading狀態
@@ -35,7 +35,8 @@ const ProjectPage = () => {
     { id: 'link', Name: '專案連結', isShow: 'true', isEnable: "false", type: 'Url', style: { minWidth: '100px', whiteSpace: 'normal', textAlign: 'center' } },
     { id: 'tags', Name: '專案標籤', isShow: 'true', type: 'SelectItems', data: [] },
     { id: 'members', Name: '人員', isShow: 'true', type: 'SelectItems', data: [], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
-    { id: 'types', Name: '專案類別', isShow: 'true', type: 'SelectItems', required: 'false', data: ['AILA', 'Story Bot/Eduactional Agent'], style: { minWidth: '100px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' }},
+    { id: 'types', Name: '專案類別', isShow: 'true', type: 'SelectItems', required: 'false', data: types, style: { minWidth: '100px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' }},
+    { id: 'sequence', Name: '專案順序', isShow: 'true', type: 'Number', required: 'false', style: { minWidth: '100px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' }, defaultValue: 0},
     { id: 'start_time', Name: '開始時間', isShow: 'true', type: 'Date', dateType: ['month','YYYY-MM'] as [PickerMode, string], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' }, required: 'true' },
     { id: 'end_time', Name: '結束時間', isShow: 'true', type: 'Date', dateType: ['month','YYYY-MM'] as [PickerMode, string], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'imageActions', Name: 'project-icon', isShow: 'false', type: 'Null' },
@@ -49,6 +50,10 @@ const ProjectPage = () => {
       });
       const data = response.data.response;
       setProjects(data);
+      let uniqueTypes = [...new Set(data.flatMap(project => project.types))];
+      uniqueTypes = uniqueTypes.concat('Other');
+      setTypes(uniqueTypes);
+      console.log(types)
     } catch (error) {
       handleErrorResponse(error);
     } finally {
@@ -69,7 +74,8 @@ const ProjectPage = () => {
         members: formData.members || [],
         types: formData.types || [],
         start_time: formData.start_time || '',
-        end_time: formData.end_time || ''
+        end_time: formData.end_time || '',
+        sequence: formData.sequence || 0
       };
 
 

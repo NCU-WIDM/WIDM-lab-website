@@ -95,11 +95,11 @@ def post_project():
       400:
         description: no ['project_name'] in json
     """
-    if not api_input_check(['name', 'description', 'summary', 'tags', 'link', 'types', 'github', 'members','start_time','end_time'], request.json):
-        return Response.client_error("no ['name', 'description', 'summary', 'tags', 'types', 'link', 'github', 'members','start_time','end_time'] in json")
+    if not api_input_check(['name', 'description', 'summary', 'tags', 'link', 'types', 'sequence', 'github', 'members','start_time','end_time'], request.json):
+        return Response.client_error("no ['name', 'description', 'summary', 'tags', 'types', 'sequence', 'link', 'github', 'members','start_time','end_time'] in json")
 
-    name, description, summary, tags, types, link, github, members, start_time, end_time= api_input_get(
-        ['name', 'description', 'summary', 'tags', 'types', 'link', 'github', 'members','start_time','end_time'], request.json)
+    name, description, summary, tags, types, sequence, link, github, members, start_time, end_time= api_input_get(
+        ['name', 'description', 'summary', 'tags', 'types', 'sequence', 'link', 'github', 'members','start_time','end_time'], request.json)
 
     tags = dumps(tags)
     members = dumps(members)
@@ -116,6 +116,7 @@ def post_project():
         tags=tags,
         link=link,
         types=types,
+        sequence=sequence,
         github=github,
         members=members,
         start_time=start_time,
@@ -290,7 +291,9 @@ def patch_project(project_id):
     if 'members' in request.json:
         project.members = json.dumps(request.json['members'])
     if 'types' in request.json:
-      project.types = dumps(request.json['types'])
+        project.types = dumps(request.json['types'])
+    if 'sequence' in request.json:
+        project.sequence = request.json['sequence']
     if 'start_time' in request.json:
         project.start_time = datetime.strptime(request.json['start_time'], '%Y-%m') \
             if request.json['start_time'] else None

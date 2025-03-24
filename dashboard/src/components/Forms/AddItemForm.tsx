@@ -13,6 +13,7 @@ interface Header {
   Name: string;
   isShow: string | boolean;
   type: string;
+  sequence?: number;
   data?: any;
   dateType?: [PickerMode, string];
   required?: string;
