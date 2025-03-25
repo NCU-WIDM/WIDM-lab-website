@@ -30,6 +30,7 @@ const PaperPage = () => {
     { id: 'id', Name: 'Id', isShow: 'false', isEnable: "false", type: 'Number' },
     { id: 'title', Name: '標題', isShow: 'true', type: 'String', required: 'true', style: { minWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
     { id: 'sub_title', Name: '副標題', isShow: 'true', type: 'String', required: 'false', style: { minWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
+    { id: 'description', Name: '論文摘要', isShow: 'true', type: 'String', require: 'false', style: { minWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' }},
     { id: 'origin', Name: '會議、發布地', isShow: 'true', type: 'String', required: 'false', style: { minWidth: '100px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'detail_origin', Name: '詳細會議、發布地', isShow: 'true', type: 'String', required: 'false', style: { minWidth: '100px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
     { id: 'publish_year', Name: '發布時間', isShow: 'true', type: 'Date', required: 'true', dateType: ['month','YYYY-MM'] as [PickerMode, string], style: { minWidth: '150px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' } },
@@ -62,6 +63,7 @@ const PaperPage = () => {
       const newPaper = {
         title: formData.title,
         sub_title: formData.sub_title || '',
+        description: formData.description || '',
         origin: formData.origin || '',
         detail_origin: formData.detail_origin || '',
         publish_year: formData.publish_year || '',

@@ -112,8 +112,8 @@ def post_paper():
     # title, sub_title, authors, tags, publish_year, origin, link, types = api_input_get(
     #     ['title', 'sub_title', 'authors', 'tags', 'publish_year', 'origin', 'link', 'types'], request.json
     # )
-    title, sub_title, authors, tags, publish_year, origin, detail_origin, link, types = api_input_get(
-        ['title', 'sub_title', 'authors', 'tags', 'publish_year', 'origin', 'detail_origin', 'link', 'types'], request.json
+    title, sub_title, description, authors, tags, publish_year, origin, detail_origin, link, types = api_input_get(
+        ['title', 'sub_title', 'description', 'authors', 'tags', 'publish_year', 'origin', 'detail_origin', 'link', 'types'], request.json
     )
 
     # try:
@@ -128,6 +128,7 @@ def post_paper():
     paper = Paper(
         title=title,
         sub_title=sub_title,
+        description=description,
         authors=authors,
         tags=tags,
         publish_year=publish_year,
@@ -235,6 +236,8 @@ def patch_paper(paper_id):
         paper.title = request.json['title']
     if 'sub_title' in request.json:
         paper.sub_title = request.json['sub_title']
+    if 'description' in request.json:
+        paper.description = request.json['description']
     if 'authors' in request.json:
         paper.authors = dumps(request.json['authors'])
     if 'tags' in request.json:

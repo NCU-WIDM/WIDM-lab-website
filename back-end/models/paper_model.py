@@ -6,6 +6,7 @@ class Paper(db.Model, SchemaMixin):
     __tablename__ = 'paper'
     title = db.Column(db.Text)
     sub_title = db.Column(db.Text)
+    description = db.Column(db.Text)
     authors = db.Column(db.Text)
     tags = db.Column(db.Text)
     publish_year = db.Column(db.String(30))
@@ -26,6 +27,7 @@ class Paper(db.Model, SchemaMixin):
             'id': self.id,
             'title': self.title,
             'sub_title': self.sub_title,
+            'description': self.description,
             'authors': self.authors,
             'tags': self.tags,
             'publish_year': self.publish_year,
