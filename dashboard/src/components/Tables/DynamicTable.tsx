@@ -209,7 +209,14 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
                             <FaLink />
                           </a>
                         </div>
-                      ) : ( // 顯示文字
+                      ) : header.type === 'Textarea' && row[header.id] ? ( // 顯示textarea
+                        <div
+                          className="text-black dark:text-white inline-block max-w-full"
+                          style={{ maxWidth: '100%' }}  // 使用 max-width 來防止內容超出表格邊界
+                        >
+                          {(row[header.id] ? row[header.id].slice(0,100) + (row[header.id].length>100?'...':''):'No description about this project.')}
+                        </div>
+                      ) :( // 顯示文字
                         <div
                           className="text-black dark:text-white inline-block max-w-full"
                           style={{ maxWidth: '100%' }}  // 使用 max-width 來防止內容超出表格邊界
