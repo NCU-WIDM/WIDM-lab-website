@@ -214,7 +214,7 @@ const DynamicTable: React.FC<TableProps> = ({ page, headers, data, onDelete, onE
                           className="text-black dark:text-white inline-block max-w-full"
                           style={{ maxWidth: '100%' }}  // 使用 max-width 來防止內容超出表格邊界
                         >
-                          {row[header.id].length > 100 ? row[header.id].substring(0, 100) + '...' : row[header.id]}
+                          {row[header.id]}
                         </div>
                       )}
                       {header.effect === 'importance' && (
