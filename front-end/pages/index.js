@@ -72,12 +72,14 @@ export default function Home() {
     const responseMessage = { sender: 'api', text: response.data.response.answer }; // 單一解答
     // console.log(response.data.response)
     const responseSourceLink = response.data.response.source_list; // 連結列表 (list)
-    const linksource = responseSourceLink
-      .map((link, index) => {
-        const isLastLink = index === responseSourceLink.length - 1;
-        return `<a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a>${isLastLink ? '' : '<br>'}`;
-      })
-      .join('');
+    const linksource = Array.isArray(responseSourceLink) && responseSourceLink.length > 0
+    ? responseSourceLink
+        .map((link, index) => {
+          const isLastLink = index === responseSourceLink.length - 1;
+          return `<a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a>${isLastLink ? '' : '<br>'}`;
+        })
+        .join('')
+    : '';
     const combinedMessage = {
       sender: 'api',
       text: linksource ? `${marked(responseMessage.text)}<br>${linksource}` : responseMessage.text,

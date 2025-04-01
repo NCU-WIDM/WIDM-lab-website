@@ -213,81 +213,6 @@ def scrapying_website():
 
     scrapying_status['status'] = 'finished'
     scrapying_status['end_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-def enhance_question(question):
-    print('start enhance', flush=True)
-     # 創建優化提示模板
-    optimize_template = PromptTemplate(
-        input_variables=["original_query"],
-        template="""你是一個專業的學術查詢優化系統，負責將使用者的查詢轉換為標準化的中文學術問句。
-
-資料範圍：
-- 學術論文資訊（中英文）
-- 實驗室專案介紹
-- 指導教授研究方向和專案
-- 實驗室成員資訊
-- 研究成果展示
-
-處理流程：
-
-1. 輸入檢查階段：
-   - 檢查是否包含錯別字
-   - 檢查專有名詞拼寫是否正確
-   - 檢查英文論文標題格式是否完整
-   - 如發現錯誤，先進行修正
-
-2. 標準化處理：
-   - 必須以「請問」開頭
-   - 確保句尾有問號
-   - 每次只處理一個主題
-   - 保持句子結構完整
-
-3. 專有名詞規範：
-   - 張嘉惠老師 → 張嘉惠教授(Chia-Hui Chang)
-   - 英文論文標題保持原文，加引號
-   - 專業術語採用「中文(English)」格式
-
-4. 語法檢查：
-   - 確認主謂賓結構完整
-   - 檢查量詞使用
-   - 確認介詞使用正確
-   - 避免贅字重複
-
-輸入查詢：{original_query}
-
-如果發現輸入有誤，請先更正，再進行標準化處理。然後只輸出一個完整的標準問句。
-"""
-    )
-    
-    # 創建優化鏈
-    
-    optimization_chain = LLMChain(
-        llm=llm,
-        prompt=optimize_template
-    )
-    
-    try:
-        # 執行優化
-        optimized_query = optimization_chain.run(original_query=question)
-        result = {
-            'original': question,
-            'optimized': optimized_query.strip()
-        }
-        
-        # 輸出優化結果
-        print("\n查詢優化結果:", flush=True)
-        print(f"原始查詢: {result['original']}", flush=True)
-        print(f"優化查詢: {result['optimized']}", flush=True)
-        
-        return result
-    except Exception as e:
-        error_result = {
-            'original': question,
-            'optimized': question,
-            'error': str(e)
-        }
-        print(f"\n查詢優化失敗: {str(e)}", flush=True)
-        return error_result
         
 def enhance_question(question,intent):
     print('start enhance', flush=True)
@@ -473,30 +398,6 @@ def enhance_question(question,intent):
         }
         return error_result
 
-def chat_with_rag(user_id, question):
-    global manager
-    chain = manager.get_chain_for_user(user_id)
-    print("Before enhance call", flush=True)
-    enhance_result = enhance_question(question)
-    optimized_question = enhance_result['optimized']
-    print(optimized_question, flush=True)
-    result = chain({"question": optimized_question})
-
-    answer = result['answer']
-    source_list = [source.metadata['source'] for source in result['source_documents']]
-    temp = []
-    after_list = []
-    for link in source_list:
-        if after_list is None:
-            temp.append(link.replace('/',''))
-            after_list.append(link)
-        else:
-            if link.replace('/','') not in temp:
-                temp.append(link.replace('/',''))
-                after_list.append(link)
-    # after_list = clean_list_with_rag(user_id,source_list)
-    return answer, after_list
-
 def classify_intent(question):
     print('start classify', flush=True)
      # 創建優化提示模板
@@ -508,7 +409,7 @@ def classify_intent(question):
 
 可用類別：
 1. paper：與 WIDM 實驗室成員發表的學術論文相關的查詢
-   - 包含：論文題目、作者、發表年份、會議/期刊資訊、研究主題
+   - 包含：論文題目、作者、發表年份、會議/期刊資訊、研究主題或方向
    - 關鍵詞：論文、發表、研究成果、下載、引用、期刊、會議
    - 範例查詢：
      * "請問實驗室最近發表的 NLP 相關論文有哪些？"
@@ -524,7 +425,7 @@ def classify_intent(question):
      * "實驗室有做過哪些 AI 相關專案？"
 
 3. other：實驗室一般資訊與其他內容
-   - 包含：實驗室簡介、成員資訊、最新消息、活動資訊、競賽成果、位置資訊
+   - 包含：實驗室簡介、指導教授資訊、成員資訊、最新消息、活動資訊、競賽成果、位置資訊
    - 關鍵詞：成員、消息、活動、競賽、位置、聯絡方式、指導教授
    - 範例查詢：
      * "實驗室目前有哪些博士生？"
@@ -676,23 +577,6 @@ def chat_with_rag(user_id, question):
             'answer': response_text,
             'sources': [source.metadata['source'] for source in result['source_documents']]
         }
-
-    # answer = result['answer']
-    # source_list = [source.metadata['source'] for source in result['source_documents']]
-    # temp = []
-    # after_list = []
-    # for link in source_list:
-    #     if after_list is None:
-    #         temp.append(link.replace('/',''))
-    #         after_list.append(link)
-    #     else:
-    #         if link.replace('/','') not in temp:
-    #             temp.append(link.replace('/',''))
-    #             after_list.append(link)
-    # # after_list = clean_list_with_rag(user_id,source_list)
-    # print(f'answer:{answer}', flush=True)
-    # print(f'after_list:{after_list}', flush=True)
-    # return answer, after_list
 
 # def load_paper():
 #     org_paper = paper_blueprint.get_paper_by_uuid()
