@@ -6,12 +6,14 @@ from queue import Queue
 from datetime import datetime
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-import pdfplumber
+# import pdfplumber
 from pathlib import Path
 from io import BytesIO
-from . import paper_blueprint
+# from . import paper_blueprint
 from google.api.resource_pb2 import resource
 import json
+from datetime import datetime
+from pathlib import Path
 from config import Config
 
 from fastapi.openapi.models import APIKey
@@ -27,13 +29,12 @@ from langchain_community.document_transformers import MarkdownifyTransformer
 from langchain.schema import Document
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
-
 # from langchain_core.runnables import RunnablePassthrough
-
 
 from flask import Blueprint, request, stream_with_context, current_app
 from flask import Response as FlaskResponse
 from models.responses import Response
+import utiles.prompt as prompt
 retrieval_blueprint = Blueprint('retrieval', __name__)
 
 scrapying_status = {
@@ -52,7 +53,7 @@ paper_status = {
 }
 embedding = OpenAIEmbeddings(model='text-embedding-3-small', openai_api_key=Config.OPENAI_KEY)
 llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0, api_key=Config.OPENAI_KEY)
-
+current_log_path = None
 
 class UserMemoryManager:
     def __init__(self, retriever, llm, memory_window=5, inactive_time=36):
@@ -178,7 +179,6 @@ def scrapying_website():
     try:
         root_url = Config.HOME_PAGE_URL
         urls = bfs_website(root_url)
-        
         # 將 URLs 分類
         project_urls, paper_urls, other_urls = categorize_urls(urls)
         
@@ -217,158 +217,12 @@ def scrapying_website():
 def enhance_question(question,intent):
     print('start enhance', flush=True)
     if intent == 'paper':
-        prompt_template = '''你是一個專業的學術查詢優化系統，負責將使用者的查詢轉換為標準化的中文學術問句。
-
-資料範圍：
-- 學術論文資訊（中英文）
-- 實驗室專案介紹
-- 指導教授研究方向和專案
-- 實驗室成員資訊
-- 研究成果展示
-
-處理流程：
-
-1. 輸入檢查階段：
-   - 檢查是否包含錯別字
-   - 檢查專有名詞拼寫是否正確
-   - 檢查英文論文標題格式是否完整
-   - 如發現錯誤，先進行修正
-
-2. 標準化處理：
-   - 必須以「請問」開頭
-   - 確保句尾有問號
-   - 每次只處理一個主題
-   - 保持句子結構完整
-
-3. 專有名詞規範：
-   - 張嘉惠老師 → 張嘉惠教授(Chia-Hui Chang)
-   - 英文論文標題保持原文，加引號
-   - 專業術語採用「中文(English)」格式
-
-4. 語法檢查：
-   - 確認主謂賓結構完整
-   - 檢查量詞使用
-   - 確認介詞使用正確
-   - 避免贅字重複
-
-我需要幫助您明確以下論文相關資訊：
-1. 時間範圍（例如：特定年份、最近幾年）
-2. 研究領域或主題（例如：自然語言處理(NLP)、資料探勘(Data Mining)）
-3. 論文類型（期刊論文、會議論文）
-4. 特定作者或合作單位
-5. 其他具體條件（如：引用次數、影響因子）
-
-輸入查詢：{original_query}
-
-請讓我按照上述流程處理您的問題，使其符合標準化格式。如果發現輸入有誤，會先更正再進行標準化處理。最後只輸出一個完整的標準問句。
-
-範例：
-原始："找張教授的論文"
-標準化："請問張嘉惠教授(Chia-Hui Chang)近期發表的學術論文有哪些？"
-'''
-
+        prompt_template = prompt.enhance_paper
     elif intent == 'project':
-        prompt_template = '''你是一個專業的學術查詢優化系統，負責將使用者的查詢轉換為標準化的中文學術問句。
-
-資料範圍：
-- 學術論文資訊（中英文）
-- 實驗室專案介紹
-- 指導教授研究方向和專案
-- 實驗室成員資訊
-- 研究成果展示
-
-處理流程：
-
-1. 輸入檢查階段：
-   - 檢查是否包含錯別字
-   - 檢查專有名詞拼寫是否正確
-   - 檢查英文論文標題格式是否完整
-   - 如發現錯誤，先進行修正
-
-2. 標準化處理：
-   - 必須以「請問」開頭
-   - 確保句尾有問號
-   - 每次只處理一個主題
-   - 保持句子結構完整
-
-3. 專有名詞規範：
-   - 張嘉惠老師 → 張嘉惠教授(Chia-Hui Chang)
-   - 英文論文標題保持原文，加引號
-   - 專業術語採用「中文(English)」格式
-
-4. 語法檢查：
-   - 確認主謂賓結構完整
-   - 檢查量詞使用
-   - 確認介詞使用正確
-   - 避免贅字重複
-
-我需要幫助您明確以下專案相關資訊：
-1. 專案名稱或類型
-2. 專案階段（進行中、已完成）
-3. 技術重點和應用領域
-4. 研究目標和預期成果
-5. 具體功能或實際應用
-
-輸入查詢：{original_query}
-
-請讓我按照上述流程處理您的問題，使其符合標準化格式。如果發現輸入有誤，會先更正再進行標準化處理。最後只輸出一個完整的標準問句。
-
-範例：
-原始："legal ai專案進度"
-標準化："請問法律人工智慧(Legal AI)專案目前的研究進展和實際應用成果為何？"
-'''
-
+        prompt_template = prompt.enhance_project
     else:
-        prompt_template = '''你是一個專業的學術查詢優化系統，負責將使用者的查詢轉換為標準化的中文學術問句。
-
-資料範圍：
-- 學術論文資訊（中英文）
-- 實驗室專案介紹
-- 指導教授研究方向和專案
-- 實驗室成員資訊
-- 研究成果展示
-
-處理流程：
-
-1. 輸入檢查階段：
-   - 檢查是否包含錯別字
-   - 檢查專有名詞拼寫是否正確
-   - 檢查英文論文標題格式是否完整
-   - 如發現錯誤，先進行修正
-
-2. 標準化處理：
-   - 必須以「請問」開頭
-   - 確保句尾有問號
-   - 每次只處理一個主題
-   - 保持句子結構完整
-
-3. 專有名詞規範：
-   - 張嘉惠老師 → 張嘉惠教授(Chia-Hui Chang)
-   - 英文論文標題保持原文，加引號
-   - 專業術語採用「中文(English)」格式
-
-4. 語法檢查：
-   - 確認主謂賓結構完整
-   - 檢查量詞使用
-   - 確認介詞使用正確
-   - 避免贅字重複
-
-我需要幫助您明確以下一般資訊：
-1. 查詢類型（成員資訊、活動資訊、一般資訊）
-2. 時間範圍（如適用）
-3. 具體對象或主題
-4. 所需資訊的詳細程度
-5. 其他相關條件
-
-輸入查詢：{original_query}
-
-請讓我按照上述流程處理您的問題，使其符合標準化格式。如果發現輸入有誤，會先更正再進行標準化處理。最後只輸出一個完整的標準問句。
-
-範例：
-原始："實驗室博士生"
-標準化："請問網際網路與巨量資料探勘實驗室(WIDM Lab)目前有哪些博士班研究生，以及他們的研究方向？"
-'''
-     # 創建優化提示模板
+        prompt_template = prompt.enhance_other
+    # 創建優化提示模板
     optimize_template = PromptTemplate(
         input_variables=["original_query"],
         template=prompt_template
@@ -403,47 +257,7 @@ def classify_intent(question):
      # 創建優化提示模板
     optimize_template = PromptTemplate(
         input_variables=["original_query"],
-        template="""你是一個智慧型分類助手，負責將查詢內容分類至最相關的類別。
-
-輸入問題：{original_query}
-
-可用類別：
-1. paper：與 WIDM 實驗室成員發表的學術論文相關的查詢
-   - 包含：論文題目、作者、發表年份、會議/期刊資訊、研究主題或方向
-   - 關鍵詞：論文、發表、研究成果、下載、引用、期刊、會議
-   - 範例查詢：
-     * "請問實驗室最近發表的 NLP 相關論文有哪些？"
-     * "想找 2023 年發表的資料探勘相關論文"
-     * "教授近期在哪些期刊發表論文？"
-
-2. project：WIDM 實驗室目前或過去執行的研究專案
-   - 包含：Educational Agent、Legal AI、GITM 等專案內容與進度
-   - 關鍵詞：專案、計畫、技術、研發、成果、demo、系統
-   - 範例查詢：
-     * "想了解 WIDM 的 Legal AI 專案內容"
-     * "Educational Agent 專案目前進度如何？"
-     * "實驗室有做過哪些 AI 相關專案？"
-
-3. other：實驗室一般資訊與其他內容
-   - 包含：實驗室簡介、指導教授資訊、成員資訊、最新消息、活動資訊、競賽成果、位置資訊
-   - 關鍵詞：成員、消息、活動、競賽、位置、聯絡方式、指導教授
-   - 範例查詢：
-     * "實驗室目前有哪些博士生？"
-     * "如何申請加入實驗室？"
-     * "實驗室最近有什麼活動？"
-
-請根據輸入問題，判斷最相關的類別。可以選擇一個或多個類別。
-
-輸出格式要求：
-- 必須是合法的 JSON 格式
-- 僅包含數字陣列：[1] 或 [2] 或 [3] 或 [1,2] 等
-- 數字必須為 1、2 或 3
-- 至少要有一個類別
-
-範例輸出：
-單一類別：[1]
-多個類別：[1,3]
-"""
+        template=prompt.classify_intent
     )
     
     # 創建優化鏈
@@ -490,93 +304,105 @@ def classify_intent(question):
 
 def chat_with_rag(user_id, question):
     global manager
-    chain = manager.get_chain_for_user(user_id)
     intents = classify_intent(question)
-    print(intents, flush=True)
-    print("Before enhance call", flush=True)
-    # enhance_result = enhance_question(question)
-    # optimized_question = enhance_result['optimized']
-    # print(optimized_question, flush=True)
     
     retrieve_result = ''
+    all_sources = []
     
     for intent in intents['intent']:
         if intent == 1:
             enhance_result = enhance_question(question,'paper')
             retriever = vectorstores['paper'].as_retriever()
-            retrieve_result += '參考paper所得到結果：'
+            retrieve_result += '參考paper所得到結果：\n'
         elif intent == 2:
             enhance_result = enhance_question(question,'project')
             retriever = vectorstores['project'].as_retriever()
-            retrieve_result += '參考project所得到結果：'
+            retrieve_result += '參考project所得到結果：\n'
         else:
             enhance_result = enhance_question(question,'other')
             retriever = vectorstores['other'].as_retriever()
-            retrieve_result += '參考other所得到結果：'
+            retrieve_result += '參考other所得到結果：\n'
+            
         optimized_question = enhance_result['optimized']
-        manager = UserMemoryManager(retriever, llm, inactive_time=300)
-        chain = manager.get_chain_for_user(user_id)
-        result = chain({"question": optimized_question})
         
-        # 收集當前檢索的來源
-        current_sources = [source.metadata['source'] for source in result['source_documents']]
-        # all_sources.extend(current_sources)
+        # 使用檢索器獲取文檔
+        docs = retriever.get_relevant_documents(optimized_question)
+        current_sources = [doc.metadata['source'] for doc in docs]
+        all_sources.extend(current_sources)
         
-        retrieve_result += f'''回覆：{result["answer"]}
-        參考來源：{current_sources}'''
-        
-        print(f'answer:{result["answer"]}', flush=True)
-        print(f"source:{current_sources}", flush=True)
-
+        # 將文檔內容加入檢索結果
+        context = "\n".join([doc.page_content for doc in docs])
+        retrieve_result += f"相關資訊：{context}\n參考來源：{current_sources}\n\n"
+    # 使用單一 prompt 生成最終回答
     final_prompt = PromptTemplate(
-        template="""基於以下檢索到的資訊，請提供一個完整且連貫的回答。
-問題：{question}
-
-檢索到資訊：{context}
-
-請根據以上資訊提供回答。要求：
-1. 回答要有條理、邏輯性強
-2. 整合所有相關資訊
-3. 如果資訊有衝突，請說明並解釋
-
-請提供一個 JSON 格式的回答，格式如下：
-{{
-    "answer": "你的回答內容",
-    "sources": ["來源1", "來源2", ...]  # 按照實際使用的來源順序列出
-}}
-
-請確保輸出是有效的 JSON 格式。""",
+        template=prompt.generate_result,
         input_variables=["question", "context"]
     )
+    
     final_chain = LLMChain(llm=llm, prompt=final_prompt)
     response_text = final_chain.run(
         question=question,
         context=retrieve_result
     )
-    
     try:
-        response_json = json.loads(response_text)
-        # 確保回應包含必要的欄位
-        if not all(k in response_json for k in ['answer', 'sources']):
-            raise ValueError("回應缺少必要的欄位")
-            
-        temp = []
-        after_list = []
-        for link in response_json['sources']:
-            if after_list is None:
-                temp.append(link.replace('/',''))
-                after_list.append(link)
-            else:
-                if link.replace('/','') not in temp:
-                    temp.append(link.replace('/',''))
-                    after_list.append(link)
-        return response_json['answer'], after_list
+        print(response_text)
+        response_json = json.loads(response_text.replace('`','').replace('json',''))
+        
+        # 去重並保持順序
+        unique_sources = []
+        [unique_sources.append(x) for x in response_json['sources'] if x not in unique_sources]
+        
+        # 記錄日誌
+        log_retrieval(
+            query=question,
+            intents=intents['intent'],
+            retrieve_result=retrieve_result,
+            response=response_json['answer'],
+            sources=unique_sources
+        )
+        
+        return response_json['answer'], unique_sources
         
     except json.JSONDecodeError:
-        return {
-            'answer': response_text,
-            'sources': [source.metadata['source'] for source in result['source_documents']]
+        # 如果 JSON 解析失敗，創建一個標準格式的回應
+        fallback_response = {
+            "answer": response_text,  # 直接使用 LLM 的回應
+            "sources": unique_sources
         }
+        
+        # 記錄日誌
+        log_retrieval(
+            query=question,
+            intents=intents['intent'],
+            retrieve_result=retrieve_result,
+            response=fallback_response['answer'],
+            sources=fallback_response['sources']
+        )
+        
+        return fallback_response['answer'], fallback_response['sources']
+
+def log_retrieval(query, intents, retrieve_result, response, sources):
+    global current_log_path
+    
+    # 如果還沒有創建文件，則創建一個
+    if current_log_path is None:
+        current_time = datetime.now().strftime('%Y%m%d_%H%M%S')
+        current_log_path = f'statics/retrieve/retrieval_log_{current_time}.jsonl'
+    
+    # 創建記錄對象
+    log_entry = {
+        "timestamp": datetime.now().isoformat(),
+        "query": query,
+        "intents": intents,
+        "retrieve_result": retrieve_result,
+        "response": response,
+        "sources": sources
+    }
+    
+    # 直接追加寫入，使用自定義格式
+    with open(current_log_path, 'a', encoding='utf-8') as f:
+        json.dump(log_entry, f, ensure_ascii=False, indent=4)
+        f.write('\n')
 
 # def load_paper():
 #     org_paper = paper_blueprint.get_paper_by_uuid()
@@ -856,42 +682,6 @@ def create_vectorspace():
             )
             vectorstores[name] = vectorstore
             print(f"Created new collection: {name}")
-    # try:
-    #     # Try to load existing vectorstore
-    #     vectorstore = Chroma(
-    #         collection_name='info',
-    #         embedding_function=embedding,
-    #         persist_directory='./statics/chroma_db'
-    #     )
-    #     print(f"Found existing collection: info")
-    # except:
-    #     # Create new vectorstore if it doesn't exist
-    #     vectorstore = Chroma.from_documents(
-    #         documents=[],  # Start with empty collection
-    #         embedding=embedding,
-    #         collection_name='info',
-    #         persist_directory='./statics/chroma_db'
-    #     )
-    #     print(f"Created new collection: info'")
-
-# def create_vectorspace():
-#     global embedding, vectorstore
-#     try:
-#         # Try to load existing vectorstore with specified collection name
-#         vectorstore = Chroma(
-#             embedding_function=embedding,
-#             persist_directory='./statics/chroma_db'
-#         )
-#         print(f"Found existing vector db")
-#     except:
-#         # Create new vectorstore if it doesn't exist
-#         vectorstore = Chroma.from_documents(
-#             documents=[],  # Start with empty collection
-#             embedding=embedding,
-#             persist_directory='./statics/chroma_db'
-#         )
-#         print(f"Created new vector db")
-#     return vectorstore
 
 @retrieval_blueprint.route('/initialize', methods=['GET'])
 def scrapying():
@@ -902,6 +692,7 @@ def scrapying():
         })
     create_vectorspace()
     scrapying_website()
+
     # scrapying_paper()
     return Response.response('start scrapying successful', {
         'website_status': scrapying_status,

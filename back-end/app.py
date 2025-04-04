@@ -79,4 +79,5 @@ if __name__ == '__main__':
     Path('statics/images').mkdir(parents=True, exist_ok=True)
     Path('statics/attachments').mkdir(parents=True, exist_ok=True)
     Path('statics/chroma_db').mkdir(parents=True, exist_ok=True)
+    Path('statics/retrieve').mkdir(parents=True, exist_ok=True)
     app.run(host=app.config['HOST'], port=app.config['PORT'])
