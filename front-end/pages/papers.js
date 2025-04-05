@@ -5,6 +5,7 @@ import PaperListLayout from '@/layouts/PaperListLayout';
 import { PageSEO } from '@/components/SEO';
 import { defaultHttp } from 'utils/http';
 import { processDataRoutes } from 'routes/api';
+import Link from '@/components/Link';
 
 const Papers = ({ posts, initialDisplayPosts, timeoutError }) => {
   const router = useRouter();

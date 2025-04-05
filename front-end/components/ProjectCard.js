@@ -12,80 +12,161 @@ const ProjectCard = ({ project_id, title, description, summary, project_link, gi
   const displaySummary = isEmpty(summary)
     ? (description ? description.slice(0, 80) + (description.length > 80 ? '...' : '') : 'No description about this project.')
     : summary;
-  // 使用環境變數來設置 API URL
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   return (
-    // <div className="md p-4 md:w-1/3" style={{ maxWidth: '544px' }}>
-      <div className="h-full transform overflow-hidden rounded-md border-2 border-solid border-gray-200 bg-transparent bg-opacity-20 transition duration-500 hover:scale-105 hover:rounded-md hover:border-primary-500 hover:bg-gray-200 dark:border-gray-700 dark:hover:border-primary-500 dark:hover:bg-gray-800">
-        <div className="p-6">
-          <Link
-            href={`/projectTasks/${project_id}`}
-            key={project_id}
-            className="hover:scale-105 transition-transform duration-300"
-          >
-            <div className="flex flex-row items-center justify-between">
-              <div className="flex justify-center my-2 w-full h-52">
-                {icon_existed ? (
-                  <img
-                    className="w-30 h-30 invert-0 dark:invert"
-                    src={`${API_URL}/project/${project_id}/project-icon`}  // 使用環境變數的 API URL
-                    alt="Project Icon"
-                    onError={(e) => e.target.style.display = 'none'}
-                  />
-                ) : (
-                  <div className="w-44 h-44"></div> // 保留空間但不顯示內容
-                  // <UiwFolder className="w-full h-5/6 invert-0 dark:invert" />
-                )}
-              </div>
+    <div className={`w-full h-full flex flex-col overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 hover:shadow-xl dark:bg-gray-800 dark:shadow-gray-700/30
+      ${project_link ? 'border-l-4 border-blue-500 dark:border-blue-400' : ''}
+      ${project_link ? 'hover:scale-105 hover:-translate-y-1' : 'hover:shadow-xl'}
+    `}>
+      <Link
+        href={`/projectTasks/${project_id}`}
+        key={project_id}
+        className="flex flex-col flex-grow"
+      >
+        <div className="relative overflow-hidden bg-gray-100 dark:bg-gray-700 pt-[56.25%]">
+          {project_link && (
+            <div className="absolute top-0 right-0 z-10 m-2">
+              <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 animate-pulse">
+                <span className="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                Live Demo
+              </span>
             </div>
-            <p className="mb-3 text-3xl font-bold leading-8 tracking-tight text-black dark:text-white">{title}</p>
-            {/* <p className="prose mb-3 max-w-none text-gray-500 dark:text-gray-400">{description}</p> */}
-            <p className="prose mb-3 max-w-none text-gray-500 dark:text-gray-400">{displaySummary}</p>
-          </Link>
+          )}
+          {icon_existed ? (
+            <img
+              className="absolute top-0 left-0 h-full w-full object-contain p-4"
+              src={`${API_URL}/project/${project_id}/project-icon`}
+              alt={title}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = '/static/images/placeholder.svg';
+              }}
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <UiwFolder className="w-16 h-16 text-gray-400 dark:text-gray-500" />
+            </div>
+          )}
+        </div>
 
-          <div className="flex flex-row justify-between">
-            {tags && tags.length > 0 && (
-              <div className="text-sm text-gray-400">
-                {tags.map((tag, index) => (
-                  <span key={index}>
-                    {tag}
-                    {index < tags.length - 1 && ' \u2022 '}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="flex flex-row justify-between">
-            {members && members.length > 0 && (
-              <div className="text-sm text-gray-400">
-                {members.map((member, index) => (
-                  <span key={index}>
-                    {member}
-                    {index < members.length - 1 && ' \u2022 '}
-                  </span>
-                ))}
-              </div>
-            )}
-            <div className="flex flex-row justify-between">
-              <div className="mx-1.5">
-                {project_link ? <SocialIcon kind="website" href={project_link} size="6" /> : null}
-              </div>
-              <div className="mx-1.5">
-                {github ? <SocialIcon kind="github" href={github} size="6" /> : null}
-              </div>
+        <div className="flex flex-col flex-grow p-6">
+          <h3 className="mb-2 text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
+            {title}
+          </h3>
+          
+          {tags && tags.length > 0 && (
+            <div className="mb-3 flex flex-wrap gap-2">
+              {tags.map((tag, index) => (
+                <span 
+                  key={index} 
+                  className="inline-block rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                >
+                  {tag}
+                </span>
+              ))}
             </div>
+          )}
+          
+          <p className="flex-grow mb-4 text-sm text-gray-600 dark:text-gray-400">
+            {displaySummary}
+          </p>
+          
+          {project_link && (
+            <a 
+              href={project_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mb-4 inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="mr-2 h-4 w-4" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" 
+                />
+              </svg>
+              Try Demo
+            </a>
+          )}
+          
+          {start_time && (
+            <div className="mt-auto mb-3 flex items-center text-xs text-gray-500 dark:text-gray-400">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="mr-1.5 h-3.5 w-3.5" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                />
+              </svg>
+              <span>{end_time ? `${start_time} - ${end_time}` : `${start_time} - now`}</span>
+            </div>
+          )}
+        </div>
+      </Link>
+
+      <div className="border-t border-gray-200 bg-gray-50 px-6 py-3 dark:border-gray-700 dark:bg-gray-800/70">
+        <div className="flex items-center justify-between">
+          {members && members.length > 0 && (
+            <div className="flex-1 truncate text-xs text-gray-500 dark:text-gray-400">
+              <span className="font-medium">Contributors: </span>
+              {members.map((member, index) => (
+                <span key={index} className="inline-block">
+                  {member}
+                  {index < members.length - 1 && <span className="mx-1">•</span>}
+                </span>
+              ))}
+            </div>
+          )}
+          
+          <div className="flex space-x-3">
+            {project_link && (
+              <a 
+                href={project_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                onClick={(e) => e.stopPropagation()}
+                title="Visit project website"
+              >
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-6 w-6" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" 
+                  />
+                </svg>
+              </a>
+            )}
+            {github && (
+              <SocialIcon kind="github" href={github} size="6" />
+            )}
           </div>
-          {start_time ? (
-            <div className="flex flex-row justify-between">
-                <div className="text-sm text-gray-400">
-                  {end_time ? `${start_time} - ${end_time}` : `${start_time} - now`}
-                </div>
-            </div>)
-          : null}
         </div>
       </div>
-    // </div>
+    </div>
   )
 }
 

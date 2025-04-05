@@ -7,8 +7,10 @@ import { defaultHttp } from 'utils/http';
 import { FaFileDownload, FaExternalLinkAlt } from 'react-icons/fa'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useRouter } from 'next/router'
 
 export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
+  const router = useRouter();
   const [error, setError] = useState(null)
   const [searchValue, setSearchValue] = useState('')
   const [selectedTypes, setSelectedTypes] = useState([])  // 儲存選中的 type 條件
@@ -102,11 +104,11 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
         <ul className="list-none">
           {!filteredPapersPosts.length && <h2 className="m-2 text-lg">No Papers found.</h2>}
           {displayPosts.map((frontMatter) => {
-            const { id, uniqueId, authors, link, origin, publish_year, tags, title, sub_title, types, update_time } = frontMatter
+            const { id, uniqueId, authors, link, origin, publish_year, tags, title, sub_title, types, update_time, paper_existed } = frontMatter
             return (
               <li
                 key={`li-paper-${id}-${uniqueId}`}
-                className="list-none py-6 transition duration-100 hover:scale-105 hover:rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="list-none py-6 transition duration-100 hover:scale-105 hover:rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
                 style={{ maxHeight: '280px', overflow: 'hidden', transition: 'max-height 0.3s ease-in-out' }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.maxHeight = 'none'; 
@@ -121,6 +123,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
                   originElement.style.overflow = 'hidden'; 
                   originElement.textContent = origin.split(' ').slice(0, 10).join(' ') + (origin.split(' ').length > 10 ? '...' : ''); 
                 }}
+                onClick={() => router.push(`/papers/${id}`)}
               >
                 <article className="space-y-2 bg-transparent bg-opacity-20 p-2 transition duration-200 hover:rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 xl:grid xl:grid-cols-2 xl:items-baseline xl:space-y-3">
                   <dl>
@@ -173,7 +176,10 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
                           <div className="relative group flex items-center">
                             <FaExternalLinkAlt
                               className={`text-4xl ${link === '' ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500 cursor-pointer'}`}
-                              onClick={() => link && window.open(link, '_blank')}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                link && window.open(link, '_blank')
+                              }}
                               style={{ pointerEvents: link === '' ? 'none' : 'auto' }}
                             />
                             <div className={`absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-1 text-xs text-white bg-gray-600 rounded shadow-lg ${!link ? 'text-gray-400 cursor-not-allowed' : 'text-gray-800 cursor-pointer'} group-hover:flex hidden whitespace-nowrap`}>
@@ -184,12 +190,15 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
                           {/* Tooltip for FaFileDownload */}
                           <div className="relative group flex items-center">
                             <FaFileDownload
-                              className={`text-4xl cursor-pointer ${frontMatter.paper_existed === false ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500'}`}
-                              onClick={() => frontMatter.paper_existed && download_attachment(id)}
-                              style={{ pointerEvents: frontMatter.paper_existed === true ? 'auto' : 'none' }}
+                              className={`text-4xl cursor-pointer ${paper_existed === false ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500'}`}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                paper_existed && download_attachment(id)
+                              }}
+                              style={{ pointerEvents: paper_existed === true ? 'auto' : 'none' }}
                             />
-                            <div className={`absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-1 text-xs text-white bg-gray-600 rounded shadow-lg ${frontMatter.paper_existed === false ? 'text-gray-400 cursor-not-allowed' : 'text-gray-800 cursor-pointer'} group-hover:flex hidden whitespace-nowrap`}>
-                              {frontMatter.paper_existed === true ? '檔案下載' : '無檔案'}
+                            <div className={`absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-1 text-xs text-white bg-gray-600 rounded shadow-lg ${paper_existed === false ? 'text-gray-400 cursor-not-allowed' : 'text-gray-800 cursor-pointer'} group-hover:flex hidden whitespace-nowrap`}>
+                              {paper_existed === true ? '檔案下載' : '無檔案'}
                             </div>
                           </div>
                         </div>
