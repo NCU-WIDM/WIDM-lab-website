@@ -6,7 +6,8 @@ import { motion } from 'framer-motion';
 import eventBus from '../utils/eventBus'; // 引入事件總線
 import { defaultHttp } from 'utils/http'
 import { processDataRoutes } from 'routes/api'
-
+import { marked } from 'marked';
+import { Icon } from '@iconify/react'
 
 export default function LayoutMessage() {
   const [messages, setMessages] = useState([]);
@@ -76,7 +77,23 @@ export default function LayoutMessage() {
       }
     });
     const responseMessage = { sender: 'api', text: response.data.response.answer };
-    const finalMessages = [...updatedMessages.slice(0, -1), responseMessage];
+    const responseSourceLink = response.data.response.source_list;
+    const linksource = Array.isArray(responseSourceLink) && responseSourceLink.length > 0
+    ? responseSourceLink
+        .map((link, index) => {
+          const isLastLink = index === responseSourceLink.length - 1;
+          return `<a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a>${isLastLink ? '' : '<br>'}`;
+        })
+        .join('')
+    : '';
+    const combinedMessage = {
+      sender: 'api',
+      text: linksource ? `${marked(responseMessage.text)}<br>${linksource}` : responseMessage.text,
+    };
+    const finalMessages = [
+      ...updatedMessages.slice(0, -1), // 保留原來的訊息，移除最後一個
+      combinedMessage, // 插入合併後的訊息
+    ];
 
     if (finalMessages.length > 15) {
       finalMessages.shift(); // 移除最舊的訊息
@@ -120,7 +137,7 @@ export default function LayoutMessage() {
       setIsComposing(false);
     }
   };
-
+  
   return (
     <>
       <motion.button
@@ -171,7 +188,9 @@ export default function LayoutMessage() {
                             style={{ maxWidth: '80%', wordBreak: 'break-word' }}
                           >
                             {msg.sender !== 'time' && (
-                              <p className="text-gray-800 dark:text-gray-100">{msg.text}</p>
+                              <p className="text-gray-800 dark:text-gray-100">
+                                {msg.text === 'loading' ? <Icon icon="svg-spinners:3-dots-bounce" style={{'color': 'black'}} /> : <span dangerouslySetInnerHTML={{ __html: msg.text }} />}
+                              </p>
                             )}
                           </div>
                         </div>
