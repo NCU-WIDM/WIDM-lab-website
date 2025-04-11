@@ -311,7 +311,7 @@ def chat_with_rag(user_id, question):
     
     for intent in intents['intent']:
         if intent == 1:
-            enhance_result = enhance_question(question,'paper')
+            enhance_result = enhance_question(question,'paper') # 擴大問題範圍
             retriever = vectorstores['paper'].as_retriever()
             retrieve_result += '參考paper所得到結果：\n'
         elif intent == 2:
@@ -325,7 +325,7 @@ def chat_with_rag(user_id, question):
             
         optimized_question = enhance_result['optimized']
         
-        # 使用檢索器獲取文檔
+        # 使用檢索器獲取文檔(query=enhance_result['optimized'])
         docs = retriever.get_relevant_documents(optimized_question)
         current_sources = [doc.metadata['source'] for doc in docs]
         all_sources.extend(current_sources)
