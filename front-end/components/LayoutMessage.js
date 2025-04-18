@@ -139,9 +139,9 @@ export default function LayoutMessage() {
   };
   
   return (
-    <>
+    <div className="fixed bottom-4 right-8 z-50">
       <motion.button
-        className="ml-2 mr-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-gray-400 p-1 ring-gray-600 transition-all duration-200 ease-in-out hover:bg-gray-500 hover:ring-2 dark:bg-gray-700 dark:ring-white dark:hover:bg-gray-800"
+        className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-pink-500 p-2 ring-pink-600 transition-all duration-200 ease-in-out hover:bg-pink-600 hover:ring-2 dark:bg-pink-600 dark:ring-white dark:hover:bg-pink-700"
         type="button"
         aria-label="Message button"
         animate={{
@@ -150,7 +150,7 @@ export default function LayoutMessage() {
         transition={{ duration: 0.1, ease: 'easeIn' }}
         onClick={toggleIcon}
       >
-        <BiMessageDetail />
+        <BiMessageDetail className="text-white text-2xl" />
       </motion.button>
       <Transition.Root show={isOpen} as={Fragment}>
         <Dialog onClose={setIsOpen} className="fixed inset-0 z-20 flex items-center justify-center">
@@ -233,6 +233,6 @@ export default function LayoutMessage() {
           </Transition.Child>
         </Dialog>
       </Transition.Root>
-    </>
+    </div>
   );
 }
