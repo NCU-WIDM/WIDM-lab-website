@@ -350,7 +350,7 @@ export default function Home({news,activities}) {
         )}
         
         {activities && activities.length > 0 && (
-          <DisplayMessage title = {'Activate'} info={activities}/>
+          <DisplayMessage title = {'Activity'} info={activities}/>
         )}
         <hr className="my-8"></hr>
         <div className="my-8">
