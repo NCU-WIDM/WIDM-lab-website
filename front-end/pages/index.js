@@ -425,16 +425,16 @@ export async function getStaticProps() {
       ...news,
       uniqueId: `${news.id}-${index}`,
     }));
-    const activates = activityResponse.data.response;
+    const activities = activityResponse.data.response;
 
     // 根據數據量決定要顯示的數量
     const topNews = newsWithId.length >= 3 
       ? newsWithId.slice(0, 3)  // 如果有3筆或以上，顯示前3筆
       : newsWithId.slice(0, newsWithId.length); // 顯示所有現有的
 
-    const topActivities = activates.length >= 3 
-      ? activates.slice(0, 3)  // 如果有3筆或以上，顯示前3筆
-      : activates.slice(0, activates.length); // 顯示所有現有的
+    const topActivities = activities.length >= 3 
+      ? activities.slice(0, 3)  // 如果有3筆或以上，顯示前3筆
+      : activities.slice(0, activities.length); // 顯示所有現有的
     return {
       props: {
         news: topNews,

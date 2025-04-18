@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Activate from '@/components/Activate';
+import Activate from '@/components/Activity';
 import Link from '@/components/Link';
 
 const DisplayMessage = ({ title, info }) => {

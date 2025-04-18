@@ -6,6 +6,6 @@ export const navigation = {
     { name: 'Project', href: '/project' },
     { name: 'Papers', href: '/papers' },
     { name: 'Members', href: '/members' },
-    { name: 'Activate', href: '/activate' },
+    { name: 'Activity', href: '/activity' },
   ],
 }
