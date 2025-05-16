@@ -219,6 +219,10 @@ module.exports = {
           '50%': { filter: 'hue-rotate(180deg)' },
           '100%': { filter: 'hue-rotate(0deg)' },
         },
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-100%)' }
+        },
         'fade-away': {
           '0%': {
             opacity: 1,
@@ -289,6 +293,10 @@ module.exports = {
             opacity: 0,
           },
         },
+        scrolling: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-250%)' }
+        }
       },
       animation: {
         'fade-text': '10s ease-in-out 3s 1 normal forwards running fade-away',
@@ -301,6 +309,13 @@ module.exports = {
         'gradient-foreground-2': 'gradient-foreground-2 8s infinite',
         'gradient-background-3': 'gradient-background-3 8s infinite',
         'gradient-foreground-3': 'gradient-foreground-3 8s infinite',
+        'ping-once': 'ping 5s cubic-bezier(0, 0, 0.2, 1)',
+        rotating: 'rotating 30s linear infinite',
+        'spin-1.5': 'spin 1.5s linear infinite',
+        'spin-2': 'spin 2s linear infinite',
+        'spin-3': 'spin 3s linear infinite',
+        'marquee': 'marquee 15s linear infinite',
+        'scrolling': 'scrolling 10s linear infinite'
       },
     },
   },
