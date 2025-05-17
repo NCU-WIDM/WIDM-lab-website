@@ -26,7 +26,8 @@ const Papers = ({ posts, initialDisplayPosts, timeoutError }) => {
       <PaperListLayout
         posts={posts}
         initialDisplayPosts={initialDisplayPosts}
-        title="Papers"
+        groupBy="year"
+        title="Publication by Year"
       />
     </>
   );

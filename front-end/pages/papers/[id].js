@@ -155,5 +155,4 @@ export async function getStaticProps({ params }) {
     };
   }
 }
-卻
 export default PaperDetail; 
