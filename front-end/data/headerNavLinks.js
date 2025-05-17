@@ -17,8 +17,8 @@ const headerNavLinks = [
     title: 'Papers',
     href: '/papers',
     dropdown: [
-      { title: 'Thesis Advised', href: '/thesis-advised' },
-      { title: 'Publication', href: '/publication' },
+      { title: 'Thesis Advised', href: '/thesis_advised' },
+      { title: 'Publication by Year', href: '/publication_by_year' },
     ],
   },
   { title: 'Members', href: '/members' },
