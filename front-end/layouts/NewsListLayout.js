@@ -31,7 +31,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
       <div className="mx-auto max-w-6xl divide-y divide-gray-400">
         <div className="pt-6 pb-8 md:space-y-5">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
+            <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-5xl md:leading-12">
               {title}
             </h1>
             <div className="flex flex-col md:flex-row gap-4 mt-4 md:mt-0">
