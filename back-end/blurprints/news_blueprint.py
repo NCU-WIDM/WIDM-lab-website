@@ -145,7 +145,8 @@ def post_news():
     news = News(
         title=request.json['title'],
         sub_title=request.json['sub_title'],
-        content=request.json['content']
+        content=request.json['content'],
+        types=request.json.get('types', '')
     )
 
     db.session.add(news)
@@ -188,6 +189,8 @@ def patch_news(news_id):
         news.sub_title = request.json['sub_title']
     if 'content' in request.json:
         news.content = request.json['content']
+    if 'types' in request.json:
+        news.types = request.json['types']
 
     db.session.commit()
     return Response.response('patch news successfully', news.to_dict())
