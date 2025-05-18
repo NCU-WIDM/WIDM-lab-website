@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Paths */
+    "baseUrl": ".",  // 添加 baseUrl
+    "paths": {
+      "domain/api-client/*": ["domain/api-client/*"]  // 添加 paths 配置
+    }
+  },
+  "include": [
+    "src",
+    "src/lib.d.ts",
+    "src/vite-env.d.ts",  // 確保包含 vite-env.d.ts 文件
+    "domain/api-client"  // 添加 domain/api-client 到 include 路徑
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
