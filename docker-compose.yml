@@ -1,0 +1,106 @@
+version: '3.8'
+
+services:
+  widm-dashboard-end:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: widm-dashboard-end
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_END_POINT=/dash
+
+      - VITE_API_URL=http://widm.csie.ncu.edu.tw/api
+      - VITE_REDIRECT_URI=http://widm.csie.ncu.edu.tw/api/auth/return-to
+      - VITE_CLIENT_ID=20241224114804R6cxm7M4T8gP
+
+      - VITE_AUTHORITY=https://portal.ncu.edu.tw
+      - VITE_TOKEN_ENDPOINT=https://portal.ncu.edu.tw/oauth2/token
+      - VITE_AUTHORIZATION_ENDPOINT=https://portal.ncu.edu.tw/oauth2/authorization
+      - VITE_USERINFO_ENDPOINT=https://portal.ncu.edu.tw/apis/oauth/v1/info
+      
+      - VITE_WEB_URL=http://widm.csie.ncu.edu.tw/
+      - VITE_DASHBOARD_URL=http://widm.csie.ncu.edu.tw/dash/
+    networks:
+      - nginx_proxy
+      - backend_network
+
+  widm-front-end:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    container_name: widm-front-end
+    ports:
+      - "7230:7230"
+      - "24678:24678"
+    environment:
+      - NEXT_PUBLIC_API_URL=https://widm.csie.ncu.edu.tw/api
+    networks:
+      - nginx_proxy
+      - backend_network
+
+  widm-backend:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+    container_name: widm-back-end
+    environment:
+      SQLALCHEMY_DATABASE_URI: mysql+pymysql://widm:widmwidm@widm-database:3306/backend
+      OPENAI_KEY: 
+      BASIC_AUTH: MjAyNDEyMjQxMTQ4MDRSNmN4bTdNNFQ4Z1A6TUE1UnNvTk9ZcmZIeDN0TWY0T0p3VHQ5bnJCdHkweHAzVDVmbHlIcThvZW14akZhcmc1MDJ4
+      DASH_BOARD_URL: http://widm.csie.ncu.edu.tw/dash/
+      HOME_PAGE_URL: http://widm.csie.ncu.edu.tw
+    ports:
+      - "5025:5025"
+    volumes:
+      - ./statics:/app/statics
+      - ./instance:/app/instance
+    depends_on:
+      widm-database:
+        condition: service_healthy
+    restart: always
+    networks:
+      - nginx_proxy
+      - backend_network
+
+  widm-database:
+    image: mysql:8
+    container_name: widm-database
+    environment:
+      MYSQL_ROOT_PASSWORD: widmwidm
+      MYSQL_DATABASE: backend
+      MYSQL_USER: widm
+      MYSQL_PASSWORD: widmwidm
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "widm", "-pwidmwidm" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - backend_network
+
+  widm-phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: widm-phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: widm-database
+      MYSQL_ROOT_PASSWORD: widmwidm
+    restart: always
+    networks:
+      - nginx_proxy
+      - backend_network
+
+networks:
+  nginx_proxy:
+    external: true
+  backend_network:
+    internal: true
+
+volumes:
+  mysql_data:
