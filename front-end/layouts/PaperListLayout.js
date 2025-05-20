@@ -59,9 +59,13 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], gro
     const keywords = searchValue.toLowerCase().split(' ').filter(Boolean)
 
     const isKeywordMatch = keywords.every((keyword) => searchContent.toLowerCase().includes(keyword))
-    const isTypeMatch = selectedTypes.length === 0 || selectedTypes.some((type) => frontMatter.types.includes(type))
+    const isGroupMatch = selectedTypes.length === 0 ||
+      (groupBy === 'year'
+        ? selectedTypes.includes(frontMatter.publish_year ? frontMatter.publish_year.toString().slice(0, 4) : '')
+        : selectedTypes.some((type) => frontMatter.types.includes(type))
+      );
 
-    return isKeywordMatch && isTypeMatch
+    return isKeywordMatch && isGroupMatch
   })
 
   const displayPosts =
@@ -79,52 +83,52 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], gro
     }
   });
 
-  const download_attachment = async (id) => {
-    try {
-      const response = await defaultHttp.get(
-        `${processDataRoutes.paper}/${id}/paper-attachment`, 
-        { 
-          responseType: 'blob',
-          timeout: 10000 
-        }
-      );
+  // const download_attachment = async (id) => {
+  //   try {
+  //     const response = await defaultHttp.get(
+  //       `${processDataRoutes.paper}/${id}/paper-attachment`, 
+  //       { 
+  //         responseType: 'blob',
+  //         timeout: 10000 
+  //       }
+  //     );
   
-      if (response.status === 200) {
-        const contentDisposition = response.headers['content-disposition'];
-        let fileName = 'downloaded-file';
+  //     if (response.status === 200) {
+  //       const contentDisposition = response.headers['content-disposition'];
+  //       let fileName = 'downloaded-file';
   
-        if (contentDisposition && contentDisposition.includes('attachment')) {
-          const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-          if (fileNameMatch && fileNameMatch[1]) {
-            fileName = fileNameMatch[1].replace(/['"]/g, '');
-          }
-        }
+  //       if (contentDisposition && contentDisposition.includes('attachment')) {
+  //         const fileNameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+  //         if (fileNameMatch && fileNameMatch[1]) {
+  //           fileName = fileNameMatch[1].replace(/['"]/g, '');
+  //         }
+  //       }
   
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', fileName);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
+  //       const url = window.URL.createObjectURL(new Blob([response.data]));
+  //       const link = document.createElement('a');
+  //       link.href = url;
+  //       link.setAttribute('download', fileName);
+  //       document.body.appendChild(link);
+  //       link.click();
+  //       document.body.removeChild(link);
+  //       window.URL.revokeObjectURL(url);
   
-        toast.success('檔案下載成功！');
-        return true;
-      }
-      throw new Error('檔案下載失敗！');
-    } catch (error) {
-      console.error('檔案下載失敗:', error.message);
-      if (error.code === 'ECONNABORTED') {
-        toast.error('下載超時！請稍後再試。');
-      } else if (error.response?.status === 404) {
-        toast.error('檔案不存在！');
-      } else {
-        toast.error('檔案下載失敗！');
-      }
-      return false;
-    }
-  };
+  //       toast.success('檔案下載成功！');
+  //       return true;
+  //     }
+  //     throw new Error('檔案下載失敗！');
+  //   } catch (error) {
+  //     console.error('檔案下載失敗:', error.message);
+  //     if (error.code === 'ECONNABORTED') {
+  //       toast.error('下載超時！請稍後再試。');
+  //     } else if (error.response?.status === 404) {
+  //       toast.error('檔案不存在！');
+  //     } else {
+  //       toast.error('檔案下載失敗！');
+  //     }
+  //     return false;
+  //   }
+  // };
       
   return (
       <>
@@ -158,7 +162,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], gro
                   />
                 </svg>
               </div>
-              <div className="w-full md:w-48">
+              <div className="w-full md:w-64">
                 <MultiSelect selectedTypes={selectedTypes} setSelectedTypes={setSelectedTypes} typeOptions={groupOptions} />
               </div>
             </div>
@@ -219,7 +223,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], gro
                                       {frontMatter.link !== '' ? '連結'  : '無連結' }
                                     </div>
                                   </div>
-                                  <div className="relative group flex items-center">
+                                  {/* <div className="relative group flex items-center">
                                     <FaFileDownload
                                       className={`text-2xl cursor-pointer ${frontMatter.paper_existed === false ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500'}`}
                                       onClick={(e) => {
@@ -231,7 +235,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], gro
                                     <div className={`absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-1 text-xs text-white bg-gray-600 rounded shadow-lg ${frontMatter.paper_existed === false ? 'text-gray-400 cursor-not-allowed' : 'text-gray-800 cursor-pointer'} group-hover:flex hidden whitespace-nowrap`}>
                                       {frontMatter.paper_existed === true ? '檔案下載' : '無檔案'}
                                     </div>
-                                  </div>
+                                  </div> */}
                                 </div>
                               </div>
                             </div>
