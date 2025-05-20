@@ -58,7 +58,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
                   />
                 </svg>
               </div>
-              <div className="w-full md:w-48">
+              <div className="w-full md:w-64">
                 <select
                   value={selectedType}
                   onChange={(e) => setSelectedType(e.target.value)}
