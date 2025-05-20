@@ -1,17 +1,7 @@
 const headerNavLinks = [
   { title: 'Home', href: '/' },
   { title: 'Advisor', href: '/advisor' },
-  { 
-    title: 'News',
-    href: '/news',
-    dropdown: [
-      { title: 'External Award', href: '/news' },
-      { title: 'School Award', href: '/news' },
-      { title: 'Seminar', href: '/news' },
-      { title: 'Undergraduate Research Project Scholarship', href: '/news' },
-      { title: 'Other', href: '/news' },
-    ],
-  },
+  { title: 'News',href: '/news'},
   { title: 'Project', href: '/project' },
   {
     title: 'Papers',

@@ -10,6 +10,7 @@ export default function NavDropdown({ title, href, dropdown }) {
       <div 
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
+        className="hover cursor-pointer"
       >
         <div className="flex items-center">
           <Link
