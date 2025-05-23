@@ -208,6 +208,9 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], gro
                                   {frontMatter.origin && frontMatter.origin.length > 0 && (
                                     <p className="text-cyan-600/70">Conference: {frontMatter.origin} {frontMatter.publish_year.slice(0, 4)}</p>
                                   )}
+                                  {frontMatter.publish_year && frontMatter.types.some(type => type.toLowerCase().includes('thesis')) && (
+                                    <p className="text-gray-500">Graduate year: {frontMatter.publish_year.slice(0, 4)}</p>
+                                  )}
                                 </div>
                                 <div className="flex gap-4 items-center w-1/8 justify-end">
                                   <div className="relative group flex items-center">
