@@ -27,16 +27,16 @@ const LayoutWrapper = ({ children }) => {
       <div className="flex h-screen flex-col justify-between">
         <header className="flex flex-col">
           {/* Lab Title */}
-          <div className="w-full border-b border-gray-200 dark:border-gray-700">
+          {/* <div className="w-full border-b border-gray-200 dark:border-gray-700">
             <div className="mx-auto max-w-6xl py-6 sm:py-10 lg:py-8">
               <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-gray-100 sm:text-2xl md:text-4xl">
                 Web Intelligence Data Mining Lab
               </h1>
             </div>
-          </div>
+          </div> */}
 
           {/* Navigation */}
-          <div className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full max-w-6xl pr-4 py-4 sm:pr-6 lg:pr-8">
             <div className="flex items-center justify-between">
 
               <Link href="/" aria-label={siteMetadata.headerTitle}>
