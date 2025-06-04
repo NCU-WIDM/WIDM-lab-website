@@ -36,14 +36,30 @@ const LayoutWrapper = ({ children }) => {
           </div> */}
 
           {/* Navigation */}
-          <div className="mx-auto w-full max-w-6xl pr-4 py-4 sm:pr-6 lg:pr-8">
+          <div className="mx-auto w-full max-w-6xl pr-4 py-4 border-b border-gray-200 dark:border-gray-700 sm:pr-6 lg:pr-8">
             <div className="flex items-center justify-between">
 
-              <Link href="/" aria-label={siteMetadata.headerTitle}>
+              {/* <Link href="/" aria-label={siteMetadata.headerTitle}>
                 <div className="text-primary-color dark:text-primary-color-dark text-lg font-semibold sm:text-xl">
                   {`~${path}`}
                 </div>
-              </Link>
+              </Link> */}
+              {/* # LOGOS */}
+              <div className="flex items-center space-x-4">
+                <Link href="/" aria-label={siteMetadata.headerTitle}>
+                  <div className="flex items-center space-x-3">
+                    <img
+                      src="/static/images/logo.png"
+                      alt="Logo"
+                      className="h-12 w-auto object-contain"
+                    />
+                    <span className="text-xl font-bold text-gray-900 dark:text-white">
+                      Web Intelligence<br className="hidden sm:block" />
+                      &amp; Data Mining
+                    </span>
+                  </div>
+                </Link>
+              </div>
 
               <div className="flex items-center space-x-4">
                 <div className="hidden sm:flex">
