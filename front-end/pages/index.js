@@ -194,7 +194,7 @@ export default function Home({news,activities}) {
           <div className="flex flex-col md:flex-row gap-4 mt-3 items-stretch">
             {/* LAB INFO */}
             <div className="w-full md:w-2/3">
-              <h1 className="text-2xl font-bold leading-8 mb-4 tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl sm:leading-9 md:text-4xl md:leading-10">
+              <h1 className="text-2xl font-bold leading-8 mb-8 tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl sm:leading-9 md:text-4xl md:leading-10">
                 Hello, Here's &nbsp;
                 <span className="text-primary-color-500 dark:text-primary-color-dark-500">WIDM</span>
               </h1>
@@ -205,7 +205,7 @@ export default function Home({news,activities}) {
                   color="#FF0000"
                   animationDelay={300}
                   animationDuration={3000}
-                  padding={5}
+                  padding={8}
                   strokeWidth={1}
                 >
                   <p className="text-base leading-relaxed">{labinfo}</p>
@@ -295,12 +295,17 @@ export default function Home({news,activities}) {
         <div className="pt-6 pb-8 md:space-y-5">
           {/* Prospective Students */}
           <div className="mb-2">
-            <h1 className="text-2xl font-bold leading-8 tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl sm:leading-9 md:text-4xl md:leading-10">
+            <h1 className="text-2xl font-bold leading-8 mb-4 tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl sm:leading-9 md:text-4xl md:leading-10">
               Prospective Students
             </h1>
             <div className="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-4">
               <div className="prose dark:prose-dark max-w-none">
                 <p className="text-base text-gray-600 dark:text-gray-400 mb-2">
+                  Please carefully review WIDM LAB's research areas and recent published papers to ensure that your research direction are consistent with our research activities in the laboratory. Please send your personal resume (CV), academic transcript, and short research proposal to Prof. Chang (
+                  <a href="mailto:chiahui@g.ncu.edu.tw" className="text-blue-600 underline">chiahui@g.ncu.edu.tw</a>
+                  ) to schedule an interview. Priority will be given to students who have taken Professor Chang's courses.
+                </p>
+                <p className="text-base text-gray-600 dark:text-gray-400 mb-2 mt-4">
                   We are looking for motivated students who are interested in:
                 </p>
                 <ul className="list-disc list-inside space-y-1 mt-2 text-base">
@@ -310,9 +315,6 @@ export default function Home({news,activities}) {
                   <li>Knowledge Graphs and Semantic Web</li>
                   <li>Conversational AI and Chatbots</li>
                 </ul>
-                <p className="mt-2 text-base text-gray-600 dark:text-gray-400">
-                  If you are interested in joining our lab, please contact Professor for more information.
-                </p>
               </div>
             </div>
           </div>
