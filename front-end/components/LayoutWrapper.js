@@ -67,10 +67,10 @@ const LayoutWrapper = ({ children }) => {
                     {headerNavLinks.map((link) =>
                       link.dropdown ? (
                         <div
+                        key={link.title}
                         className="link-underline rounded py-1 px-2 text-gray-900 hover:bg-gray-200 dark:text-gray-100 dark:hover:bg-gray-700 sm:py-2 sm:px-3"
                         >
                         <NavDropdown
-                          key={link.title}
                           title={link.title}
                           href={link.href}
                           dropdown={link.dropdown}

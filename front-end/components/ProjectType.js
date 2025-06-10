@@ -13,29 +13,10 @@ const ProjectType = ({ projects }) => {
       <div className="mb-6 flex items-center">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{typeName}</h2>
         <div className="ml-4 h-0.5 flex-grow bg-pink-500"></div>
-        {demoCount > 0 && (
-          <div className="ml-4 flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="mr-1.5 h-4 w-4" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
-              />
-            </svg>
-            {demoCount} Interactive {demoCount === 1 ? 'Demo' : 'Demos'}
-          </div>
-        )}
       </div>
-      <p className="mb-6 text-lg text-gray-600 dark:text-gray-400 max-w-3xl">
+      {/* <p className="mb-6 text-lg text-gray-600 dark:text-gray-400 max-w-3xl">
         {getTypeDescription(typeName)}
-      </p>
+      </p> */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {projects.sort((a, b) => {
           const seqA = a.sequence || 0;
