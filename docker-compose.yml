@@ -13,7 +13,7 @@ services:
 
       - VITE_API_URL=http://widm.csie.ncu.edu.tw/api
       - VITE_REDIRECT_URI=http://widm.csie.ncu.edu.tw/api/auth/return-to
-      - VITE_CLIENT_ID=20241224114804R6cxm7M4T8gP
+      - VITE_CLIENT_ID=20241015055432qRZYk9smXsLH
 
       - VITE_AUTHORITY=https://portal.ncu.edu.tw
       - VITE_TOKEN_ENDPOINT=https://portal.ncu.edu.tw/oauth2/token
@@ -47,8 +47,8 @@ services:
     container_name: widm-back-end
     environment:
       SQLALCHEMY_DATABASE_URI: mysql+pymysql://widm:widmwidm@widm-database:3306/backend
-      OPENAI_KEY: 
-      BASIC_AUTH: MjAyNDEyMjQxMTQ4MDRSNmN4bTdNNFQ4Z1A6TUE1UnNvTk9ZcmZIeDN0TWY0T0p3VHQ5bnJCdHkweHAzVDVmbHlIcThvZW14akZhcmc1MDJ4
+      OPENAI_API_KEY: fake-key-for-development
+      BASIC_AUTH: MjAyNDEwMTUwNTU0MzJxUlpZazlzbVhzTEg6NTc4WEFwbUR3YXgxcjZub2RsUmpqOXVvdnl1TkN3RzAwc0hOYXVaYTVpek5URG9vYnh1c2VtUQ==
       DASH_BOARD_URL: http://widm.csie.ncu.edu.tw/dash/
       HOME_PAGE_URL: http://widm.csie.ncu.edu.tw
     ports:

@@ -8,7 +8,7 @@ const ContentSecurityPolicy = `
   script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app https://maps.googleapis.com https://calendar.google.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net;
   font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net;
-  img-src 'self' blob: data: https://maps.gstatic.com https://maps.googleapis.com https://widm.csie.ncu.edu.tw https://calendar.google.com https://www.google.com;
+  img-src 'self' blob: data: https://maps.gstatic.com https://maps.googleapis.com https://widm.csie.ncu.edu.tw http://widm.csie.ncu.edu.tw https://calendar.google.com https://www.google.com;
   media-src 'none';
   connect-src 'self' https://maps.googleapis.com https://api.iconify.design https://api.simplesvg.com https://api.unisvg.com;
   frame-src giscus.app https://www.google.com https://maps.google.com https://calendar.google.com;
