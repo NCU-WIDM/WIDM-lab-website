@@ -188,62 +188,50 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], gro
                         onMouseLeave={(e) => {
                           e.currentTarget.style.maxHeight = '280px';
                         }}
-                        onClick={() => router.push(`/papers/${frontMatter.id}`)}
                       >
-                        <article className="space-y-2 bg-transparent bg-opacity-20 p-2 transition duration-200 hover:rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 xl:grid xl:grid-cols-2 xl:items-baseline xl:space-y-3">
-                          <div className="space-y-5 xl:col-span-4">
-                            <div className="space-y-1">
-                              <div>
-                                <h2 className="text-xl font-bold leading-6 tracking-tight">
-                                  <span className="text-gray-900 transition duration-500 ease-in-out hover:text-primary-500 dark:text-gray-100 dark:hover:text-primary-500">
-                                    {frontMatter.title}
-                                  </span>
-                                </h2>
-                              </div>
-                              <div className="prose flex max-w-none justify-between text-gray-500 dark:text-gray-400">
-                                <div className="not-prose flex flex-col w-7/8">
-                                  {frontMatter.authors && frontMatter.authors.length > 0 && (
-                                    <p className="text-orange-500">Author: {frontMatter.authors.join(', ')}</p>
-                                  )}
-                                  {frontMatter.origin && frontMatter.origin.length > 0 && (
-                                    <p className="text-cyan-600/70">Conference: {frontMatter.origin} {frontMatter.publish_year.slice(0, 4)}</p>
-                                  )}
-                                  {frontMatter.publish_year && frontMatter.types.some(type => type.toLowerCase().includes('thesis')) && (
-                                    <p className="text-gray-500">Graduate year: {frontMatter.publish_year.slice(0, 4)}</p>
-                                  )}
+                        <a href={`/papers/${frontMatter.id}`} className="block">
+                          <article className="space-y-2 bg-transparent bg-opacity-20 p-2 transition duration-200 hover:rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 xl:grid xl:grid-cols-2 xl:items-baseline xl:space-y-3">
+                            <div className="space-y-5 xl:col-span-4">
+                              <div className="space-y-1">
+                                <div>
+                                  <h2 className="text-xl font-bold leading-6 tracking-tight">
+                                    <span className="text-gray-900 transition duration-500 ease-in-out hover:text-primary-500 dark:text-gray-100 dark:hover:text-primary-500">
+                                      {frontMatter.title}
+                                    </span>
+                                  </h2>
                                 </div>
-                                <div className="flex gap-4 items-center w-1/8 justify-end">
-                                  <div className="relative group flex items-center">
-                                    <FaExternalLinkAlt
-                                      className={`text-2xl ${frontMatter.link === '' ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500 cursor-pointer'}`}
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        frontMatter.link && window.open(frontMatter.link, '_blank')
-                                      }}
-                                      style={{ pointerEvents: frontMatter.link === '' ? 'none' : 'auto' }}
-                                    />
-                                    <div className={`absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-1 text-xs text-white bg-gray-600 rounded shadow-lg ${!frontMatter.link ? 'text-gray-400 cursor-not-allowed' : 'text-gray-800 cursor-pointer'} group-hover:flex hidden whitespace-nowrap`}>
-                                      {frontMatter.link !== '' ? '連結'  : '無連結' }
+                                <div className="prose flex max-w-none justify-between text-gray-500 dark:text-gray-400">
+                                  <div className="not-prose flex flex-col w-7/8">
+                                    {frontMatter.authors && frontMatter.authors.length > 0 && (
+                                      <p className="text-orange-500">Author: {frontMatter.authors.join(', ')}</p>
+                                    )}
+                                    {frontMatter.origin && frontMatter.origin.length > 0 && (
+                                      <p className="text-cyan-600/70">Conference: {frontMatter.origin} {frontMatter.publish_year.slice(0, 4)}</p>
+                                    )}
+                                    {frontMatter.publish_year && frontMatter.types.some(type => type.toLowerCase().includes('thesis')) && (
+                                      <p className="text-gray-500">Graduate year: {frontMatter.publish_year.slice(0, 4)}</p>
+                                    )}
+                                  </div>
+                                  <div className="flex gap-4 items-center w-1/8 justify-end">
+                                    <div className="relative group flex items-center">
+                                      <FaExternalLinkAlt
+                                        className={`text-2xl ${frontMatter.link === '' ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500 cursor-pointer'}`}
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          frontMatter.link && window.open(frontMatter.link, '_blank')
+                                        }}
+                                        style={{ pointerEvents: frontMatter.link === '' ? 'none' : 'auto' }}
+                                      />
+                                      <div className={`absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-1 text-xs text-white bg-gray-600 rounded shadow-lg ${!frontMatter.link ? 'text-gray-400 cursor-not-allowed' : 'text-gray-800 cursor-pointer'} group-hover:flex hidden whitespace-nowrap`}>
+                                        {frontMatter.link !== '' ? '連結'  : '無連結' }
+                                      </div>
                                     </div>
                                   </div>
-                                  {/* <div className="relative group flex items-center">
-                                    <FaFileDownload
-                                      className={`text-2xl cursor-pointer ${frontMatter.paper_existed === false ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500'}`}
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        frontMatter.paper_existed && download_attachment(frontMatter.id)
-                                      }}
-                                      style={{ pointerEvents: frontMatter.paper_existed === true ? 'auto' : 'none' }}
-                                    />
-                                    <div className={`absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-1 text-xs text-white bg-gray-600 rounded shadow-lg ${frontMatter.paper_existed === false ? 'text-gray-400 cursor-not-allowed' : 'text-gray-800 cursor-pointer'} group-hover:flex hidden whitespace-nowrap`}>
-                                      {frontMatter.paper_existed === true ? '檔案下載' : '無檔案'}
-                                    </div>
-                                  </div> */}
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        </article>
+                          </article>
+                        </a>
                       </li>
                     ))}
                   </ul>
