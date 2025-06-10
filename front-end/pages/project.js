@@ -1,8 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import siteMetadata from '@/data/siteMetadata';
-import ProjectCard from '@/components/ProjectCard'; 
-import ProjectCarousel from '@/components/ProjectCarousel';
+import ProjectCard from '@/components/ProjectCard';
 import { PageSEO } from '@/components/SEO';
 import { defaultHttp } from 'utils/http';
 import { processDataRoutes } from 'routes/api';
@@ -21,7 +20,7 @@ const Projects = ({ projectsDatas, timeoutError }) => {
   }
 
   // 根據 sequence 排序所有專案
-  const sortedProjects = projectsDatas.sort((a, b) => {
+  const sortedProjects = [...projectsDatas].sort((a, b) => {
     const seqA = a.sequence || 0;
     const seqB = b.sequence || 0;
     return seqA - seqB;
@@ -31,28 +30,25 @@ const Projects = ({ projectsDatas, timeoutError }) => {
     <>
       <PageSEO
         title={`Projects - ${siteMetadata.author}`}
-        description="A list of projects I have built"
+        description={siteMetadata.description}
       />
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-6xl divide-y divide-gray-400">
         <div className="pt-6 pb-8 md:space-y-5">
-          <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-5xl md:leading-12">
-            Projects
-          </h1>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-5xl md:leading-12">
+              Projects
+            </h1>
+          </div>
         </div>
         
-        {/* 專案輪播展示區域 */}
-        {projectsDatas.length > 0 && (
-          <ProjectCarousel projects={sortedProjects} />
-        )}
-        
-        {!projectsDatas.length && (
-          <div className="text-center py-20">
-            <h2 className="text-xl">No Projects found.</h2>
+        {projectsDatas && projectsDatas.length === 0 && (
+          <div className="text-center text-gray-500 dark:text-gray-400">
+            No projects found.
           </div>
         )}
         
-        {projectsDatas.length > 0 && (
-          <div className="flex flex-col gap-6">
+        {projectsDatas && projectsDatas.length > 0 && (
+          <div className="flex flex-col gap-3">
             {sortedProjects.map((project) => (
               <div key={project.id} className="w-full">
                 <ProjectCard
