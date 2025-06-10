@@ -16,11 +16,12 @@ export default function NavDropdown({ title, href, dropdown }) {
           <Link
             key={title}
             href={href}
+            className="relative inline-block"
           >
-            <span className="relative inline-block">
+            <a className="relative inline-block">
               {title}
               <span className="absolute bottom-0 left-0 w-full h-0.5 bg-current transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
-            </span>
+            </a>
           </Link>
           <Menu.Button 
             className="rounded hover:bg-gray-200 
@@ -79,11 +80,10 @@ export default function NavDropdown({ title, href, dropdown }) {
                       overflow-hidden
                     `}
                   >
-                    <Link
-                      href={item.href}
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {item.title}
+                    <Link href={item.href}>
+                      <a onClick={() => setIsOpen(false)}>
+                        {item.title}
+                      </a>
                     </Link>
                   </div>
                 )}
