@@ -77,7 +77,7 @@ const ProjectCard = ({ project_id, title, description, summary, project_link, gi
       onClick={handleCardClick}
     >
       {/* 內容區域 */}
-      <div className="flex flex-col p-6">
+      <div className="flex flex-col p-3">
         {/* 標題區域 - 包含圖片和專案名稱 */}
         <div className="flex items-center mb-2">
           {/* 專案圖片 - 顯示在標題左側 */}
@@ -103,9 +103,15 @@ const ProjectCard = ({ project_id, title, description, summary, project_link, gi
           </h3>
         </div>
         
-        {tags && tags.length > 0 && (
-          <div className="mb-3 flex flex-wrap gap-2">
-            {tags.map((tag, index) => (
+        <p className="mb-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+          {displaySummary}
+        </p>
+        
+        {/* 底部區域 - 包含標籤和連結 */}
+        <div className="mt-auto flex items-center justify-between">
+          {/* 左側標籤 */}
+          <div className="flex flex-wrap gap-1">
+            {tags && tags.length > 0 && tags.map((tag, index) => (
               <span 
                 key={index} 
                 className="inline-block rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-200"
@@ -114,15 +120,9 @@ const ProjectCard = ({ project_id, title, description, summary, project_link, gi
               </span>
             ))}
           </div>
-        )}
-        
-        <p className="mb-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-          {displaySummary}
-        </p>
-        
-        {/* 底部連結區域 */}
-        <div className="flex justify-end">
-          <div className="flex space-x-3">
+
+          {/* 右側連結 */}
+          <div className="flex flex-shrink-0 space-x-3">
             {project_link && (
               <a 
                 href={project_link}
