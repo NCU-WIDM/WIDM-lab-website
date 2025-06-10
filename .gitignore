@@ -39,3 +39,5 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 statics/chroma_db/chroma.sqlite3
+
+.cursor
