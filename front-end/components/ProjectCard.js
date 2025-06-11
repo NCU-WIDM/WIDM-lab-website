@@ -18,55 +18,8 @@ const ProjectCard = ({ project_id, title, description, summary, project_link, gi
     : summary;
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  const handleCardClick = async () => {
-    console.log('Card clicked for project:', project_id);
-    
-    try {
-      // 使用 fetch 而不是 defaultHttp 來避免 CORS 問題
-      const apiUrl = `/api/project/${project_id}/task`;
-      console.log('Fetching tasks from:', apiUrl);
-      
-      const response = await fetch(apiUrl);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log('API response:', data);
-      
-      const projectTasks = data.response;
-      console.log('Project tasks:', projectTasks);
-      
-      // 如果有任務，跳轉到第一個任務的詳細頁面
-      if (projectTasks && projectTasks.length > 0) {
-        // 根據 parent_id 和 id 排序找到真正的第一個任務
-        const sortedTasks = projectTasks.sort((a, b) => {
-          // 先按 parent_id 排序（父任務優先）
-          if (a.parent_id === 0 && b.parent_id !== 0) return -1;
-          if (a.parent_id !== 0 && b.parent_id === 0) return 1;
-          // 然後按 id 排序
-          return a.id - b.id;
-        });
-        
-        const firstTask = sortedTasks[0];
-        console.log('First task:', firstTask);
-        
-        const targetUrl = `/projectTasks/${project_id}/${firstTask.id}`;
-        console.log('Navigating to first task:', targetUrl);
-        router.push(targetUrl);
-      } else {
-        console.log('No tasks found, navigating to project task list');
-        // 如果沒有任務，跳轉到專案任務列表頁面
-        router.push(`/projectTasks/${project_id}`);
-      }
-    } catch (error) {
-      console.error('Failed to fetch project tasks:', error);
-      console.error('Error details:', error.message);
-      // 發生錯誤時，回退到專案任務列表頁面
-      console.log('Falling back to project task list page');
-      router.push(`/projectTasks/${project_id}`);
-    }
+  const handleCardClick = () => {
+    router.push(`/project/${project_id}`);
   };
 
   return (

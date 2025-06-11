@@ -294,13 +294,11 @@ const AddItemForm: React.FC<AddItemFormProps> = ({ headers, isOpen, onClose, onS
     } else if (header.type === 'jodit') {
       return (
         <JoditEditor
-          key={header.id}
           value={formData[header.id] || ''}
-          onBlur={(newContent) => setFormData({
-            ...formData,
-            [header.id]: newContent,
-          })}
           config={joditConfig}
+          onBlur={(newContent) =>
+            setFormData({ ...formData, [header.id]: newContent })
+          }
         />
       );
     }

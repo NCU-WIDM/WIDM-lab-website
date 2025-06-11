@@ -9,6 +9,8 @@ import { defaultHttp } from '../utils/http';
 import { processDataRoutes } from '../routes/api';
 import { storedHeaders } from '../utils/storedHeaders';
 import { handleErrorResponse } from '../utils';
+import JoditEditor from 'jodit-react';
+import { joditConfig } from '../config/joditConfig';
 
 const ProjectPage = () => {
   const [projects, setProjects] = useState<any[]>([]);
@@ -30,7 +32,8 @@ const ProjectPage = () => {
     { id: 'id', Name: 'Id', isShow: 'false', isEnable: "false", type: 'String' },
     { id: 'name', Name: '專案名稱', isShow: 'true', type: 'String', required: 'true', style: { minWidth: '250px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
     { id: 'description', Name: '專案描述', isShow: 'true', type: 'Textarea', style: { minWidth: '500px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
-    { id: 'summary', Name: '專案摘要', isShow: 'true', type: 'Textarea', style: { minWidth: '500px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
+    { id: 'summary', Name: '專案內容子標題', isShow: 'true', type: 'Textarea', style: { minWidth: '500px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' } },
+    { id: 'content', Name: '專案內容', isShow: 'true', type: 'jodit' },
     { id: 'github', Name: 'GitHub 連結', isShow: 'true', isEnable: "false", type: 'Url', style: { minWidth: '100px', whiteSpace: 'normal', textAlign: 'center' } },
     { id: 'link', Name: '專案連結', isShow: 'true', isEnable: "false", type: 'Url', style: { minWidth: '100px', whiteSpace: 'normal', textAlign: 'center' } },
     { id: 'tags', Name: '專案標籤', isShow: 'true', type: 'SelectItems', data: [] },
@@ -50,7 +53,7 @@ const ProjectPage = () => {
       });
       const data = response.data.response;
       setProjects(data);
-      let uniqueTypes = [...new Set(data.flatMap(project => project.types))];
+      let uniqueTypes = [...new Set(data.flatMap((project: any) => project.types))];
       uniqueTypes = uniqueTypes.concat('Other');
       setTypes(uniqueTypes);
       console.log(types)
@@ -67,6 +70,7 @@ const ProjectPage = () => {
       const newProject = {
         name: formData.name,
         description: formData.description || '',
+        content: formData.content || '',
         summary: formData.summary || '',
         github: formData.github || '',
         link: formData.link || '',
@@ -199,7 +203,7 @@ const ProjectPage = () => {
         <div className="flex flex-col gap-6">
           <DynamicTable page={'project'} data={projects} headers={headers} onDelete={deleteProject} onEdit={handleEditItem} onUploadFile={handleUploadImage} />
         </div>
-        <AddItemForm headers={headers} isOpen={isAdding} onClose={handleCloseForm} onSubmit={createProject} editData={editData} />
+        <AddItemForm headers={headers} isOpen={isAdding} onClose={handleCloseForm} onSubmit={createProject} editData={editData} joditConfig={joditConfig} />
         <UploadImage isOpen={isUploading} onClose={handleCloseUploadImage} onSubmit={handleUploadImageSubmit} />
       </DefaultLayout>
     </Spin>
