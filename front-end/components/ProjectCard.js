@@ -13,9 +13,6 @@ const ProjectCard = ({ project_id, title, description, summary, project_link, gi
   const isEmpty = (str) => {
     return str === undefined || str === null || str.trim() === '';
   };
-  const displaySummary = isEmpty(summary)
-    ? (description || 'No description about this project.')
-    : summary;
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const handleCardClick = () => {
@@ -57,7 +54,7 @@ const ProjectCard = ({ project_id, title, description, summary, project_link, gi
         </div>
         
         <p className="mb-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-          {displaySummary}
+          {description || 'No description about this project.'}
         </p>
         
         {/* 底部區域 - 包含標籤和連結 */}

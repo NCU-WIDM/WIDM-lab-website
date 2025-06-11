@@ -273,26 +273,40 @@ def patch_project(project_id):
       404:
         description: project not found
     """
+
     project = Project.query.get(project_id)
     if not project:
         return Response.not_found("project not found")
 
-    name, description, summary, tags, link, types, sequence, github, members, start_time, end_time, content = api_input_get(
-        ['name', 'description', 'summary', 'tags', 'link', 'types', 'sequence', 'github', 'members', 'start_time', 'end_time', 'content'], request.json)
-
-    project.name = name
-    project.description = description
-    project.summary = summary
-    project.tags = dumps(tags)
-    project.link = link
-    project.types = dumps(types) if types else dumps([])
-    project.sequence = sequence
-    project.github = github
-    project.members = dumps(members)
-    project.start_time = datetime.strptime(start_time, '%Y-%m') if start_time else None
-    project.end_time = datetime.strptime(end_time, '%Y-%m') if end_time else None
-    project.content = content
-
+    if 'name' in request.json:
+        project.name = request.json['name']
+    if 'description' in request.json:
+        project.description = request.json['description']
+    if 'summary' in request.json:
+        project.summary = request.json['summary']
+    if 'content' in request.json:
+        project.content = request.json['content']
+    if 'tags' in request.json:
+        project.tags = dumps(request.json['tags'])
+    if 'link' in request.json:
+        project.link = request.json['link']
+    if 'types' in request.json:
+        project.types = dumps(request.json['types'])
+    if 'sequence' in request.json:
+        project.sequence = request.json['sequence']
+    if 'github' in request.json:
+        project.github = request.json['github']
+    if 'members' in request.json:
+        project.members = dumps(request.json['members'])
+    if 'start_time' in request.json and request.json['start_time']:
+        project.start_time = datetime.strptime(request.json['start_time'], '%Y-%m')
+    else:
+        project.start_time = None
+    if 'end_time' in request.json and request.json['end_time']:
+        project.end_time = datetime.strptime(request.json['end_time'], '%Y-%m')
+    else:
+        project.end_time = None
+    
     db.session.commit()
     return Response.response('patch project successfully', project.to_dict())
 
