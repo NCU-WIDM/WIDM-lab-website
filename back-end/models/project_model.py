@@ -7,6 +7,7 @@ class Project(db.Model, SchemaMixin):
     id = db.Column(db.String(50), nullable=False, unique=True, primary_key=True)
     name = db.Column(db.String(50), nullable=True)
     description = db.Column(db.TEXT, nullable=True)
+    content = db.Column(db.TEXT, nullable=True)
     summary = db.Column(db.TEXT, nullable=True)
     tags = db.Column(db.TEXT, nullable=True)
     link = db.Column(db.String(255), nullable=True)
@@ -35,6 +36,7 @@ class Project(db.Model, SchemaMixin):
             'id': self.id,
             'name': self.name,
             'description': self.description,
+            'content': self.content,
             'summary': self.summary,
             'tags': self.tags,
             'link': self.link,

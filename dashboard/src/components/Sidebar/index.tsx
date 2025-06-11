@@ -322,11 +322,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Project --> */}
 
               {/* <!-- Menu Item Project_Task --> */}
+              {/*
               <li>
                 <NavLink
                   to="/project_task"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname === '/project_task' ? 'bg-graydark dark:bg-meta-4' : ''
+                    pathname.includes('tables') && 'bg-graydark dark:bg-meta-4'
                   }`}
                 >
                   <svg
@@ -344,7 +345,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       />
                     </g>
                     <defs>
-                      <clipPath id="clip0_130_9756">
+                      <clipPath id="clip0_130_9756)">
                         <rect
                           width="18"
                           height="18"
@@ -357,6 +358,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   Project_Task
                 </NavLink>
               </li>
+              */}
               {/* <!-- Menu Item Project_Task --> */}
 
               <li>

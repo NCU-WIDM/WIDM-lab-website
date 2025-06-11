@@ -110,3 +110,17 @@ menu {
 .dark .news-content-container *:not([style*="color: white"]) {
   color: white !important;
 }
+
+.dark .project-content-container {
+  background-color: black;
+  color: white;
+}
+
+.dark .project-content-container * {
+  background-color: transparent !important;
+  color: inherit;
+}
+
+.dark .project-content-container *:not([style*="color: white"]) {
+  color: white !important;
+}
