@@ -111,6 +111,51 @@ menu {
   color: white !important;
 }
 
+.project-content-container {
+  /* 調整行間距 */
+  line-height: 1.6;
+}
+
+.project-content-container p {
+  margin-bottom: 0.75rem !important;
+  margin-top: 0.5rem !important;
+  line-height: 1.6 !important;
+}
+
+.project-content-container ul,
+.project-content-container ol {
+  margin-bottom: 0.75rem !important;
+  margin-top: 0.5rem !important;
+}
+
+.project-content-container li {
+  margin-bottom: 0.25rem !important;
+  margin-top: 0.25rem !important;
+  line-height: 1.5 !important;
+}
+
+.project-content-container h1,
+.project-content-container h2,
+.project-content-container h3,
+.project-content-container h4,
+.project-content-container h5,
+.project-content-container h6 {
+  margin-bottom: 0.5rem !important;
+  margin-top: 1rem !important;
+  line-height: 1.4 !important;
+}
+
+.project-content-container hr {
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.project-content-container blockquote {
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+  line-height: 1.5 !important;
+}
+
 .dark .project-content-container {
   background-color: black;
   color: white;

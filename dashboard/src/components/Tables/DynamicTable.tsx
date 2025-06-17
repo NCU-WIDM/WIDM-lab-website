@@ -48,6 +48,21 @@ const DynamicTable: React.FC<TableProps> = ({
   const apiUrl =
     import.meta.env.VITE_API_URL || 'https://widm-back-end.nevercareu.space'; // 使用環境變數
 
+  // 輔助函數：處理jodit內容，只顯示前40個字
+  const formatJoditContent = (htmlContent: string): string => {
+    if (!htmlContent) return '';
+    
+    // 去除HTML標籤
+    const plainText = htmlContent.replace(/<[^>]*>/g, '').trim();
+    
+    // 只取前40個字
+    if (plainText.length <= 40) {
+      return plainText;
+    } else {
+      return plainText.slice(0, 40) + '...';
+    }
+  };
+
   useEffect(() => {
     setImageUpdate((prev) => prev + 1); // 更新狀態
   }, [data]);
@@ -316,6 +331,13 @@ const DynamicTable: React.FC<TableProps> = ({
                             ? row[header.id].slice(0, 100) +
                               (row[header.id].length > 100 ? '...' : '')
                             : 'No description about this project.'}
+                        </div>
+                      ) : header.type === 'jodit' && row[header.id] ? ( // 顯示jodit內容（只顯示前40個字）
+                        <div
+                          className="text-black dark:text-white inline-block max-w-full"
+                          style={{ maxWidth: '100%' }} // 使用 max-width 來防止內容超出表格邊界
+                        >
+                          {formatJoditContent(row[header.id])}
                         </div>
                       ) : (
                         // 顯示文字
