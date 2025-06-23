@@ -47,7 +47,7 @@ services:
     container_name: widm-back-end
     environment:
       SQLALCHEMY_DATABASE_URI: mysql+pymysql://widm:widmwidm@widm-database:3306/backend
-      OPENAI_API_KEY: fake-key-for-development
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
       BASIC_AUTH: MjAyNDEwMTUwNTU0MzJxUlpZazlzbVhzTEg6NTc4WEFwbUR3YXgxcjZub2RsUmpqOXVvdnl1TkN3RzAwc0hOYXVaYTVpek5URG9vYnh1c2VtUQ==
       DASH_BOARD_URL: http://widm.csie.ncu.edu.tw/dash/
       HOME_PAGE_URL: http://widm.csie.ncu.edu.tw
