@@ -65,6 +65,14 @@ export default function LayoutMessage() {
 
   useEffect(() => {
     if (isOpen) {
+      // 當視窗打開時，如果沒有歷史訊息，就顯示歡迎語
+      if (messages.length === 0) {
+        const welcomeMessage = {
+          sender: 'api',
+          text: '您好！我是 WIDM 實驗室的智慧導覽員，請問有什麼我可以為您服務的嗎？您可以直接提問，或參考左下方的常見問題。'
+        };
+        setMessages([welcomeMessage]);
+      }
       setTimeout(scrollToBottom, 100); // 延遲滾動操作，確保元素渲染完成
     }
   }, [isOpen]);

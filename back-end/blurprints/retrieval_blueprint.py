@@ -238,6 +238,8 @@ def enhance_question(question,intent):
     try:
         # 執行優化
         optimized_query = optimization_chain.run(original_query=question)
+        print(f"問題增強結果: {optimized_query.strip()}", flush=True)
+        
         result = {
             'original': question,
             'optimized': optimized_query.strip()
@@ -245,6 +247,8 @@ def enhance_question(question,intent):
         
         return result
     except Exception as e:
+        print(f"問題增強失敗: {str(e)}", flush=True)
+        # 返回原始問題作為備用
         error_result = {
             'original': question,
             'optimized': question,
@@ -270,13 +274,16 @@ def classify_intent(question):
     try:
         # 執行優化
         optimized_query = optimization_chain.run(original_query=question)
+        print(f"原始優化結果: {optimized_query}", flush=True)
+        
         try:
         # 將字串轉換為 Python 列表，確保格式正確
             intent_list = json.loads(optimized_query.strip())
             
             # 驗證結果是否符合要求（只包含 1、2、3）
             if not all(isinstance(x, int) and x in [1, 2, 3] for x in intent_list):
-                raise ValueError("分類結果必須只包含 1、2、3")
+                print(f"警告：分類結果包含無效值 {intent_list}，使用預設值", flush=True)
+                intent_list = [3]  # 預設使用 other 類別
                 
             result = {
                 'original': question,
@@ -290,9 +297,15 @@ def classify_intent(question):
             
             return result
             
-        except json.JSONDecodeError:
-            print("錯誤：優化結果不是有效的 JSON 格式", flush=True)
-            return None
+        except json.JSONDecodeError as e:
+            print(f"錯誤：優化結果不是有效的 JSON 格式: {e}", flush=True)
+            print(f"嘗試解析的內容: {optimized_query}", flush=True)
+            # 返回預設結果而不是 None
+            return {
+                'original': question,
+                'intent': [3]  # 預設使用 other 類別
+            }
+            
     except Exception as e:
         error_result = {
             'original': question,
@@ -306,21 +319,29 @@ def chat_with_rag(user_id, question):
     global manager
     intents = classify_intent(question)
     
+    # 處理 intents 為 None 的情況
+    if intents is None or intents.get('intent') is None:
+        print("警告：意圖分類失敗，使用預設分類", flush=True)
+        intents = {
+            'original': question,
+            'intent': [3]  # 預設使用 other 類別
+        }
+    
     retrieve_result = ''
     all_sources = []
     
     for intent in intents['intent']:
         if intent == 1:
             enhance_result = enhance_question(question,'paper') # 擴大問題範圍
-            retriever = vectorstores['paper'].as_retriever()
+            retriever = vectorstores['paper'].as_retriever(search_kwargs={"k": 8})
             retrieve_result += '參考paper所得到結果：\n'
         elif intent == 2:
             enhance_result = enhance_question(question,'project')
-            retriever = vectorstores['project'].as_retriever()
+            retriever = vectorstores['project'].as_retriever(search_kwargs={"k": 8})
             retrieve_result += '參考project所得到結果：\n'
         else:
             enhance_result = enhance_question(question,'other')
-            retriever = vectorstores['other'].as_retriever()
+            retriever = vectorstores['other'].as_retriever(search_kwargs={"k": 8})
             retrieve_result += '參考other所得到結果：\n'
             
         optimized_question = enhance_result['optimized']
