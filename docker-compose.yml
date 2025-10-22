@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   widm-dashboard-end:
     build:
@@ -9,22 +7,23 @@ services:
     ports:
       - "5173:5173"
     environment:
-      - VITE_END_POINT=/dash
+      - VITE_END_POINT=/dash #no change
 
-      - VITE_API_URL=http://widm.csie.ncu.edu.tw/api
-      - VITE_REDIRECT_URI=http://widm.csie.ncu.edu.tw/api/auth/return-to
-      - VITE_CLIENT_ID=20241015055432qRZYk9smXsLH
+      - VITE_API_URL=http://widm.csie.ncu.edu.tw/api #根據nginx設定 遷域名 /api 設為後端
+      - VITE_REDIRECT_URI=http://widm.csie.ncu.edu.tw/api/auth/return-to #nginx設定域名/api/auth/return-to 
+      - VITE_CLIENT_ID=20241224114804R6cxm7M4T8gP #protol oauth client id
 
-      - VITE_AUTHORITY=https://portal.ncu.edu.tw
-      - VITE_TOKEN_ENDPOINT=https://portal.ncu.edu.tw/oauth2/token
-      - VITE_AUTHORIZATION_ENDPOINT=https://portal.ncu.edu.tw/oauth2/authorization
-      - VITE_USERINFO_ENDPOINT=https://portal.ncu.edu.tw/apis/oauth/v1/info
+      - VITE_AUTHORITY=https://portal.ncu.edu.tw #protol 自帶參數
+      - VITE_TOKEN_ENDPOINT=https://portal.ncu.edu.tw/oauth2/token #protol 自帶參數
+      - VITE_AUTHORIZATION_ENDPOINT=https://portal.ncu.edu.tw/oauth2/authorization #protol 自帶參數
+      - VITE_USERINFO_ENDPOINT=https://portal.ncu.edu.tw/apis/oauth/v1/info #protol 自帶參數
       
-      - VITE_WEB_URL=http://widm.csie.ncu.edu.tw/
-      - VITE_DASHBOARD_URL=http://widm.csie.ncu.edu.tw/dash/
+      - VITE_WEB_URL=http://widm.csie.ncu.edu.tw/ #域名
+      - VITE_DASHBOARD_URL=http://widm.csie.ncu.edu.tw/dash/ #域名/dash網址
     networks:
       - nginx_proxy
       - backend_network
+      - elasticsearch_elastic  # 連接到 Elasticsearch 網路
 
   widm-front-end:
     build:
@@ -39,6 +38,7 @@ services:
     networks:
       - nginx_proxy
       - backend_network
+      - elasticsearch_elastic  # 如果前端需要訪問 Elasticsearch
 
   widm-backend:
     build:
@@ -48,14 +48,19 @@ services:
     environment:
       SQLALCHEMY_DATABASE_URI: mysql+pymysql://widm:widmwidm@widm-database:3306/backend
       OPENAI_API_KEY: ${OPENAI_API_KEY}
-      BASIC_AUTH: MjAyNDEwMTUwNTU0MzJxUlpZazlzbVhzTEg6NTc4WEFwbUR3YXgxcjZub2RsUmpqOXVvdnl1TkN3RzAwc0hOYXVaYTVpek5URG9vYnh1c2VtUQ==
+      BASIC_AUTH: MjAyNDEyMjQxMTQ4MDRSNmN4bTdNNFQ4Z1A6TUE1UnNvTk9ZcmZIeDN0TWY0T0p3VHQ5bnJCdHkweHAzVDVmbHlIcThvZW14akZhcmc1MDJ4
       DASH_BOARD_URL: http://widm.csie.ncu.edu.tw/dash/
       HOME_PAGE_URL: http://widm.csie.ncu.edu.tw
+      # Elasticsearch 配置
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
     ports:
       - "5025:5025"
     volumes:
       - ./statics:/app/statics
       - ./instance:/app/instance
+      - ./taxonomy_KG2_total_parts_all.json:/app/taxonomy_KG2_total_parts_all.json
     depends_on:
       widm-database:
         condition: service_healthy
@@ -63,6 +68,7 @@ services:
     networks:
       - nginx_proxy
       - backend_network
+      - elasticsearch_elastic  # 連接到 Elasticsearch 網路
 
   widm-database:
     image: mysql:8
@@ -101,6 +107,8 @@ networks:
     external: true
   backend_network:
     internal: true
+  elasticsearch_elastic:
+    external: true
 
 volumes:
   mysql_data:

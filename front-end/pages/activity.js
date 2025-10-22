@@ -26,17 +26,23 @@ export default function ActivityPage({ activities, timeoutError }) {
         title={`Activities - ${siteMetadata.author}`}
         description="A collection of activities."
       />
-      <div className="mx-auto max-w-2xl">
-        <div className="flex items-center justify-between border-b border-gray-300 space-y-2 pt-6 md:space-y-5">
-          <h1 className="text-3xl font-extrabold leading-9 pb-8 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
-            Activities
-          </h1>
+      <div className="mx-auto max-w-6xl divide-y divide-gray-400">
+        <div className="pt-6 pb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-5xl md:leading-12">
+              Activities
+            </h1>
+          </div>
         </div>
 
-        {!activities.length && <h2 className="m-2 text-lg">No Activity found.</h2>}
-        {activities.map((activity) => (
-          <Activity key={activity.id} {...activity} />
-        ))}
+        <div className="py-12 flex justify-center">
+          <div className="w-full max-w-2xl">
+            {!activities.length && <h2 className="m-2 text-lg">No Activity found.</h2>}
+            {activities.map((activity) => (
+                <Activity key={activity.id} {...activity} />
+            ))}
+          </div>
+        </div>
       </div>
     </>
   );

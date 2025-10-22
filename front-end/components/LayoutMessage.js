@@ -17,20 +17,12 @@ const faqData = [
   },
   {
     question: "如何加入WIDM實驗室？",
-    answer: "如果您對我們的研究領域感興趣，可以透過以下方式加入：\n1. 直接聯繫教授\n2. 參加實驗室的說明會\n3. 透過學校的招生管道申請"
+    answer: "如果您對我們的研究領域感興趣，可以透過以下方式加入：<br />請仔細閱讀WIDM實驗室的研究領域和近期發表的論文，以確保您的研究方向與我們實驗室的研究活動一致。請將您的個人履歷、學業成績單和簡短的研究計劃發送至張教授（<a href=\"mailto:chiahui@g.ncu.edu.tw\" class=\"text-blue-600 underline\">chiahui@g.ncu.edu.tw</a>），以便安排面試。已修讀張教授課程的學生將優先考慮。<br />我們正在尋找對以下領域感興趣的積極學生：<br />- Web 智慧與資料探勘<br />- 機器學習<br />- 深度學習<br />- 知識圖譜<br />- 對話式AI"
   },
   {
     question: "實驗室提供哪些資源？",
-    answer: "實驗室提供豐富的研究資源，包括：\n1. 高性能計算設備\n2. 研究資料集\n3. 學術交流機會\n4. 產業合作機會"
+    answer: "實驗室提供豐富的研究資源，尤其在高性能計算方面，我們擁有以下設備：<br />GPU 資源：<br />- NVIDIA RTX 4090: 2張<br />- NVIDIA A6000: 1張<br />- NVIDIA RTX 3090: 1張<br />- NVIDIA RTX 3080 Ti: 1張<br />- NVIDIA RTX 4070 Ti: 1張<br />- NVIDIA GeForce 2080 Ti: 3張<br />- NVIDIA GeForce 1080 Ti: 7張<br />伺服器配置：<br />- 多台伺服器配備高達 128GB RAM。<br />- 每台伺服器均配備 TB 等級的 SSD 或 HDD 儲存空間，以支援大規模深度學習與資料探勘研究。"
   },
-  {
-    question: "實驗室的研究生需要具備什麼條件？",
-    answer: "我們期望研究生具備：\n1. 扎實的程式設計能力\n2. 良好的數學基礎\n3. 對AI和資料科學的熱情\n4. 良好的英文能力"
-  },
-  {
-    question: "WIDM實驗室申請流程與注意事項？",
-    answer: `請仔細閱讀WIDM LAB的研究領域與近期發表論文，確保您的研究方向與本實驗室一致。請將個人履歷（CV）、成績單與簡短研究計畫寄給張教授（<a href=\"mailto:chiahui@g.ncu.edu.tw\" class=\"text-blue-600 underline\">chiahui@g.ncu.edu.tw</a>），以安排面談。曾修習張教授課程者將優先考慮。`
-  }
 ];
 
 export default function LayoutMessage() {
@@ -69,7 +61,7 @@ export default function LayoutMessage() {
       if (messages.length === 0) {
         const welcomeMessage = {
           sender: 'api',
-          text: '您好！我是 WIDM 實驗室的智慧導覽員，請問有什麼我可以為您服務的嗎？您可以直接提問，或參考左下方的常見問題。'
+          text: '您好！我是 WIDM 實驗室的網頁助手，請問有什麼我可以為您服務的嗎？您可以直接提問，或參考左下方的常見問題。'
         };
         setMessages([welcomeMessage]);
       }
@@ -259,10 +251,10 @@ export default function LayoutMessage() {
           >
             <div className="relative w-full max-w-[400px] sm:w-[400px] h-[80vh] mx-auto sm:mr-20 mb-8 overflow-hidden rounded-xl bg-zinc-200 shadow-2xl ring-1 ring-black/5 dark:bg-zinc-800">
               <div className="flex flex-col h-full">
-                <div className="flex justify-between items-center p-2 bg-white border-b border-gray-300 dark:bg-black dark:border-gray-700">
+                <div className="flex justify-between items-center p-2 bg-white border-b border-gray-300 dark:bg-zinc-800 dark:border-gray-700">
                   <h2 className="text-xl font-bold w-full text-center">WIDM Web Assistant</h2>
                 </div>
-                <div ref={nodeRef} className="flex-1 w-full overflow-y-auto bg-white dark:bg-black p-4 rounded-md custom-scrollbar">
+                <div ref={nodeRef} className="flex-1 w-full overflow-y-auto bg-white dark:bg-zinc-800 p-4 rounded-md custom-scrollbar">
                   {messages.length === 0 ? (
                     <p className="prose pt-5 text-lg text-gray-600 dark:text-gray-300">
                       歡迎來到聊天窗口，有什麼我可以幫助你的嗎？
@@ -340,7 +332,7 @@ export default function LayoutMessage() {
 
                   {/* FAQ列表 */}
                   {showFAQ && (
-                    <div className="absolute bottom-full left-0 mb-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div className="absolute bottom-full left-0 mb-2 w-64 bg-white border-2 border-gray-300 dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="max-h-48 overflow-y-auto p-2">
                         {faqData.map((faq, idx) => (
                           <button

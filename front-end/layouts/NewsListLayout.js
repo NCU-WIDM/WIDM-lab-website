@@ -1,28 +1,30 @@
 import Link from '@/components/Link'
 import { useState } from 'react'
 import Pagination from '@/components/Pagination'
+import MultiSelect from '../components/MultiSelect'
+import { FaThumbtack } from 'react-icons/fa'
 
 export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
   const [searchValue, setSearchValue] = useState('')
-  const [selectedType, setSelectedType] = useState('all')
+  const [selectedTypes, setSelectedTypes] = useState([])
 
   // Get unique news types
-  const newsTypes = ['all', ...new Set(posts.flatMap(post => 
+  const newsTypes = Array.from(new Set(posts.flatMap(post => 
     Array.isArray(post.types) ? post.types : post.types ? [post.types] : []
-  ))]
+  )))
 
   const filteredNewsPosts = posts.filter((frontMatter) => {
     const searchContent = frontMatter.title + frontMatter.sub_title
     const matchesSearch = searchContent.toLowerCase().includes(searchValue.toLowerCase())
-    const matchesType = selectedType === 'all' || 
-      (Array.isArray(frontMatter.types) 
-        ? frontMatter.types.includes(selectedType)
-        : frontMatter.types === selectedType)
+    const matchesType = selectedTypes.length === 0 ||
+      (Array.isArray(frontMatter.types)
+        ? selectedTypes.some(type => frontMatter.types.includes(type))
+        : selectedTypes.includes(frontMatter.types))
     return matchesSearch && matchesType
   })
 
   // If initialDisplayPosts exist, display it if no searchValue is specified
-  const displayPosts = initialDisplayPosts.length > 0 && !searchValue && selectedType === 'all' 
+  const displayPosts = initialDisplayPosts.length > 0 && !searchValue && selectedTypes.length === 0 
     ? initialDisplayPosts 
     : filteredNewsPosts
 
@@ -59,17 +61,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
                 </svg>
               </div>
               <div className="w-full md:w-64">
-                <select
-                  value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
-                  className="block w-full rounded-md border border-gray-400 bg-white px-4 py-2 pr-8 text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-900 dark:bg-gray-800 dark:text-gray-100"
-                >
-                  {newsTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {type === 'all' ? 'All News' : type}
-                    </option>
-                  ))}
-                </select>
+                <MultiSelect selectedTypes={selectedTypes} setSelectedTypes={setSelectedTypes} typeOptions={newsTypes} />
               </div>
             </div>
           </div>
@@ -77,7 +69,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
         <ul className='list-none'>
           {!filteredNewsPosts.length && <h2 className=' m-2 text-lg'>No News found.</h2>}
           {displayPosts.map((frontMatter) => {
-            const { id, uniqueId, title, create_time } = frontMatter
+            const { id, uniqueId, title, create_time, importance } = frontMatter
             return (
               <Link
                 href={`/news/${id}`}
@@ -86,7 +78,12 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [] }) {
               >
                 <li key={uniqueId} className="list-none py-6">
                   <div className="flex items-center justify-between">
-                    <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</span>
+                    <div className="flex items-center gap-2">
+                      {importance && (
+                        <FaThumbtack className="text-pink-500" title="Pinned" />
+                      )}
+                      <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</span>
+                    </div>
                     <span className="text-sm text-gray-500 dark:text-gray-400">{create_time}</span>
                   </div>
                 </li>

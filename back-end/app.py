@@ -1,5 +1,9 @@
 from pathlib import Path
 import uuid
+from dotenv import load_dotenv
+
+# 載入 .env 檔案
+load_dotenv()
 
 from blurprints.member_blueprint import member_blueprint
 from blurprints.image_blueprint import image_blueprint

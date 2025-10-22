@@ -1,5 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
+/docker-compose.yml.bak
+/docker-compose.yml.
 /front-end/node_modules
 /front-end/.next/
 /front-end/out/

@@ -80,11 +80,11 @@ def post_member():
       400:
         description: no ['member_name', 'member_intro'] or content in form
     """
-    if not api_input_check(['name', 'name_en', 'position', 'intro', 'graduate_year'], request.json):
-        return Response.client_error("no ['name', 'name_en', 'position', 'intro', 'graduate_year'] or content in json")
+    if not api_input_check(['name', 'name_en', 'position', 'intro', 'graduate_year', 'github', 'email'], request.json):
+        return Response.client_error("no ['name', 'name_en', 'position', 'intro', 'graduate_year', 'github', 'email'] or content in json")
 
-    name, name_en, position, intro, graduate_year = api_input_get(
-        ['name', 'name_en', 'position', 'intro', 'graduate_year'], request.json)
+    name, name_en, position, intro, graduate_year, github, email = api_input_get(
+        ['name', 'name_en', 'position', 'intro', 'graduate_year', 'github', 'email'], request.json)
     graduate_year = datetime.strptime(graduate_year, '%Y-%m') if graduate_year else None
 
     member = Member(
@@ -92,7 +92,9 @@ def post_member():
         name_en=name_en,
         position=position,
         intro=intro,
-        graduate_year=graduate_year
+        graduate_year=graduate_year,
+        github=github,
+        email=email
     )
 
     db.session.add(member)
@@ -223,6 +225,10 @@ def patch_member(member_id):
     if 'graduate_year' in request.json:
         member.graduate_year = datetime.strptime(request.json['graduate_year'], '%Y-%m') \
             if request.json['graduate_year'] else None
+    if 'github' in request.json:
+        member.github = request.json['github']
+    if 'email' in request.json:
+        member.email = request.json['email']
 
     db.session.commit()
     return Response.response('patch member successfully', member.to_dict())

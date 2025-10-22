@@ -90,7 +90,7 @@ const LayoutWrapper = ({ children }) => {
                 </div>
                 <CommandPalette navigation={navigation} />
                 <ThemeSwitch />
-                <LayoutMessage />
+                {/*<LayoutMessage />*/}
               </div>
             </div>
           </div>

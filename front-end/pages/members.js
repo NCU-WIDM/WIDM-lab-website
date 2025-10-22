@@ -4,6 +4,7 @@ import siteMetadata from '@/data/siteMetadata';
 import { PageSEO } from '@/components/SEO';
 import { defaultHttp } from 'utils/http';
 import { processDataRoutes } from 'routes/api';
+import { FaGithub, FaEnvelope } from 'react-icons/fa';
 
 function CharmPerson(props) {
   return (
@@ -42,40 +43,57 @@ export const Members = ({ members, timeoutError }) => {
     return acc;
   }, {});
 
+  // 定義職位排序順序
+  const positionOrder = {
+    'PhD Student': 1,
+    'Master Student 2nd Year': 2,
+    'Master Student 1st Year': 3,
+    'Project Assistant': 4,
+  };
+
+  // 按照指定順序排序職位
+  const sortedPositions = Object.keys(groupByPosition).sort((a, b) => {
+    const orderA = positionOrder[a] || 999; // 未定義的職位排在最後
+    const orderB = positionOrder[b] || 999;
+    return orderA - orderB;
+  });
+
   return (
     <>
       <PageSEO title={`Members - ${siteMetadata.author}`} description="What I use" />
-      <div className="mx-auto max-w-4xl divide-y divide-gray-200 dark:divide-gray-700">
-        <div className="flex items-center justify-between border-b border-gray-300 space-y-2 pt-6 md:space-y-5">
-          <h1 className="text-3xl font-extrabold leading-9 pb-8 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
-            Members
-          </h1>
-          <div className="flex mb-0 items-end space-x-6">
-            <button
-              onClick={() => setFilter('current')}
-              className={`text-gray-600 hover:text-gray-900 dark:text-gray-100 ${filter === 'current' ? 'font-bold' : ''}`}
-            >
-              在學
-            </button>
-            <button
-              onClick={() => setFilter('graduated')}
-              className={`text-gray-600 hover:text-gray-900 dark:text-gray-100 ${filter === 'graduated' ? 'font-bold' : ''}`}
-            >
-              畢業
-            </button>
+      <div className="mx-auto max-w-6xl divide-y divide-gray-400">
+        <div className="pt-6 pb-8">
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-5xl md:leading-12">
+              Members
+            </h1>
+            <div className="flex items-end space-x-6">
+              <button
+                onClick={() => setFilter('current')}
+                className={`text-gray-600 hover:text-gray-900 dark:text-gray-100 ${filter === 'current' ? 'font-bold' : ''}`}
+              >
+                在學
+              </button>
+              <button
+                onClick={() => setFilter('graduated')}
+                className={`text-gray-600 hover:text-gray-900 dark:text-gray-100 ${filter === 'graduated' ? 'font-bold' : ''}`}
+              >
+                畢業
+              </button>
+            </div>
           </div>
         </div>
 
         <div className="container py-12">
           {Object.keys(groupByPosition).length === 0 && <h2 className="m-2 text-lg">No Member found.</h2>}
-          {Object.keys(groupByPosition).map((position, index) => (
+          {sortedPositions.map((position, index) => (
             <div key={index} className="mb-8">
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{position}</h2>
-              <div className="flex flex-row flex-wrap">
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                 {groupByPosition[position].map((member, idx) => (
                   <div
                     key={idx}
-                    className="group mb-4 w-full cursor-pointer rounded-xl p-6 backdrop-filter transition duration-100 hover:scale-[1.02] hover:bg-gray-300 hover:bg-opacity-40 dark:hover:bg-gray-500 dark:hover:bg-opacity-40 md:w-1/2"
+                    className="group cursor-pointer rounded-xl p-6 backdrop-filter transition duration-100 hover:scale-[1.02] hover:bg-gray-300 hover:bg-opacity-40 dark:hover:bg-gray-500 dark:hover:bg-opacity-40"
                   >
                     <div className="flex items-center justify-start">
                       <div className="flex-shrink-0 p-3 font-sans text-gray-700 dark:text-gray-50 ">
@@ -104,6 +122,30 @@ export const Members = ({ members, timeoutError }) => {
                             Graduate Year: {member.graduate_year}
                           </p>
                         )}
+                        <div className="mt-2 flex space-x-3">
+                          {member.github && (
+                            <a
+                              href={member.github}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={member.github}
+                              className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                            >
+                              <FaGithub size={20} />
+                            </a>
+                          )}
+                          {member.email && (
+                            <a
+                              href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(member.email)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={member.email}
+                              className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                            >
+                              <FaEnvelope size={20} />
+                            </a>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>

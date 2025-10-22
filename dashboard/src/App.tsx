@@ -24,7 +24,7 @@ import { handleErrorResponse } from './utils/';
 const App: React.FC = () => {
   const { pathname } = useLocation();
 
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true); 
 
   const user_info_get = async () => {

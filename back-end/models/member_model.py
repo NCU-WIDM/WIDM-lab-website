@@ -10,6 +10,8 @@ class Member(db.Model, SchemaMixin):
     intro = db.Column(db.Text, nullable=False)
     image_path = db.Column(db.String(255), nullable=True)
     graduate_year = db.Column(db.DateTime, nullable=True)
+    github = db.Column(db.String(255), nullable=True)
+    email = db.Column(db.String(255), nullable=True)
 
     def to_dict(self):
         self.graduate_year = datetime.strftime(self.graduate_year, '%Y-%m') if self.graduate_year else None
@@ -22,6 +24,8 @@ class Member(db.Model, SchemaMixin):
             'intro': self.intro,
             'graduate_year': self.graduate_year,
             'image_existed': image_existed,
+            'github': self.github,
+            'email': self.email,
             'create_time': self.create_time,
             'update_time': self.update_time
         }

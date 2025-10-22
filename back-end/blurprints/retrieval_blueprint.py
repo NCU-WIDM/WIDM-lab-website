@@ -6,35 +6,33 @@ from queue import Queue
 from datetime import datetime
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-# import pdfplumber
 from pathlib import Path
 from io import BytesIO
-# from . import paper_blueprint
-from google.api.resource_pb2 import resource
 import json
-from datetime import datetime
-from pathlib import Path
 from config import Config
 
 from fastapi.openapi.models import APIKey
 from langchain_openai import ChatOpenAI
 from langchain_community.vectorstores import Chroma
-from langchain.chains import ConversationalRetrievalChain
 from langchain_community.embeddings import OpenAIEmbeddings
-from langchain.memory import ConversationBufferWindowMemory
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from langchain_community.document_loaders import AsyncHtmlLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_transformers import MarkdownifyTransformer
 from langchain.schema import Document
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
-# from langchain_core.runnables import RunnablePassthrough
 
 from flask import Blueprint, request, stream_with_context, current_app
 from flask import Response as FlaskResponse
 from models.responses import Response
-import utiles.prompt as prompt
+from utiles.kg_retrival import KnowledgeGraphRetrieval
+from utiles.retrival_strategy import RetrievalStrategy
+from utiles.retrival_config import RetrievalConfig
+from elasticsearch import Elasticsearch
+from sentence_transformers import SentenceTransformer
+
+kg_retrieval = None
+retrieval_strategy = None
+
 retrieval_blueprint = Blueprint('retrieval', __name__)
 
 scrapying_status = {
@@ -54,50 +52,6 @@ paper_status = {
 embedding = OpenAIEmbeddings(model='text-embedding-3-small', openai_api_key=Config.OPENAI_KEY)
 llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0, api_key=Config.OPENAI_KEY)
 current_log_path = None
-
-class UserMemoryManager:
-    def __init__(self, retriever, llm, memory_window=5, inactive_time=36):
-        self.retriever = retriever
-        self.llm = llm
-        self.memory_window = memory_window
-        self.inactive_time = inactive_time
-        self.user_memories = {}
-        self.last_activity = {}
-        self.lock = threading.Lock()
-
-    def get_chain_for_user(self, user_id):
-        with self.lock:
-            if user_id not in self.user_memories:
-                memory = ConversationBufferWindowMemory(
-                    memory_key="chat_history",
-                    return_messages=True,
-                    output_key='answer'
-                )
-                self.user_memories[user_id] = memory
-            else:
-                memory = self.user_memories[user_id]
-
-            self.last_activity[user_id] = datetime.now()
-
-            return ConversationalRetrievalChain.from_llm(
-                llm=self.llm,
-                retriever=self.retriever,
-                memory=memory,
-                return_source_documents=True,
-            )
-
-    def clean_inactive_memories(self):
-        with self.lock:
-            current_time = datetime.now()
-            inactive_users = [
-                user_id for user_id, last_active in self.last_activity.items()
-                if (current_time - last_active).total_seconds() > self.inactive_time
-            ]
-            for user_id in inactive_users:
-                del self.user_memories[user_id]
-                del self.last_activity[user_id]
-            return len(inactive_users)
-
 
 manager = None
 vectorstores = {}
@@ -130,7 +84,6 @@ def process_url(url, root_url, visited_urls, html_urls, next_queue):
 
     except requests.RequestException:
         pass
-
 
 def bfs_website(root_url, max_workers=20):
     visited_urls = set()
@@ -201,11 +154,6 @@ def scrapying_website():
                 vectorstores[collection_name].add_documents(documents=splits)
                 print(f"Processed {len(collection_urls)} URLs for collection: {collection_name}")
         
-        # 使用 'other' collection 作為默認的檢索器
-        retriever = vectorstores['other'].as_retriever()
-        global manager
-        manager = UserMemoryManager(retriever, llm, inactive_time=300)
-        
     except Exception as e:
         print(e)
         scrapying_status['status'] = 'error'
@@ -213,359 +161,93 @@ def scrapying_website():
 
     scrapying_status['status'] = 'finished'
     scrapying_status['end_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        
-def enhance_question(question,intent):
-    print('start enhance', flush=True)
-    if intent == 'paper':
-        prompt_template = prompt.enhance_paper
-    elif intent == 'project':
-        prompt_template = prompt.enhance_project
-    else:
-        prompt_template = prompt.enhance_other
-    # 創建優化提示模板
-    optimize_template = PromptTemplate(
-        input_variables=["original_query"],
-        template=prompt_template
-    )
-    
-    # 創建優化鏈
-    
-    optimization_chain = LLMChain(
-        llm=llm,
-        prompt=optimize_template
-    )
-    
-    try:
-        # 執行優化
-        optimized_query = optimization_chain.run(original_query=question)
-        print(f"問題增強結果: {optimized_query.strip()}", flush=True)
-        
-        result = {
-            'original': question,
-            'optimized': optimized_query.strip()
-        }
-        
-        return result
-    except Exception as e:
-        print(f"問題增強失敗: {str(e)}", flush=True)
-        # 返回原始問題作為備用
-        error_result = {
-            'original': question,
-            'optimized': question,
-            'error': str(e)
-        }
-        return error_result
 
-def classify_intent(question):
-    print('start classify', flush=True)
-     # 創建優化提示模板
-    optimize_template = PromptTemplate(
-        input_variables=["original_query"],
-        template=prompt.classify_intent
-    )
-    
-    # 創建優化鏈
-    
-    optimization_chain = LLMChain(
-        llm=llm,
-        prompt=optimize_template
-    )
-    
+def create_vectorspace():
+    global embedding, vectorstores, kg_retrieval, retrieval_strategy
+    collection_names = ['project', 'paper', 'other']
     try:
-        # 執行優化
-        optimized_query = optimization_chain.run(original_query=question)
-        print(f"原始優化結果: {optimized_query}", flush=True)
-        
-        try:
-        # 將字串轉換為 Python 列表，確保格式正確
-            intent_list = json.loads(optimized_query.strip())
-            
-            # 驗證結果是否符合要求（只包含 1、2、3）
-            if not all(isinstance(x, int) and x in [1, 2, 3] for x in intent_list):
-                print(f"警告：分類結果包含無效值 {intent_list}，使用預設值", flush=True)
-                intent_list = [3]  # 預設使用 other 類別
-                
-            result = {
-                'original': question,
-                'intent': intent_list
-            }
-            
-            # 輸出優化結果
-            print("\n查詢優化結果:", flush=True)
-            print(f"原始查詢: {result['original']}", flush=True)
-            print(f"分類結果: {result['intent']}", flush=True)
-            
-            return result
-            
-        except json.JSONDecodeError as e:
-            print(f"錯誤：優化結果不是有效的 JSON 格式: {e}", flush=True)
-            print(f"嘗試解析的內容: {optimized_query}", flush=True)
-            # 返回預設結果而不是 None
-            return {
-                'original': question,
-                'intent': [3]  # 預設使用 other 類別
-            }
-            
-    except Exception as e:
-        error_result = {
-            'original': question,
-            'intent': None,
-            'error': str(e)
-        }
-        print(f"\n查詢優化失敗: {str(e)}", flush=True)
-        return error_result
+        for name in collection_names:
+            vectorstore = Chroma(
+                collection_name=name,
+                embedding_function=embedding,
+                persist_directory='./statics/chroma_db'
+            )
+            vectorstores[name] = vectorstore
+            print(f"Found existing collection: {name}")
+    except:
+        for name in collection_names:
+            try:
+                vectorstore = Chroma.from_documents(
+                    documents=[],  # Start with empty collection
+                    embedding=embedding,
+                    collection_name=name,
+                    persist_directory='./statics/chroma_db'
+                )
+                vectorstores[name] = vectorstore
+                print(f" 創建新集合: {name}")
+            except Exception as create_error:
+                print(f" 創建集合 {name} 失敗: {create_error}")
+    
+    print("3. 初始化知識圖譜檢索...")
+    kg_init_result = initialize_kg_retrieval()
+    if kg_init_result:
+        print("向量空間創建完成")
+              
+    return kg_init_result
 
-def chat_with_rag(user_id, question):
-    global manager
-    intents = classify_intent(question)
+def initialize_kg_retrieval():
+    """初始化知識圖譜檢索系統"""
+    global kg_retrieval, retrieval_strategy
     
-    # 處理 intents 為 None 的情況
-    if intents is None or intents.get('intent') is None:
-        print("警告：意圖分類失敗，使用預設分類", flush=True)
-        intents = {
-            'original': question,
-            'intent': [3]  # 預設使用 other 類別
-        }
-    
-    retrieve_result = ''
-    all_sources = []
-    
-    for intent in intents['intent']:
-        if intent == 1:
-            enhance_result = enhance_question(question,'paper') # 擴大問題範圍
-            retriever = vectorstores['paper'].as_retriever(search_kwargs={"k": 8})
-            retrieve_result += '參考paper所得到結果：\n'
-        elif intent == 2:
-            enhance_result = enhance_question(question,'project')
-            retriever = vectorstores['project'].as_retriever(search_kwargs={"k": 8})
-            retrieve_result += '參考project所得到結果：\n'
-        else:
-            enhance_result = enhance_question(question,'other')
-            retriever = vectorstores['other'].as_retriever(search_kwargs={"k": 8})
-            retrieve_result += '參考other所得到結果：\n'
-            
-        optimized_question = enhance_result['optimized']
-        
-        # 使用檢索器獲取文檔(query=enhance_result['optimized'])
-        docs = retriever.get_relevant_documents(optimized_question)
-        current_sources = [doc.metadata['source'] for doc in docs]
-        all_sources.extend(current_sources)
-        
-        # 將文檔內容加入檢索結果
-        context = "\n".join([doc.page_content for doc in docs])
-        retrieve_result += f"相關資訊：{context}\n參考來源：{current_sources}\n\n"
-    # 使用單一 prompt 生成最終回答
-    final_prompt = PromptTemplate(
-        template=prompt.generate_result,
-        input_variables=["question", "context"]
-    )
-    
-    final_chain = LLMChain(llm=llm, prompt=final_prompt)
-    response_text = final_chain.run(
-        question=question,
-        context=retrieve_result
-    )
     try:
-        print(response_text)
-        response_json = json.loads(response_text.replace('`','').replace('json',''))
-        
-        # 去重並保持順序
-        unique_sources = []
-        [unique_sources.append(x) for x in response_json['sources'] if x not in unique_sources]
-        
-        # 記錄日誌
-        log_retrieval(
-            query=question,
-            intents=intents['intent'],
-            retrieve_result=retrieve_result,
-            response=response_json['answer'],
-            sources=unique_sources
+        # 檢查配置是否有效
+        if not RetrievalConfig.validate_config():
+            print("知識圖譜配置驗證失敗，跳過初始化")
+            return False
+
+        # 初始化 Elasticsearch 客戶端
+        es_config = RetrievalConfig.KG_CONFIG
+        es_client = Elasticsearch(
+            [es_config['es_host']],
+            basic_auth=(es_config['es_username'], es_config['es_password']),
+            verify_certs=es_config['es_verify_certs']
         )
         
-        return response_json['answer'], unique_sources
+        # 初始化 SentenceTransformer 模型
+        st_model = SentenceTransformer(es_config['st_model_name'])
         
-    except json.JSONDecodeError:
-        # 如果 JSON 解析失敗，創建一個標準格式的回應
-        fallback_response = {
-            "answer": response_text,  # 直接使用 LLM 的回應
-            "sources": unique_sources
-        }
-        
-        # 記錄日誌
-        log_retrieval(
-            query=question,
-            intents=intents['intent'],
-            retrieve_result=retrieve_result,
-            response=fallback_response['answer'],
-            sources=fallback_response['sources']
+        # 初始化知識圖譜檢索
+        kg_retrieval = KnowledgeGraphRetrieval(
+            taxonomy_path=es_config['taxonomy_path'],
+            es_client=es_client,
+            st_model=st_model
         )
         
-        return fallback_response['answer'], fallback_response['sources']
-
-def log_retrieval(query, intents, retrieve_result, response, sources):
-    global current_log_path
-    
-    # 如果還沒有創建文件，則創建一個
-    if current_log_path is None:
-        current_time = datetime.now().strftime('%Y%m%d_%H%M%S')
-        current_log_path = f'statics/retrieve/retrieval_log_{current_time}.jsonl'
-    
-    # 創建記錄對象
-    log_entry = {
-        "timestamp": datetime.now().isoformat(),
-        "query": query,
-        "intents": intents,
-        "retrieve_result": retrieve_result,
-        "response": response,
-        "sources": sources
-    }
-    
-    # 直接追加寫入，使用自定義格式
-    with open(current_log_path, 'a', encoding='utf-8') as f:
-        json.dump(log_entry, f, ensure_ascii=False, indent=4)
-        f.write('\n')
-
-# def load_paper():
-#     org_paper = paper_blueprint.get_paper_by_uuid()
-#     documents = []
-    
-#     for path, title in org_paper.items():
-#         try:
-#             with open(path, 'rb') as file:
-#                 contents = file.read()
-            
-#             all_text = ""
-#             with pdfplumber.open(BytesIO(contents)) as pdf:
-#                 for page in pdf.pages:
-#                     extracted_text = page.extract_text() or ""
-#                     all_text += extracted_text + "\n"
-            
-#             doc = Document(
-#                 page_content=all_text,
-#                 metadata={
-#                     "source": title,
-#                     "path": str(path),
-#                     "type": "pdf"
-#                 }
-#             )
-#             documents.append(doc)
-            
-#         except Exception as e:
-#             print(f"處理 PDF 文件 {title} 時發生錯誤: {str(e)}")
-#             continue
-#     return documents
-
-# def scrapying_paper():
-#     global vectorstore
-#     paper = load_paper()
-#     paper_status['status'] = 'pending'
-#     paper_status['start_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-#     try:
-#         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=128)
-#         splits = text_splitter.split_documents(paper)
-#         vectorstore.add_documents(documents=splits)
-#         retriever = vectorstore.as_retriever()
-#         global manager
-#         manager = UserMemoryManager(retriever, llm, inactive_time=300)
-#     except Exception as e:
-#         print(e)
-#         paper_status['status'] = 'error'
-#         return
-
-#     paper_status['status'] = 'finished'
-#     paper_status['end_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-# def scrapying_paper(batch_size=50):
-#     global vectorstore, manager
-#     paper_status['status'] = 'pending'
-#     paper_status['start_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    
-#     try:
-#         # 載入論文
-#         papers = load_paper()
-#         total_documents = len(papers)
-#         total_batches = (total_documents // batch_size) + (1 if total_documents % batch_size != 0 else 0)
+        # 初始化檢索策略
+        retrieval_strategy = RetrievalStrategy(
+            mode=RetrievalConfig.DEFAULT_MODE,
+            kg_retrieval=kg_retrieval,
+            vectorstores=vectorstores,
+            llm=llm
+        )
         
-#         # 更新狀態資訊
-#         paper_status.update({
-#             'total_documents': total_documents,
-#             'total_batches': total_batches,
-#             'current_batch': 0,
-#             'processed_documents': 0
-#         })
-
-#         # 初始化文本分割器
-#         text_splitter = RecursiveCharacterTextSplitter(
-#             chunk_size=1024, 
-#             chunk_overlap=128
-#         )
+        print("知識圖譜檢索系統初始化成功")
+        return True
         
-#         # 分批處理文檔
-#         for i in range(0, total_documents, batch_size):
-#             try:
-#                 # 取得當前批次的文檔
-#                 batch = papers[i:i + batch_size]
-#                 current_batch = i // batch_size + 1
-                
-#                 # 更新處理狀態
-#                 paper_status.update({
-#                     'current_batch': current_batch,
-#                     'status': f'Processing batch {current_batch}/{total_batches}'
-#                 })
-
-#                 # 處理當前批次
-#                 batch_splits = text_splitter.split_documents(batch)
-#                 vectorstore.add_documents(documents=batch_splits)
-                
-#                 # 更新已處理文檔數
-#                 paper_status['processed_documents'] = min(i + batch_size, total_documents)
-                
-#             except Exception as batch_error:
-#                 print(f"Error in batch {current_batch}: {batch_error}")
-#                 continue  # 繼續處理下一批
-        
-#         # 設置檢索器和記憶管理器
-#         retriever = vectorstore.as_retriever()
-#         manager = UserMemoryManager(retriever, llm, inactive_time=300)
-        
-#         # 完成處理
-#         paper_status['status'] = 'finished'
-        
-#     except Exception as e:
-#         print(f"Error during paper processing: {e}")
-#         paper_status['status'] = 'error'
-#         paper_status['error_message'] = str(e)
-#         return False
-    
-#     paper_status['end_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-#     return True
-
-def get_processing_progress():
-    """獲取處理進度"""
-    if 'total_documents' not in paper_status or paper_status['total_documents'] == 0:
-        progress = 0
-    else:
-        progress = (paper_status['processed_documents'] / 
-                   paper_status['total_documents'] * 100)
-    
-    return {
-        **paper_status,
-        'progress_percentage': round(progress, 2)
-    }
+    except Exception as e:
+        print(f"知識圖譜檢索系統初始化失敗: {e}")
+        return False
 
 def periodic_cleanup():
-    global manager
+    global retrieval_strategy
     while True:
         time.sleep(60)
-        if manager:
-            cleaned = manager.clean_inactive_memories()
+        if retrieval_strategy:
+            cleaned = retrieval_strategy.memory_manager.clean_inactive_memories()
             print(f"已清理 {cleaned} 個不活躍使用者的記憶")
-
 
 cleanup_thread = threading.Thread(target=periodic_cleanup, daemon=True)
 cleanup_thread.start()
-
 
 @retrieval_blueprint.route('/start-scrapying', methods=['GET'])
 def start_scrapying():
@@ -597,22 +279,14 @@ def start_scrapying():
     if scrapying_status['status'] == 'pending':
         return Response.client_error('scrapying is pending', {
             'website_status': scrapying_status,
-            # 'paper_status': paper_status
         })
-
-    # if vectorstore is None:
-    # initialize_vectorstore()
 
     scrapying_website_thread = threading.Thread(target=scrapying_website)
     scrapying_website_thread.start()
 
-    # scrapying_pdf_thread = threading.Thread(target=scrapying_paper)
-    # scrapying_pdf_thread.start()
     return Response.response('start scrapying successful', {
         'website_status': scrapying_status,
-        # 'paper_status': paper_status
     })
-
 
 @retrieval_blueprint.route('/scrapying-status', methods=['GET'])
 def check_scrapying_status():
@@ -640,7 +314,6 @@ def check_scrapying_status():
     """
     return Response.response('check status successful', scrapying_status)
 
-
 @retrieval_blueprint.route('/query', methods=['GET'])
 def query():
     """
@@ -659,12 +332,18 @@ def query():
         description: person who can multi-turn conversations
         required: true
         type: string
+      - name: mode
+        in: query
+        description: retrieval mode (original, knowledge_graph, hybrid)
+        required: false
+        type: string
     responses:
       200:
         description: chat retrieval augmented generation
       400:
         description: scrapying is not ready
     """
+    scrapying_status['status'] = 'finished'
     if scrapying_status['status'] == 'pending' or scrapying_status['status'] == 'not start':
         return Response.response('scrapying is not ready', {
             'answer': "網頁資訊尚未準備完成，請洽管理員",
@@ -673,36 +352,26 @@ def query():
 
     if 'query_string' not in request.args or 'person_id' not in request.args:
         return Response.client_error('query_string, person_id is required')
-    # print(request.args['person_id'])
-    answer, source_list = chat_with_rag(request.args['person_id'], request.args['query_string'])
+
+    # 獲取可選的模式參數
+    mode = request.args.get('mode')
+    
+    # 使用檢索策略處理查詢
+    if retrieval_strategy:
+        if mode:
+            retrieval_strategy.set_mode(mode)
+        answer, source_list = retrieval_strategy.chat_with_rag(
+            request.args['person_id'], 
+            request.args['query_string']
+        )
+    else:
+        return Response.client_error('檢索系統未初始化')
     
     return Response.response('chat retrieval augmented generation successful', {
         'answer': answer,
-        'source_list': source_list
+        'source_list': source_list,
+        'mode': retrieval_strategy.get_current_mode()
     })
-
-def create_vectorspace():
-    global embedding,vectorstores
-    collection_names = ['project', 'paper', 'other']
-    try:
-        for name in collection_names:
-            vectorstore = Chroma(
-                collection_name=name,
-                embedding_function=embedding,
-                persist_directory='./statics/chroma_db'
-            )
-            vectorstores[name] = vectorstore
-            print(f"Found existing collection: {name}")
-    except:
-        for name in collection_names:
-            vectorstore = Chroma.from_documents(
-                documents=[],  # Start with empty collection
-                embedding=embedding,
-                collection_name=name,
-                persist_directory='./statics/chroma_db'
-            )
-            vectorstores[name] = vectorstore
-            print(f"Created new collection: {name}")
 
 @retrieval_blueprint.route('/initialize', methods=['GET'])
 def scrapying():
@@ -711,11 +380,120 @@ def scrapying():
             'website_status': scrapying_status,
             'paper_status': paper_status
         })
-    create_vectorspace()
+    
+    print("=== 開始初始化流程 ===")
+    
+    # 初始化向量空間和知識圖譜檢索
+    kg_init_result = create_vectorspace()
+    
+    if kg_init_result:
+        print("知識圖譜檢索系統初始化成功")
+    
+    # 執行網站爬蟲
     scrapying_website()
 
-    # scrapying_paper()
     return Response.response('start scrapying successful', {
         'website_status': scrapying_status,
-        'paper_status': paper_status
+        'paper_status': paper_status,
+        'kg_initialization': 'success' if kg_init_result else 'failed'
     })
+
+@retrieval_blueprint.route('/kg-search', methods=['GET'])
+def kg_search():
+    """
+    知識圖譜檢索測試端點
+    ---
+    tags:
+      - retrieval
+    parameters:
+      - name: query
+        in: query
+        description: 查詢字串
+        required: true
+        type: string
+    responses:
+      200:
+        description: 知識圖譜檢索結果
+      400:
+        description: 查詢參數缺失或檢索失敗
+    """
+    if 'query' not in request.args:
+        return Response.client_error('query parameter is required')
+    
+    query = request.args['query']
+    
+    if not kg_retrieval:
+        return Response.client_error('知識圖譜檢索系統未初始化')
+    
+    try:
+        results = kg_retrieval.search_knowledge_graph(query, top_n=10)
+        summary = kg_retrieval.get_search_results_summary(results)
+        
+        return Response.response('知識圖譜檢索成功', {
+            'query': query,
+            'results_count': len(results),
+            'summary': summary,
+            'detailed_results': results
+        })
+    except Exception as e:
+        return Response.client_error(f'知識圖譜檢索失敗: {str(e)}')
+
+@retrieval_blueprint.route('/retrieval-modes', methods=['GET'])
+def get_retrieval_modes():
+    """
+    獲取可用的檢索模式
+    ---
+    tags:
+      - retrieval
+    responses:
+      200:
+        description: 可用的檢索模式列表
+    """
+    if retrieval_strategy:
+        modes = retrieval_strategy.get_available_modes()
+        current_mode = retrieval_strategy.get_current_mode()
+    else:
+        modes = RetrievalConfig.get_enabled_modes()
+        current_mode = RetrievalConfig.DEFAULT_MODE
+    
+    return Response.response('檢索模式列表', {
+        'available_modes': modes,
+        'current_mode': current_mode,
+        'default_mode': RetrievalConfig.DEFAULT_MODE
+    })
+
+@retrieval_blueprint.route('/set-mode', methods=['POST'])
+def set_retrieval_mode():
+    """
+    設置檢索模式
+    ---
+    tags:
+      - retrieval
+    parameters:
+      - name: mode
+        in: form
+        description: 檢索模式
+        required: true
+        type: string
+    responses:
+      200:
+        description: 模式設置成功
+      400:
+        description: 無效的模式
+    """
+    if 'mode' not in request.form:
+        return Response.client_error('mode parameter is required')
+    
+    mode = request.form['mode']
+    
+    if not RetrievalConfig.is_mode_enabled(mode):
+        return Response.client_error(f'無效的檢索模式: {mode}')
+    
+    if retrieval_strategy:
+        retrieval_strategy.set_mode(mode)
+        return Response.response('檢索模式設置成功', {
+            'mode': mode,
+            'available_modes': RetrievalConfig.get_enabled_modes()
+        })
+    else:
+        return Response.client_error('檢索策略未初始化')
