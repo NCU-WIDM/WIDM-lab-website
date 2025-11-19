@@ -45,7 +45,7 @@ export const Members = ({ members, timeoutError }) => {
 
   // 定義職位排序順序
   const positionOrder = {
-    'PhD Student': 1,
+    'PHD Student': 1,
     'Master Student 2nd Year': 2,
     'Master Student 1st Year': 3,
     'Project Assistant': 4,
